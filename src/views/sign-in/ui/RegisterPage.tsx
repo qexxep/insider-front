@@ -1,8 +1,8 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import {
   Button,
@@ -17,52 +17,94 @@ import {
   RadioGroupItem,
 } from '@/shared/ui';
 
-const FormSchema = z
-  .object({
-    nickName: z.string().min(2, {
-      message: 'Username must be at least 2 characters.',
-    }),
-    userId: z
-      .string()
-      .min(3, { message: 'User ID must be at least 3 characters.' })
-      .max(20, { message: 'User ID must be at most 20 characters.' }),
-    password: z
-      .string()
-      .min(6, { message: 'Password must be at least 6 characters.' })
-      .max(30, { message: 'Password must be at most 30 characters.' })
-      .regex(/[A-Z]/, { message: 'Password must contain at least one uppercase letter.' }) // 대문자 요구 사항 추가
-      .regex(/[a-z]/, { message: 'Password must contain at least one lowercase letter.' }) // 소문자 요구 사항 추가
-      .regex(/[0-9]/, { message: 'Password must contain at least one number.' }), // 숫자 요구 사항 추가
-    confirmPassword: z.string(),
-    email: z.string().email({ message: 'Please enter a valid email address.' }), // 이메일 유효성 검사
-    tempCode: z.string(),
-    birthDate: z.string(),
-    gender: z.enum(['M', 'F', 'other'], {
-      required_error: 'You need to select a notification type.',
-    }),
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  });
+import { checkOtp, sendOtp } from '../api/auth';
+import { checkDuplicateId, checkDuplicateNickname } from '../api/registers';
+import { useSignup } from '../hooks/useSignup';
+import { FormSchema, SignupFormType } from '../model';
 
 export function RegisterPage() {
-  const form = useForm<z.infer<typeof FormSchema>>({
+  const form = useForm<SignupFormType>({
     resolver: zodResolver(FormSchema),
-    defaultValues: {},
+    defaultValues: {
+      nickName: '',
+      userId: '',
+      password: '',
+      confirmPassword: '',
+      email: '',
+      tempCode: '',
+      birthDate: '',
+    },
   });
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  const { tempCode } = useSignup();
+  const [isNicknameChecked, setIsNicknameChecked] = useState(false);
+  const [isUserIdChecked, setIsUserIdChecked] = useState(false);
+  const [hasSentEmailOtp, setHasSentEmailOtp] = useState(false);
+  const [isEmailChecked, setIsEmailChecked] = useState(false);
+
+  function onSubmit(data: SignupFormType) {
     console.log(JSON.stringify(data, null, 2));
-    // toast({
-    //   title: 'You submitted the following values:',
-    //   description: (
-    //     <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-    //       <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // });
   }
+
+  const handleCheckDuplicateNickname = async (nickname: string) => {
+    const response = await checkDuplicateNickname(tempCode!, nickname);
+    if (response.status === 'SUCCESS') {
+      form.clearErrors('nickName');
+      form.setValue('nickName', nickname);
+      setIsNicknameChecked(true);
+    } else {
+      form.setError('nickName', {
+        type: 'manual',
+        message: response.message,
+      });
+      setIsNicknameChecked(false);
+    }
+  };
+
+  const handleCheckDuplicateUserId = async (userId: string) => {
+    const response = await checkDuplicateId(tempCode!, userId);
+    if (response.status === 'SUCCESS') {
+      form.clearErrors('userId');
+      form.setValue('userId', userId);
+      setIsUserIdChecked(true);
+    } else {
+      form.setError('userId', {
+        type: 'manual',
+        message: response.message,
+      });
+      setIsUserIdChecked(false);
+    }
+  };
+
+  const handleSendEmailOtp = async (email: string) => {
+    const payload = {
+      otpPurpose: 'SIGN_UP',
+      tempCode,
+      userEmail: email,
+    };
+    const response = await sendOtp(payload);
+    if (response.status === 'SUCCESS') {
+      setHasSentEmailOtp(true);
+    }
+  };
+
+  const handleConfirmEmail = async (inputOtp: string) => {
+    const payload = {
+      otpPurpose: 'SIGN_UP',
+      tempCode,
+      email: form.getValues('email'),
+      inputOtp,
+    };
+    const response = await checkOtp(payload);
+    if (response.status === 'SUCCESS') {
+      setIsEmailChecked(true);
+    } else {
+      form.setError('email', {
+        type: 'manual',
+        message: response.message,
+      });
+    }
+  };
 
   return (
     <Form {...form}>
@@ -80,9 +122,16 @@ export function RegisterPage() {
                 <FormLabel>닉네임</FormLabel>
                 <div className="mt-3 flex space-x-2">
                   <FormControl>
-                    <Input placeholder="닉네임 입력" {...field} />
+                    <Input placeholder="닉네임 입력" readOnly={isNicknameChecked} {...field} />
                   </FormControl>
-                  <Button>중복확인</Button>
+                  <Button
+                    disabled={isNicknameChecked}
+                    onClick={() => {
+                      handleCheckDuplicateNickname(field.value);
+                    }}
+                  >
+                    {isNicknameChecked ? '사용가능' : '중복확인'}
+                  </Button>
                 </div>
                 <FormMessage />
               </FormItem>
@@ -96,9 +145,11 @@ export function RegisterPage() {
                 <FormLabel>아이디</FormLabel>
                 <div className="flex space-x-2">
                   <FormControl>
-                    <Input placeholder="아이디 입력" {...field} />
+                    <Input placeholder="아이디 입력" readOnly={isUserIdChecked} {...field} />
                   </FormControl>
-                  <Button>중복확인</Button>
+                  <Button disabled={isUserIdChecked} onClick={() => handleCheckDuplicateUserId(field.value)}>
+                    {isUserIdChecked ? '사용가능' : '중복확인'}
+                  </Button>
                 </div>
                 <FormMessage />
               </FormItem>
@@ -111,7 +162,7 @@ export function RegisterPage() {
               <FormItem>
                 <FormLabel>비밀번호</FormLabel>
                 <FormControl>
-                  <Input placeholder="비밀번호 입력" {...field} />
+                  <Input placeholder="비밀번호 입력" type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -124,7 +175,7 @@ export function RegisterPage() {
               <FormItem>
                 <FormLabel>비밀번호 확인</FormLabel>
                 <FormControl>
-                  <Input placeholder="비밀번호 재입력" {...field} />
+                  <Input placeholder="비밀번호 재입력" type="password" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -141,7 +192,7 @@ export function RegisterPage() {
                     <FormControl>
                       <Input placeholder="이메일 입력" {...field} />
                     </FormControl>
-                    <Button>인증메일 발송</Button>
+                    <Button onClick={() => handleSendEmailOtp(field.value)}>인증메일 발송</Button>
                   </div>
                   <FormMessage />
                 </FormItem>
@@ -156,7 +207,7 @@ export function RegisterPage() {
                     <FormControl>
                       <Input placeholder="인증번호 입력" {...field} />
                     </FormControl>
-                    <Button>인증메일 확인</Button>
+                    <Button onClick={() => handleConfirmEmail(field.value)}>인증메일 확인</Button>
                   </div>
                   <FormMessage />
                 </FormItem>
