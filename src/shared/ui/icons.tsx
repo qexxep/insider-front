@@ -3,6 +3,7 @@ import {
   Bell,
   Building2,
   ChevronUp,
+  Circle,
   CircleUser,
   Diamond,
   Dog,
@@ -174,6 +175,7 @@ const Icons = {
   handshake: Handshake,
   diamond: Diamond,
   chevronUp: ChevronUp,
+  circle: Circle,
 } as const;
 
 export { Icons };
