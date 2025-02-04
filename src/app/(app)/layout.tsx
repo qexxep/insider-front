@@ -1,5 +1,9 @@
+'use client';
+
+import ky from 'ky';
 import Link from 'next/link';
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
+import React from 'react';
 
 import { cn } from '@/shared/lib';
 import {
@@ -102,36 +106,65 @@ export const Header = () => {
   );
 };
 
-export const Sidebar = ({ className }: { className?: string }) => {
-  const menuItems = {
-    favorites: {
-      title: '즐겨찾기 게시판',
-      items: [
-        { href: '/board/job', icon: <Icons.building2 className="h-4 w-4" />, label: '취업' },
-        { href: '/board/love', icon: <Icons.heart className="h-4 w-4" />, label: '연애' },
-      ],
-    },
-    inside: {
-      title: '인사이드 게시판',
-      items: [
-        { href: '/board/economy', icon: <Icons.wallet className="h-4 w-4" />, label: '경제' },
-        { href: '/board/politics', icon: <Icons.landPlot className="h-4 w-4" />, label: '정치' },
-        { href: '/board/sports', icon: <Icons.dumbbell className="h-4 w-4" />, label: '스포츠' },
-        { href: '/board/social', icon: <Icons.users className="h-4 w-4" />, label: '사회' },
-        { href: '/board/entertainment', icon: <Icons.smile className="h-4 w-4" />, label: '익명 자유' },
-      ],
-    },
-    healing: {
-      title: '힐링추천',
-      items: [
-        { href: '/board/anonymous', icon: <Icons.helpCircle className="h-4 w-4" />, label: '익명고민' },
-        { href: '/board/pets', icon: <Icons.dog className="h-4 w-4" />, label: '반려동물' },
-        { href: '/board/free', icon: <Icons.handshake className="h-4 w-4" />, label: '무한위로' },
-        { href: '/board/support', icon: <Icons.users className="h-4 w-4" />, label: '응원합시다' },
-        { href: '/board/celebrity', icon: <Icons.diamond className="h-4 w-4" />, label: '명예의 전당' },
-      ],
-    },
+{
+  /* 아이콘 매핑 함수: figma의 asset으로 관리할지 여부에 따라 변경 가능성 O */
+}
+const getIconForCategory = (categoryName: string) => {
+  const iconMap: Record<string, React.ReactNode> = {
+    취업: <Icons.building2 className="h-4 w-4" />,
+    연애: <Icons.heart className="h-4 w-4" />,
+    연예: <Icons.smile className="h-4 w-4" />,
+    경제: <Icons.wallet className="h-4 w-4" />,
+    정치: <Icons.landPlot className="h-4 w-4" />,
+    스포츠: <Icons.dumbbell className="h-4 w-4" />,
+    사회: <Icons.users className="h-4 w-4" />,
+    익명자유: <Icons.smile className="h-4 w-4" />,
+    익명고민: <Icons.helpCircle className="h-4 w-4" />,
+    반려동물: <Icons.dog className="h-4 w-4" />,
+    무한위로: <Icons.handshake className="h-4 w-4" />,
+    응원합시다: <Icons.users className="h-4 w-4" />,
   };
+  return iconMap[categoryName] || <Icons.circle className="h-4 w-4" />;
+};
+
+export const Sidebar = ({ className }: { className?: string }) => {
+  const [categories, setCategories] = useState<CategoryGroup[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  {
+    /* 즐겨찾기 더미 데이터: 추후 API 연동 후 삭제 요망 */
+  }
+  const favoriteMenus = {
+    majorCategoryNm: '즐겨찾기 게시판',
+    categoryList: [
+      { categoryCode: 'job', categoryName: '취업' },
+      { categoryCode: 'love', categoryName: '연애' },
+    ],
+  };
+
+  {
+    /* 게시판 목록 조회 */
+  }
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await ky
+          .get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/categories/all`)
+          .json<CategoryResponse>();
+        setCategories(response.data.categories);
+      } catch (error) {
+        console.error('카테고리 로딩 실패:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  if (loading) {
+    return <div>로딩중...</div>;
+  }
 
   return (
     <aside
@@ -141,41 +174,70 @@ export const Sidebar = ({ className }: { className?: string }) => {
         className
       )}
     >
-      {/* 즐겨찾기 게시판 */}
-      <MenuSection {...menuItems.favorites} />
-
+      {/* 즐겨찾기 메뉴: 추후 API 연동 요망*/}
+      <MenuSection
+        title={favoriteMenus.majorCategoryNm}
+        categoryList={favoriteMenus.categoryList.map(category => ({
+          href: `/board/${category.categoryCode.toLowerCase()}`,
+          icon: getIconForCategory(category.categoryName),
+          label: category.categoryName,
+          categoryCode: category.categoryCode,
+          categoryName: category.categoryName,
+        }))}
+      />
       <Separator className="my-2" />
 
-      {/* 인사이드 게시판 */}
-      <MenuSection {...menuItems.inside} className="mt-4" />
-      {/* 더보기 */}
-      <Button
-        variant="outline"
-        className="-pb-4 w-full justify-start rounded-lg border-none px-1 py-2 text-sm font-semibold text-[#FF4200] hover:text-[#FF4200]"
-      >
-        <span>더보기</span>
-      </Button>
-      <Separator className="my-2" />
-
-      {/* 힐링추천 */}
-      <MenuSection {...menuItems.healing} className="mt-4" />
+      {categories.map(category => (
+        <React.Fragment key={category.majorCategoryNm}>
+          <MenuSection title={category.majorCategoryNm} categoryList={category.categoryList} />
+          <Separator className="my-2" />
+        </React.Fragment>
+      ))}
     </aside>
   );
 };
 
-interface MenuItem {
-  href: string;
-  icon: React.ReactNode;
-  label: string;
+interface CategoryItem {
+  categoryCode: string;
+  categoryName: string;
+  href?: string;
+  icon?: React.ReactNode;
+  label?: string;
+}
+
+interface CategoryGroup {
+  categoryList: CategoryItem[];
+  majorCategoryNm: string;
+}
+
+interface CategoryResponse {
+  status: string;
+  message: string;
+  data: {
+    categories: CategoryGroup[];
+  };
 }
 
 interface MenuSectionProps {
   title: string;
-  items: MenuItem[];
+  categoryList: CategoryItem[];
   className?: string;
 }
 
-const MenuSection = ({ title, items, className }: MenuSectionProps) => {
+const MenuSection = ({ title, categoryList, className }: MenuSectionProps) => {
+  const [showAll, setShowAll] = useState(false);
+
+  const displayItems = categoryList.map(category => ({
+    href: `/board/${category.categoryCode.toLowerCase()}`,
+    icon: getIconForCategory(category.categoryName),
+    label: category.categoryName,
+  }));
+
+  {
+    /* 더보기 버튼에 따라 표시 여부 결정. 추후 카테고리 개수가 더 많아지면 논의 후 변경 요망 */
+  }
+  const visibleItems = showAll ? displayItems : displayItems.slice(0, 5);
+
   return (
     <Accordion type="single" collapsible defaultValue="item-1" className={className}>
       <AccordionItem value="item-1" className="border-none">
@@ -184,7 +246,7 @@ const MenuSection = ({ title, items, className }: MenuSectionProps) => {
         </AccordionTrigger>
         <AccordionContent className="pb-2">
           <div className="space-y-1">
-            {items.map(item => (
+            {visibleItems.map(item => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -195,6 +257,15 @@ const MenuSection = ({ title, items, className }: MenuSectionProps) => {
               </Link>
             ))}
           </div>
+          {displayItems.length > 5 && (
+            <Button
+              variant="outline"
+              className="w-full justify-start rounded-lg border-none px-1 py-2 text-sm font-semibold text-[#FF4200] hover:text-[#FF4200]"
+              onClick={() => setShowAll(!showAll)}
+            >
+              <span>{showAll ? '접기' : '더보기'}</span>
+            </Button>
+          )}
         </AccordionContent>
       </AccordionItem>
     </Accordion>
