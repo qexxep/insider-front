@@ -2,7 +2,7 @@
 
 import ky from 'ky';
 import Link from 'next/link';
-import { PropsWithChildren, useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
 import { cn } from '@/shared/lib';
@@ -276,10 +276,12 @@ const MenuSection = ({ title, categoryList, className }: MenuSectionProps) => {
     label: category.categoryName,
   }));
 
-  {
-    /* 더보기 버튼에 따라 표시 여부 결정. 추후 카테고리 개수가 더 많아지면 논의 후 변경 요망 */
-  }
-  const visibleItems = showAll ? displayItems : displayItems.slice(0, 5);
+  const INITIAL_DISPLAY_COUNT = 5;
+
+  const visibleItems = useMemo(
+    () => (showAll ? displayItems : displayItems.slice(0, INITIAL_DISPLAY_COUNT)),
+    [showAll, displayItems]
+  );
 
   return (
     <Accordion type="single" collapsible defaultValue="item-1" className={className}>
@@ -300,7 +302,7 @@ const MenuSection = ({ title, categoryList, className }: MenuSectionProps) => {
               </Link>
             ))}
           </div>
-          {displayItems.length > 5 && (
+          {displayItems.length > INITIAL_DISPLAY_COUNT && (
             <Button
               variant="outline"
               className="w-full justify-start rounded-lg border-none px-1 py-2 text-sm font-semibold text-[#FF4200] hover:text-[#FF4200]"
