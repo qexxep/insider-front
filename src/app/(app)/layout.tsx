@@ -34,14 +34,45 @@ const Layout = ({ children }: PropsWithChildren) => {
 export default Layout;
 
 export const Header = () => {
+  const [hotTopics, setHotTopics] = useState<
+    Array<{
+      topicSeq: string;
+      rankNum: string;
+      searchWord: string;
+      searchCnt: string;
+    }>
+  >([]);
+
+  useEffect(() => {
+    const fetchHotTopics = async () => {
+      try {
+        const response = await ky.get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/hot-topic/rankings`).json<{
+          status: string;
+          message: string;
+          data: Array<{
+            topicSeq: string;
+            rankNum: string;
+            searchWord: string;
+            searchCnt: string;
+          }>;
+        }>();
+        setHotTopics(response.data);
+      } catch (error) {
+        console.error('핫토픽 로딩 실패:', error);
+      }
+    };
+
+    fetchHotTopics();
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 h-14 w-full border-b border-border/40 bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-full w-full items-center justify-between px-5">
-        <div className="flex items-center gap-4">
+      <div className="flex h-full w-full items-center justify-between px-6">
+        <div className="flex flex-1 items-center gap-24">
           {/* 메인 로고 */}
-          <Link href="/" className="flex items-center gap-1">
-            <Icons.logo className="h-8 w-8" />
-            <span className="text-xl font-bold text-[#FF4200]">INSIDER</span>
+          <Link href="/" className="flex items-center gap-2">
+            <Icons.logo className="h-11 w-11" />
+            <span className="text-2xl font-extrabold text-[#FF4200]">INSIDER</span>
           </Link>
           {/* 실시간 검색어 */}
           <div className="flex min-w-[300px] items-center justify-between">
@@ -54,17 +85,27 @@ export const Header = () => {
                 <div
                   className="flex flex-col"
                   style={{
-                    animation: 'smoothCarousel 30s steps(10, end) infinite',
+                    animation: hotTopics.length >= 2 ? 'smoothCarousel 30s steps(10, end) infinite' : 'none',
                   }}
                 >
-                  {Array.from({ length: 10 }, (_, i) => (
-                    <div key={i} className="flex h-7 items-center gap-2">
-                      <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-sm bg-gray-200 text-xs">
-                        {i + 1}
-                      </span>
-                      <span className="whitespace-nowrap text-sm">실시간 검색어 {i + 1}</span>
-                    </div>
-                  ))}
+                  {/* 핫토픽 애니메이션은 데이터가 2개 이상일 때만 적용 */}
+                  {hotTopics.length > 0
+                    ? [...hotTopics, ...hotTopics].slice(0, 10).map((topic, index) => (
+                        <div key={`${topic.topicSeq}-${index}`} className="flex h-7 items-center gap-2">
+                          <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-sm bg-gray-200 text-xs">
+                            {topic.rankNum}
+                          </span>
+                          <span className="whitespace-nowrap text-sm">{topic.searchWord}</span>
+                        </div>
+                      ))
+                    : Array.from({ length: 10 }, (_, i) => (
+                        <div key={i} className="flex h-7 items-center gap-2">
+                          <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-sm bg-gray-200 text-xs">
+                            {i + 1}
+                          </span>
+                          <span className="whitespace-nowrap text-sm">로딩중...</span>
+                        </div>
+                      ))}
                 </div>
               </div>
             </div>
