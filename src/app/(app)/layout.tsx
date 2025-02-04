@@ -150,22 +150,24 @@ export const Header = () => {
 {
   /* 아이콘 매핑 함수: figma의 asset으로 관리할지 여부에 따라 변경 가능성 O */
 }
+const iconMap: Record<string, keyof typeof Icons> = {
+  취업: 'building2',
+  연애: 'heart',
+  연예: 'smile',
+  경제: 'wallet',
+  정치: 'landPlot',
+  스포츠: 'dumbbell',
+  사회: 'users',
+  익명자유: 'smile',
+  익명고민: 'helpCircle',
+  반려동물: 'dog',
+  무한위로: 'handshake',
+  응원합시다: 'users',
+};
+
 const getIconForCategory = (categoryName: string) => {
-  const iconMap: Record<string, React.ReactNode> = {
-    취업: <Icons.building2 className="h-4 w-4" />,
-    연애: <Icons.heart className="h-4 w-4" />,
-    연예: <Icons.smile className="h-4 w-4" />,
-    경제: <Icons.wallet className="h-4 w-4" />,
-    정치: <Icons.landPlot className="h-4 w-4" />,
-    스포츠: <Icons.dumbbell className="h-4 w-4" />,
-    사회: <Icons.users className="h-4 w-4" />,
-    익명자유: <Icons.smile className="h-4 w-4" />,
-    익명고민: <Icons.helpCircle className="h-4 w-4" />,
-    반려동물: <Icons.dog className="h-4 w-4" />,
-    무한위로: <Icons.handshake className="h-4 w-4" />,
-    응원합시다: <Icons.users className="h-4 w-4" />,
-  };
-  return iconMap[categoryName] || <Icons.circle className="h-4 w-4" />;
+  const IconComponent = Icons[iconMap[categoryName] ?? 'circle'];
+  return <IconComponent className="h-4 w-4" />;
 };
 
 export const Sidebar = ({ className }: { className?: string }) => {
