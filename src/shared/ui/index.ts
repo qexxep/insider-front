@@ -1,5 +1,7 @@
 export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './accordion';
 export { Button, buttonVariants } from './button';
+export { Card, CardContent, CardHeader, CardTitle } from './card';
+export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel';
 export { Checkbox } from './checkbox';
 export { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, useFormField } from './form';
 export { Icons } from './icons';
