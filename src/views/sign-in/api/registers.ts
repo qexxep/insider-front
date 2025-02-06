@@ -9,7 +9,7 @@ interface InitSignUpResponse {
 }
 
 export const initSignUp = async (): Promise<InitSignUpResponse> => {
-  const response = await apiClient.post('registers/sign-up-init');
+  const response = await apiClient.post('/api/registers/sign-up-init');
   return response.json();
 };
 
@@ -22,7 +22,7 @@ export const checkDuplicateNickname = async (
   tempCode: string,
   userNickname: string
 ): Promise<CheckDuplicateNicknameResponse> => {
-  const response = await apiClient.post('registers/check-duplicate-nickname', {
+  const response = await apiClient.post('/api/registers/check-duplicate-nickname', {
     json: { tempCode, userNickname },
   });
   return response.json();
@@ -34,7 +34,7 @@ interface CheckDuplicateIdResponse {
 }
 
 export const checkDuplicateId = async (tempCode: string, userId: string): Promise<CheckDuplicateIdResponse> => {
-  const response = await apiClient.post('registers/check-duplicate-id', {
+  const response = await apiClient.post('/api/registers/check-duplicate-id', {
     json: { tempCode, userId },
   });
   return response.json();
@@ -57,7 +57,7 @@ interface SignUpResponse {
 }
 
 export const signup = async (payload: SignUpRequest): Promise<SignUpResponse> => {
-  const response = await apiClient.post('registers/sign-up', {
+  const response = await apiClient.post('/api/registers/sign-up', {
     json: payload,
   });
   return response.json();

@@ -191,7 +191,7 @@ export const Sidebar = ({ className }: { className?: string }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await ky.get(`/mains/categories/all`).json<CategoryResponse>();
+        const response = await ky.get(`/api/mains/categories/all`).json<CategoryResponse>();
         setCategories(response.data.categories);
       } catch (error) {
         console.error('카테고리 로딩 실패:', error);
