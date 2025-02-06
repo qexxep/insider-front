@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -18,11 +19,13 @@ import {
 } from '@/shared/ui';
 
 import { checkOtp, sendOtp } from '../api/auth';
-import { checkDuplicateId, checkDuplicateNickname } from '../api/registers';
+import { checkDuplicateId, checkDuplicateNickname, signup } from '../api/registers';
 import { useSignup } from '../hooks/useSignup';
 import { FormSchema, SignupFormType } from '../model';
 
 export function RegisterPage() {
+  const router = useRouter();
+
   const form = useForm<SignupFormType>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -41,10 +44,6 @@ export function RegisterPage() {
   const [isUserIdChecked, setIsUserIdChecked] = useState(false);
   const [hasSentEmailOtp, setHasSentEmailOtp] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
-
-  function onSubmit(data: SignupFormType) {
-    console.log(JSON.stringify(data, null, 2));
-  }
 
   const handleCheckDuplicateNickname = async (nickname: string) => {
     const response = await checkDuplicateNickname(tempCode!, nickname);
@@ -85,6 +84,12 @@ export function RegisterPage() {
     const response = await sendOtp(payload);
     if (response.status === 'SUCCESS') {
       setHasSentEmailOtp(true);
+    } else {
+      setHasSentEmailOtp(false);
+      form.setError('email', {
+        type: 'manual',
+        message: response.message,
+      });
     }
   };
 
@@ -99,10 +104,21 @@ export function RegisterPage() {
     if (response.status === 'SUCCESS') {
       setIsEmailChecked(true);
     } else {
+      setIsEmailChecked(false);
       form.setError('email', {
         type: 'manual',
         message: response.message,
       });
+    }
+  };
+
+  const onSubmit = async (data: SignupFormType) => {
+    const response = await signup({ ...data, tempCode: tempCode });
+    if (response.status === 'SUCCESS') {
+      alert('회원가입이 완료되었습니다.');
+      router.push('/login');
+    } else {
+      console.error(response.message);
     }
   };
 
@@ -190,29 +206,40 @@ export function RegisterPage() {
                   <FormLabel>이메일</FormLabel>
                   <div className="flex space-x-2">
                     <FormControl>
-                      <Input placeholder="이메일 입력" {...field} />
+                      <Input placeholder="이메일 입력" readOnly={isEmailChecked} {...field} />
                     </FormControl>
-                    <Button onClick={() => handleSendEmailOtp(field.value)}>인증메일 발송</Button>
+                    <Button
+                      type="button"
+                      disabled={isEmailChecked || (!isEmailChecked && hasSentEmailOtp)}
+                      onClick={() => handleSendEmailOtp(field.value)}
+                    >
+                      {isEmailChecked ? '인증완료' : '인증메일 발송'}
+                    </Button>
                   </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="tempCode"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex space-x-2">
-                    <FormControl>
-                      <Input placeholder="인증번호 입력" {...field} />
-                    </FormControl>
-                    <Button onClick={() => handleConfirmEmail(field.value)}>인증메일 확인</Button>
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {hasSentEmailOtp && !isEmailChecked && (
+              <FormField
+                control={form.control}
+                name="tempCode"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex space-x-2">
+                      <FormControl>
+                        <Input placeholder="인증번호 입력" {...field} />
+                      </FormControl>
+                      <Button type="button" onClick={() => handleConfirmEmail(field.value)}>
+                        인증메일 확인
+                      </Button>
+                    </div>
+                    <span>3:00</span>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
           <FormField
             control={form.control}
