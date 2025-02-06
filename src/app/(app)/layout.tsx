@@ -1,21 +1,8 @@
 'use client';
 
-import ky from 'ky';
-import Link from 'next/link';
-import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
-import React from 'react';
+import { PropsWithChildren } from 'react';
 
-import { cn } from '@/shared/lib';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-  Button,
-  Icons,
-  Input,
-  Separator,
-} from '@/shared/ui';
+import { Header, Sidebar } from './layout/index';
 
 const Layout = ({ children }: PropsWithChildren) => {
   return (
