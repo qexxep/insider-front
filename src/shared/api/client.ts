@@ -10,7 +10,7 @@ const setAuthorizationHeader: BeforeRequestHook = request => {
 };
 
 const baseApiClient = ky.create({
-  prefixUrl: 'http://inssider.kro.kr/api',
+  // prefixUrl: 'http://inssider.kro.kr/api',
 });
 
 const apiClient = baseApiClient.extend({
