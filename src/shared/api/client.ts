@@ -1,9 +1,9 @@
 import ky, { BeforeRequestHook } from 'ky-universal';
 
-import { getAccessToken } from './auth';
+import { getLocalStorage } from '../utils';
 
 const setAuthorizationHeader: BeforeRequestHook = request => {
-  const accessToken = getAccessToken();
+  const accessToken = getLocalStorage('accessToken');
   if (accessToken) {
     request.headers.set('Authorization', `Bearer ${accessToken}`);
   }

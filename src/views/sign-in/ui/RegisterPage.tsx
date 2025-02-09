@@ -21,13 +21,13 @@ import {
 import { checkOtp, sendOtp } from '../api/auth';
 import { checkDuplicateId, checkDuplicateNickname, signup } from '../api/registers';
 import { useSignup } from '../hooks/useSignup';
-import { FormSchema, SignupFormType } from '../model';
+import { SignupFormSchema, SignupFormType } from '../model';
 
 export function RegisterPage() {
   const router = useRouter();
 
   const form = useForm<SignupFormType>({
-    resolver: zodResolver(FormSchema),
+    resolver: zodResolver(SignupFormSchema),
     defaultValues: {
       nickName: '',
       userId: '',
