@@ -1,3 +1,5 @@
+import type { Configuration } from 'webpack';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
@@ -24,6 +26,24 @@ const nextConfig = {
         ],
       },
     ];
+  },
+  webpack: (config: Configuration) => {
+    config.module?.rules?.push({
+      test: /\.svg$/i,
+      issuer: /\.[jt]sx?$/,
+      use: ['@svgr/webpack'],
+    });
+    return config;
+  },
+  experimental: {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
 };
 
