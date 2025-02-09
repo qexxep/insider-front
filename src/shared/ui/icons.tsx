@@ -14,6 +14,7 @@ import {
   Heart,
   HelpCircle,
   LandPlot,
+  MessageSquare,
   Search,
   Smile,
   ThumbsUp,
@@ -182,6 +183,7 @@ const Icons = {
   clock: Clock,
   eye: Eye,
   thumbsUp: ThumbsUp,
+  messageSquare: MessageSquare,
 } as const;
 
 export { Icons };
