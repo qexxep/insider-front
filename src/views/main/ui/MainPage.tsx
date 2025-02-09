@@ -69,10 +69,10 @@ function MainPage() {
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="hidden h-10 w-10 items-center justify-center rounded-full border-none bg-orange-600 bg-transparent text-white transition-colors disabled:text-gray-400 sm:flex">
+        <CarouselPrevious className="hidden h-10 w-10 items-center justify-center rounded-full border-none text-gray-400 disabled:bg-transparent sm:flex">
           &lt;
         </CarouselPrevious>
-        <CarouselNext className="hidden h-10 w-10 items-center justify-center rounded-full border-none bg-orange-600 bg-transparent text-white transition-colors disabled:text-gray-400 sm:flex">
+        <CarouselNext className="hidden h-10 w-10 items-center justify-center rounded-full border-none text-gray-400 disabled:bg-transparent sm:flex">
           &gt;
         </CarouselNext>
       </Carousel>
