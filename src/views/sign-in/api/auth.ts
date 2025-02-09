@@ -1,15 +1,24 @@
 import apiClient from '@/shared/api/client';
 
+interface LoginRequest {
+  userId: string;
+  password: string;
+}
 interface LoginResponse {
+  status: 'SUCCESS' | 'FAILURE';
+  message: string;
   id: string;
   data: {
-    accessToken: string;
+    jwt: {
+      accessToken: string;
+      refreshToken: string;
+    };
   };
 }
 
-export const login = async (userId: string, password: string): Promise<LoginResponse> => {
+export const login = async (payload: LoginRequest): Promise<LoginResponse> => {
   const response = await apiClient.post('/api/auth/sign-in', {
-    json: { userId, password },
+    json: payload,
   });
   return response.json<LoginResponse>();
 };

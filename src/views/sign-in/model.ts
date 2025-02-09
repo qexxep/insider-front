@@ -1,6 +1,13 @@
 import { z } from 'zod';
 
-export const FormSchema = z
+export const LoginFormSchema = z.object({
+  userId: z.string().min(1, { message: '아이디를 입력해주세요.' }),
+  password: z.string().min(1, { message: '비밀번호를 입력해주세요.' }),
+});
+
+export type LoginFormType = z.infer<typeof LoginFormSchema>;
+
+export const SignupFormSchema = z
   .object({
     nickName: z.string().min(2, {
       message: 'Username must be at least 2 characters.',
@@ -29,4 +36,4 @@ export const FormSchema = z
     path: ['confirmPassword'],
   });
 
-export type SignupFormType = z.infer<typeof FormSchema>;
+export type SignupFormType = z.infer<typeof SignupFormSchema>;
