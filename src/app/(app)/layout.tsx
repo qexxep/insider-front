@@ -1,10 +1,11 @@
 'use client';
 
-import ky from 'ky';
 import Link from 'next/link';
 import { PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
+import apiClient from '@/shared/api/client';
+import { ApiResponse } from '@/shared/api/types';
 import { cn } from '@/shared/lib';
 import {
   Accordion,
@@ -34,36 +35,7 @@ const Layout = ({ children }: PropsWithChildren) => {
 export default Layout;
 
 export const Header = () => {
-  const [hotTopics, setHotTopics] = useState<
-    Array<{
-      topicSeq: string;
-      rankNum: string;
-      searchWord: string;
-      searchCnt: string;
-    }>
-  >([]);
-
-  useEffect(() => {
-    const fetchHotTopics = async () => {
-      try {
-        const response = await ky.get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/hot-topic/rankings`).json<{
-          status: string;
-          message: string;
-          data: Array<{
-            topicSeq: string;
-            rankNum: string;
-            searchWord: string;
-            searchCnt: string;
-          }>;
-        }>();
-        setHotTopics(response.data);
-      } catch (error) {
-        console.error('핫토픽 로딩 실패:', error);
-      }
-    };
-
-    fetchHotTopics();
-  }, []);
+  const { hotTopics } = useHotTopics();
 
   return (
     <header className="sticky top-0 z-50 h-14 w-full border-b border-border/40 bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -147,32 +119,11 @@ export const Header = () => {
   );
 };
 
-{
-  /* 아이콘 매핑 함수: figma의 asset으로 관리할지 여부에 따라 변경 가능성 O */
-}
-const iconMap: Record<string, keyof typeof Icons> = {
-  취업: 'building2',
-  연애: 'heart',
-  연예: 'smile',
-  경제: 'wallet',
-  정치: 'landPlot',
-  스포츠: 'dumbbell',
-  사회: 'users',
-  익명자유: 'smile',
-  익명고민: 'helpCircle',
-  반려동물: 'dog',
-  무한위로: 'handshake',
-  응원합시다: 'users',
-};
-
-const getIconForCategory = (categoryName: string) => {
-  const IconComponent = Icons[iconMap[categoryName] ?? 'circle'];
-  return <IconComponent className="h-4 w-4" />;
-};
-
 export const Sidebar = ({ className }: { className?: string }) => {
-  const [categories, setCategories] = useState<CategoryGroup[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { categories, isLoading, error } = useCategories();
+
+  if (isLoading) return <div>로딩 중...</div>;
+  if (error) return <div>에러가 발생했습니다</div>;
 
   {
     /* 즐겨찾기 더미 데이터: 추후 API 연동 후 삭제 요망 */
@@ -185,29 +136,7 @@ export const Sidebar = ({ className }: { className?: string }) => {
     ],
   };
 
-  {
-    /* 게시판 목록 조회 */
-  }
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await ky
-          .get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/categories/all`)
-          .json<CategoryResponse>();
-        setCategories(response.data.categories);
-      } catch (error) {
-        console.error('카테고리 로딩 실패:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  if (loading) {
-    return <div>로딩중...</div>;
-  }
+  console.log(categories);
 
   return (
     <aside
@@ -222,7 +151,7 @@ export const Sidebar = ({ className }: { className?: string }) => {
         title={favoriteMenus.majorCategoryNm}
         categoryList={favoriteMenus.categoryList.map(category => ({
           href: `/board/${category.categoryCode.toLowerCase()}`,
-          icon: getIconForCategory(category.categoryName),
+          icon: CategoryIcon({ categoryName: category.categoryName }),
           label: category.categoryName,
           categoryCode: category.categoryCode,
           categoryName: category.categoryName,
@@ -230,7 +159,7 @@ export const Sidebar = ({ className }: { className?: string }) => {
       />
       <Separator className="my-2" />
 
-      {categories.map(category => (
+      {categories?.categories?.map(category => (
         <React.Fragment key={category.majorCategoryNm}>
           <MenuSection title={category.majorCategoryNm} categoryList={category.categoryList} />
           <Separator className="my-2" />
@@ -239,27 +168,6 @@ export const Sidebar = ({ className }: { className?: string }) => {
     </aside>
   );
 };
-
-interface CategoryItem {
-  categoryCode: string;
-  categoryName: string;
-  href?: string;
-  icon?: React.ReactNode;
-  label?: string;
-}
-
-interface CategoryGroup {
-  categoryList: CategoryItem[];
-  majorCategoryNm: string;
-}
-
-interface CategoryResponse {
-  status: string;
-  message: string;
-  data: {
-    categories: CategoryGroup[];
-  };
-}
 
 interface MenuSectionProps {
   title: string;
@@ -272,7 +180,7 @@ const MenuSection = ({ title, categoryList, className }: MenuSectionProps) => {
 
   const displayItems = categoryList.map(category => ({
     href: `/board/${category.categoryCode.toLowerCase()}`,
-    icon: getIconForCategory(category.categoryName),
+    icon: CategoryIcon({ categoryName: category.categoryName }),
     label: category.categoryName,
   }));
 
@@ -295,6 +203,7 @@ const MenuSection = ({ title, categoryList, className }: MenuSectionProps) => {
               <Link
                 key={item.href}
                 href={item.href}
+                prefetch={false}
                 className="flex items-center gap-2 rounded-lg px-1 py-2 text-sm hover:bg-accent"
               >
                 {item.icon}
@@ -315,4 +224,106 @@ const MenuSection = ({ title, categoryList, className }: MenuSectionProps) => {
       </AccordionItem>
     </Accordion>
   );
+};
+
+interface CategoryIconProps {
+  categoryName: string;
+  className?: string;
+}
+
+export const iconMap: Record<string, keyof typeof Icons> = {
+  취업: 'building2',
+  연애: 'heart',
+  연예: 'smile',
+  경제: 'wallet',
+  정치: 'landPlot',
+  스포츠: 'dumbbell',
+  사회: 'users',
+  익명자유: 'smile',
+  익명고민: 'helpCircle',
+  반려동물: 'dog',
+  무한위로: 'handshake',
+  응원합시다: 'users',
+};
+export function CategoryIcon({ categoryName, className = 'h-4 w-4' }: CategoryIconProps) {
+  const IconComponent = Icons[iconMap[categoryName] ?? 'circle'];
+  return <IconComponent className={className} />;
+}
+
+export interface CategoryItem {
+  categoryCode: string;
+  categoryName: string;
+  href?: string;
+  icon?: React.ReactNode;
+  label?: string;
+}
+
+export interface CategoryGroup {
+  categoryList: CategoryItem[];
+  majorCategoryNm: string;
+}
+
+interface CategoriesResponse {
+  categories: CategoryGroup[];
+}
+
+export const getCategories = async (): Promise<ApiResponse<CategoriesResponse>> => {
+  return await apiClient.get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/categories/all`).json();
+};
+export const useCategories = () => {
+  const [categories, setCategories] = useState<CategoriesResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategories();
+        setCategories(response.data);
+      } catch (err) {
+        console.error('카테고리 로딩 실패:', err);
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  return { categories, isLoading, error };
+};
+
+export interface HotTopic {
+  topicSeq: string;
+  rankNum: string;
+  searchWord: string;
+  searchCnt: string;
+}
+
+export const getHotTopics = async (): Promise<ApiResponse<HotTopic[]>> => {
+  return await apiClient.get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/hot-topic/rankings`).json();
+};
+export const useHotTopics = () => {
+  const [hotTopics, setHotTopics] = useState<HotTopic[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const fetchHotTopics = async () => {
+      try {
+        const response = await getHotTopics();
+        setHotTopics(response.data);
+      } catch (err) {
+        console.error('핫토픽 로딩 실패:', err);
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchHotTopics();
+  }, []);
+
+  return { hotTopics, isLoading, error };
 };
