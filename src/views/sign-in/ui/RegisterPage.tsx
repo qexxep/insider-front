@@ -126,8 +126,8 @@ export function RegisterPage() {
     <Form {...form}>
       <div className="flex flex-col gap-20 py-20">
         <div className="flex flex-col items-center justify-center">
-          <h1 className="text-[32px] font-bold text-[#242424]">회원가입</h1>
-          <p className="text-[18px] font-medium text-[#616161]">회원가입을 통해 더 많은 토론에 참여해보세요</p>
+          <h1 className="mb-5 text-3xl font-bold">회원가입</h1>
+          <p className="text-lg font-medium text-muted-foreground">회원가입을 통해 더 많은 토론에 참여해보세요</p>
         </div>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto flex w-[750px] flex-col gap-9">
           <FormField
@@ -135,7 +135,9 @@ export function RegisterPage() {
             name="nickName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>닉네임</FormLabel>
+                <FormLabel className="text-lg font-medium">
+                  닉네임 <span className="text-destructive">*</span>
+                </FormLabel>
                 <div className="mt-3 flex space-x-2">
                   <FormControl>
                     <Input placeholder="닉네임 입력" readOnly={isNicknameChecked} {...field} />
@@ -158,8 +160,10 @@ export function RegisterPage() {
             name="userId"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>아이디</FormLabel>
-                <div className="flex space-x-2">
+                <FormLabel className="text-lg font-medium">
+                  아이디 <span className="text-destructive">*</span>
+                </FormLabel>
+                <div className="mt-3 flex space-x-2">
                   <FormControl>
                     <Input placeholder="아이디 입력" readOnly={isUserIdChecked} {...field} />
                   </FormControl>
@@ -176,10 +180,14 @@ export function RegisterPage() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>비밀번호</FormLabel>
-                <FormControl>
+                <FormLabel className="text-lg font-medium">
+                  비밀번호<span className="text-destructive">*</span>
+                </FormLabel>
+
+                <FormControl className="mt-3 flex space-x-2">
                   <Input placeholder="비밀번호 입력" type="password" {...field} />
                 </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}
@@ -189,10 +197,14 @@ export function RegisterPage() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>비밀번호 확인</FormLabel>
-                <FormControl>
+                <FormLabel className="text-lg font-medium">
+                  비밀번호 확인<span className="text-destructive">*</span>
+                </FormLabel>
+
+                <FormControl className="mt-3 flex space-x-2">
                   <Input placeholder="비밀번호 재입력" type="password" {...field} />
                 </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}
@@ -203,13 +215,16 @@ export function RegisterPage() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>이메일</FormLabel>
-                  <div className="flex space-x-2">
+                  <FormLabel className="text-lg font-medium">
+                    이메일<span className="text-destructive">*</span>
+                  </FormLabel>
+                  <div className="mt-3 flex space-x-2">
                     <FormControl>
                       <Input placeholder="이메일 입력" readOnly={isEmailChecked} {...field} />
                     </FormControl>
                     <Button
                       type="button"
+                      className="w-[130px]"
                       disabled={isEmailChecked || (!isEmailChecked && hasSentEmailOtp)}
                       onClick={() => handleSendEmailOtp(field.value)}
                     >
@@ -226,7 +241,7 @@ export function RegisterPage() {
                 name="tempCode"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex space-x-2">
+                    <div className="mt-3 flex space-x-2">
                       <FormControl>
                         <Input placeholder="인증번호 입력" {...field} />
                       </FormControl>
@@ -246,7 +261,9 @@ export function RegisterPage() {
             name="birthDate"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>생년월일</FormLabel>
+                <FormLabel className="text-lg font-medium">
+                  생년월일 <span className="text-destructive">*</span>
+                </FormLabel>
                 <div className="flex space-x-2">
                   <FormControl>
                     <Input placeholder="생년월일 입력" {...field} />
@@ -261,20 +278,26 @@ export function RegisterPage() {
             name="gender"
             render={({ field }) => (
               <FormItem className="space-y-3">
-                <FormLabel>성별</FormLabel>
-                <FormControl>
+                <FormLabel className="text-lg font-medium">
+                  성별 <span className="text-destructive">*</span>
+                </FormLabel>
+                <FormControl className="mt-3">
                   <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-1">
                     <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <RadioGroupItem value="M" />
-                      </FormControl>
-                      <FormLabel className="font-normal">남자</FormLabel>
+                      <FormLabel htmlFor="male" className="flex cursor-pointer items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem id="male" value="M" />
+                        </FormControl>
+                        <span className="font-normal">남자</span>
+                      </FormLabel>
                     </FormItem>
                     <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormControl>
-                        <RadioGroupItem value="F" />
-                      </FormControl>
-                      <FormLabel className="font-normal">여자</FormLabel>
+                      <FormLabel htmlFor="female" className="flex cursor-pointer items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem id="female" value="F" />
+                        </FormControl>
+                        <span className="font-normal">여자</span>
+                      </FormLabel>
                     </FormItem>
                   </RadioGroup>
                 </FormControl>
@@ -282,7 +305,9 @@ export function RegisterPage() {
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit" className="m-auto h-[70px] w-[350px] rounded-[35px] text-lg font-bold">
+            회원가입하기
+          </Button>
         </form>
       </div>
     </Form>
