@@ -268,7 +268,7 @@ interface CategoriesResponse {
 }
 
 export const getCategories = async (): Promise<ApiResponse<CategoriesResponse>> => {
-  return await apiClient.get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/categories/all`).json();
+  return await apiClient.get('/api/mains/categories/all').json();
 };
 export const useCategories = () => {
   const [categories, setCategories] = useState<CategoriesResponse | null>(null);
@@ -302,7 +302,7 @@ export interface HotTopic {
 }
 
 export const getHotTopics = async (): Promise<ApiResponse<HotTopic[]>> => {
-  return await apiClient.get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/hot-topic/rankings`).json();
+  return await apiClient.get('/api/mains/hot-topic/rankings').json();
 };
 export const useHotTopics = () => {
   const [hotTopics, setHotTopics] = useState<HotTopic[]>([]);
