@@ -1,4 +1,4 @@
-import { CategoryIcon } from '@/app/(app)/@sidebar/default';
+import { CategoryIcon } from '@/shared/components';
 import { Button, Card, CardContent, CardHeader, CardTitle, Icons } from '@/shared/ui';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/shared/ui';
 
