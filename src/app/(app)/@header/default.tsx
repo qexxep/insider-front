@@ -1,11 +1,23 @@
-'use client';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
 
 import apiClient from '@/shared/api/client';
 import { ApiResponse } from '@/shared/api/types';
 import { Icons, Input, Separator } from '@/shared/ui';
 
+// Types
+export interface HotTopic {
+  topicSeq: string;
+  rankNum: string;
+  searchWord: string;
+  searchCnt: string;
+}
+
+// API Functions
+async function getHotTopics(): Promise<ApiResponse<HotTopic[]>> {
+  return apiClient.get('mains/hot-topic/rankings').json();
+}
+
+// Main Header Component
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 h-14 w-full border-b border-border/40 bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -18,14 +30,12 @@ export default function Header() {
   );
 }
 
-// Left Section: Logo + Hot Topics
-function LeftSection() {
-  const { hotTopics } = useHotTopics();
-
+// Left Section Components
+async function LeftSection() {
   return (
     <div className="flex items-center gap-24">
       <LogoLink />
-      <HotTopics topics={hotTopics} />
+      <HotTopics />
     </div>
   );
 }
@@ -39,7 +49,9 @@ function LogoLink() {
   );
 }
 
-function HotTopics({ topics }: { topics: HotTopic[] }) {
+async function HotTopics() {
+  const { data: topics } = await getHotTopics();
+
   return (
     <div className="flex min-w-[300px] items-center justify-between">
       <div className="flex items-center gap-3 overflow-hidden px-1 py-1">
@@ -51,10 +63,10 @@ function HotTopics({ topics }: { topics: HotTopic[] }) {
           <div
             className="flex flex-col"
             style={{
-              animation: topics.length >= 2 ? 'smoothCarousel 30s steps(10, end) infinite' : 'none',
+              animation: topics && topics.length >= 2 ? 'smoothCarousel 30s steps(10, end) infinite' : 'none',
             }}
           >
-            {topics.length > 0
+            {topics && topics.length > 0
               ? [...topics, ...topics].slice(0, 10).map((topic, index) => (
                   <div key={`${topic.topicSeq}-${index}`} className="flex h-7 items-center gap-2">
                     <span className="ml-1 flex h-5 w-5 items-center justify-center rounded-sm bg-gray-200 text-xs">
@@ -79,7 +91,7 @@ function HotTopics({ topics }: { topics: HotTopic[] }) {
   );
 }
 
-// Search Section
+// Search Section Component
 function SearchSection() {
   return (
     <div className="flex max-h-[40px] max-w-xl flex-1 items-center justify-center px-4">
@@ -95,7 +107,7 @@ function SearchSection() {
   );
 }
 
-// Right Section: Navigation Links & User Controls
+// Right Section Components
 function RightSection() {
   return (
     <div className="flex items-center gap-3">
@@ -131,37 +143,3 @@ function UserButton() {
     </button>
   );
 }
-
-export interface HotTopic {
-  topicSeq: string;
-  rankNum: string;
-  searchWord: string;
-  searchCnt: string;
-}
-
-export const getHotTopics = async (): Promise<ApiResponse<HotTopic[]>> => {
-  return await apiClient.get(`${process.env.NEXT_PUBLIC_BASE_URL}/mains/hot-topic/rankings`).json();
-};
-export const useHotTopics = () => {
-  const [hotTopics, setHotTopics] = useState<HotTopic[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    const fetchHotTopics = async () => {
-      try {
-        const response = await getHotTopics();
-        setHotTopics(response.data);
-      } catch (err) {
-        console.error('핫토픽 로딩 실패:', err);
-        setError(err as Error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchHotTopics();
-  }, []);
-
-  return { hotTopics, isLoading, error };
-};
