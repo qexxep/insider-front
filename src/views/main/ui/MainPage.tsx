@@ -1,8 +1,7 @@
 import { CategoryIcon } from '@/shared/components';
+import { RankIcons } from '@/shared/constants/icons';
 import { Button, Card, CardContent, CardHeader, CardTitle, Icons } from '@/shared/ui';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/shared/ui';
-
-import { First, RankingLine, Second, Third } from '../../../../public/icons';
 
 function MainPage() {
   const RANK_COLORS = {
@@ -15,12 +14,6 @@ function MainPage() {
   const INSIDER_ITEMS = Array.from({ length: 10 }, (_, i) => i);
   const CATEGORIES = ['취업', '연애', '경제', '정치', '스포츠', '사회', '익명자유'] as const;
   const CATEGORY_ITEMS = Array.from({ length: 5 }, (_, i) => i);
-
-  const RankIcons = {
-    1: First,
-    2: Second,
-    3: Third,
-  } as const;
 
   return (
     <div className="mx-auto w-[900px] max-w-full px-6 lg:px-0 [&>*]:min-w-[900px]">
@@ -48,7 +41,9 @@ function MainPage() {
                     const Icon = RankIcons[num as 1 | 2 | 3];
                     return <Icon className="absolute right-0 top-1 z-20 h-10 w-10" />;
                   })()}
-                  <RankingLine className={`absolute -top-1.5 right-0 z-10 ${num === 1 ? '' : 'fill-[#D9D9D9]'}`} />
+                  <RankIcons.RankingLine
+                    className={`absolute -top-1.5 right-0 z-10 ${num === 1 ? '' : 'fill-[#D9D9D9]'}`}
+                  />
                   <CardTitle className="text-sm text-white">법률</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
