@@ -1,8 +1,7 @@
 import { cookies } from 'next/headers';
 import Link from 'next/link';
 
-import apiClient from '@/shared/api/client';
-import { ApiResponse } from '@/shared/api/types';
+import { type ApiResponse, apiServer } from '@/shared/api';
 import { Icons, Input, Separator } from '@/shared/ui';
 
 export interface HotTopic {
@@ -13,7 +12,7 @@ export interface HotTopic {
 }
 
 async function getHotTopics(): Promise<ApiResponse<HotTopic[]>> {
-  return apiClient.get('mains/hot-topic/rankings').json();
+  return apiServer.get('mains/hot-topic/rankings').json();
 }
 
 export default async function Header() {

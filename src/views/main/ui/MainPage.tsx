@@ -1,17 +1,22 @@
+import Image from 'next/image';
+
 import { CategoryIcon } from '@/shared/components';
 import { Button, Card, CardContent, CardHeader, CardTitle, Icons } from '@/shared/ui';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/shared/ui';
 
-import RankingLine from '../../../../public/icons/card_line.svg';
-import First from '../../../../public/icons/first.svg';
-import Second from '../../../../public/icons/second.svg';
-import Third from '../../../../public/icons/third.svg';
-
 const RankIcons = {
-  RankingLine,
-  1: First,
-  2: Second,
-  3: Third,
+  1: {
+    src: '/icons/first.svg',
+    alt: 'gold rank medal',
+  },
+  2: {
+    src: '/icons/second.svg',
+    alt: 'silver rank medal',
+  },
+  3: {
+    src: '/icons/third.svg',
+    alt: 'bronze rank medal',
+  },
 } as const;
 
 function MainPage() {
@@ -49,11 +54,22 @@ function MainPage() {
                 <CardHeader className="relative">
                   {/* RankingLine을 순위별 아이콘으로 교체 */}
                   {(() => {
-                    const Icon = RankIcons[num as 1 | 2 | 3];
-                    return <Icon className="absolute right-0 top-1 z-20 h-10 w-10" />;
+                    return (
+                      <Image
+                        src={RankIcons[num as 1 | 2 | 3].src}
+                        className="absolute right-0 top-1 z-20 h-10 w-10"
+                        alt={RankIcons[num as 1 | 2 | 3].alt}
+                        width={40}
+                        height={40}
+                      />
+                    );
                   })()}
-                  <RankIcons.RankingLine
+                  <Image
+                    src={'/icons/card_line.svg'}
                     className={`absolute -top-1.5 right-0 z-10 ${num === 1 ? '' : 'fill-[#D9D9D9]'}`}
+                    alt=""
+                    width={43}
+                    height={38}
                   />
                   <CardTitle className="text-sm text-white">법률</CardTitle>
                 </CardHeader>

@@ -1,5 +1,4 @@
-import apiClient from '@/shared/api/client';
-import { ApiResponse } from '@/shared/api/types';
+import { apiClient, type ApiResponse } from '@/shared/api';
 
 export interface CategoryRecentPost {
   postSeq: string;
