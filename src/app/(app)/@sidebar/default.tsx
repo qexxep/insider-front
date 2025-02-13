@@ -1,7 +1,6 @@
 import React from 'react';
 
-import apiClient from '@/shared/api/client';
-import { ApiResponse } from '@/shared/api/types';
+import { apiClient, type ApiResponse } from '@/shared/api';
 import { CategoryIcon } from '@/shared/components';
 import { cn } from '@/shared/lib';
 import { Separator } from '@/shared/ui';

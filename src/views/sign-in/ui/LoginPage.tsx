@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import { Button, Checkbox, Form, FormControl, FormField, FormItem, FormMessage, Input } from '@/shared/ui';
-import { setLocalStorage } from '@/shared/utils';
+import { setClientCookie } from '@/shared/utils';
 
 import { login } from '../api/auth';
 import { LoginFormSchema, LoginFormType } from '../model';
@@ -26,10 +26,11 @@ export function LoginPage() {
     const response = await login(data);
     if (response.status === 'SUCCESS') {
       const { accessToken, refreshToken } = response.data.jwt;
-      setLocalStorage('accessToken', accessToken);
-      setLocalStorage('refreshToken', refreshToken);
+      setClientCookie('access_token', accessToken);
+      setClientCookie('refresh_token', refreshToken);
 
       router.push('/');
+      router.refresh();
     } else {
       console.error(response.message);
     }
