@@ -17,7 +17,7 @@ interface LoginResponse {
 }
 
 export const login = async (payload: LoginRequest): Promise<LoginResponse> => {
-  const response = await apiClient.post('/api/auth/sign-in', {
+  const response = await apiClient.post('auth/sign-in', {
     json: payload,
   });
   return response.json<LoginResponse>();
@@ -35,7 +35,7 @@ interface SendOtpResponse {
 }
 
 export const sendOtp = async (payload: SendOtpRequest): Promise<SendOtpResponse> => {
-  const response = await apiClient.post('/api/auth/send-otp', {
+  const response = await apiClient.post('auth/send-otp', {
     json: payload,
   });
   return response.json();
@@ -54,7 +54,7 @@ interface CheckOtpResponse {
 }
 
 export const checkOtp = async (payload: CheckOtpRequest): Promise<CheckOtpResponse> => {
-  const response = await apiClient.post('/api/auth/check-otp', {
+  const response = await apiClient.post('auth/check-otp', {
     json: payload,
   });
   return response.json();
@@ -66,6 +66,6 @@ interface SignOutResponse {
 }
 
 export const signOut = async (): Promise<SignOutResponse> => {
-  const response = await apiClient.get('/api/auth/sign-out');
+  const response = await apiClient.get('auth/sign-out');
   return response.json();
 };
