@@ -1,7 +1,18 @@
 import { CategoryIcon } from '@/shared/components';
-import { RankIcons } from '@/shared/constants/icons';
 import { Button, Card, CardContent, CardHeader, CardTitle, Icons } from '@/shared/ui';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/shared/ui';
+
+import RankingLine from '../../../../public/icons/card_line.svg';
+import First from '../../../../public/icons/first.svg';
+import Second from '../../../../public/icons/second.svg';
+import Third from '../../../../public/icons/third.svg';
+
+const RankIcons = {
+  RankingLine,
+  1: First,
+  2: Second,
+  3: Third,
+} as const;
 
 function MainPage() {
   const RANK_COLORS = {

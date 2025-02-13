@@ -2,8 +2,7 @@
 
 import { Suspense } from 'react';
 
-import { Loading } from '@/shared/constants/icons';
-
+import Loading from '../../../public/icons/loading.svg';
 export default function Layout({
   children,
   header,
