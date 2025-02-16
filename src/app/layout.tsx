@@ -3,6 +3,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { Toaster } from '@/shared/ui';
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -27,6 +29,7 @@ export default function RootLayout({
     <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-background antialiased`}>
         <div className="relative flex min-h-screen flex-col bg-background">{children}</div>
+        <Toaster />
       </body>
     </html>
   );

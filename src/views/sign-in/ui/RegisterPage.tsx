@@ -172,7 +172,7 @@ export function RegisterPage() {
     const response = await signup(payload);
     if (response.status === 'SUCCESS') {
       alert('회원가입이 완료되었습니다.');
-      router.push('/login');
+      router.push('/signup/complete');
     } else {
       console.error(response.message);
     }
