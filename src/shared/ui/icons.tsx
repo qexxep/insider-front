@@ -22,6 +22,8 @@ import {
   Wallet,
 } from 'lucide-react';
 
+import { CheckCircle } from '@/shared/assets/images';
+
 type IconProps = React.HTMLAttributes<SVGElement>;
 
 const Icons = {
@@ -163,6 +165,7 @@ const Icons = {
       <path d="M3 19H21" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
     </svg>
   ),
+  checkCircle: (props: IconProps) => <CheckCircle {...props} />,
   arrowBigUp: ArrowBigUp,
   bell: Bell,
   circleUser: CircleUser,

@@ -25,7 +25,7 @@ export default function Layout({
       {/* 메인 */}
       <div className="ml-[260px] flex min-h-[calc(100vh-48px)] flex-col">
         <Suspense fallback={<LoadingSpinner />}>
-          <main className="flex-1 p-5">{children}</main>
+          <main className="relative flex-1 flex-col p-5">{children}</main>
         </Suspense>
 
         {/* 푸터 */}

@@ -1,5 +1,5 @@
 import { RegisterPage } from '@/views/sign-in';
 
-export default function Home() {
+export default function Page() {
   return <RegisterPage />;
 }

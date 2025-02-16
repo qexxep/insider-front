@@ -5,7 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { Button, Checkbox, Form, FormControl, FormField, FormItem, FormMessage, Input } from '@/shared/ui';
+import { useToast } from '@/shared/hooks';
+import { Button, Checkbox, Form, FormControl, FormField, FormItem, FormMessage, Input, ToastAction } from '@/shared/ui';
 import { setClientCookie } from '@/shared/utils';
 
 import { login } from '../api/auth';
@@ -13,6 +14,7 @@ import { LoginFormSchema, LoginFormType } from '../model';
 
 export function LoginPage() {
   const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
@@ -32,12 +34,16 @@ export function LoginPage() {
       router.push('/');
       router.refresh();
     } else {
-      console.error(response.message);
+      toast({
+        variant: 'destructive',
+        title: '로그인에 실패했습니다.',
+        description: response.message,
+      });
     }
   };
 
   return (
-    <div className="py-15 mx-auto flex max-w-[400px] flex-col items-center gap-16">
+    <div className="py-15 mx-auto mt-24 flex max-w-[400px] flex-col items-center gap-16">
       <div className="flex flex-col items-center justify-center">
         <h1 className="text-3xl font-bold">로그인</h1>
       </div>
