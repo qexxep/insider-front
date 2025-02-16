@@ -2,8 +2,9 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { ZodError } from 'zod';
 
 import {
   Button,
@@ -21,7 +22,7 @@ import {
 import { checkOtp, sendOtp } from '../api/auth';
 import { checkDuplicateId, checkDuplicateNickname, signup } from '../api/registers';
 import { useSignup } from '../hooks/useSignup';
-import { SignupFormSchema, SignupFormType } from '../model';
+import { SignupFormSchema, SignupFormType, tempCodeSchema } from '../model';
 
 export function RegisterPage() {
   const router = useRouter();
@@ -35,7 +36,9 @@ export function RegisterPage() {
       confirmPassword: '',
       email: '',
       tempCode: '',
-      birthDate: '',
+      'birthDate-year': '',
+      'birthDate-month': '',
+      'birthDate-day': '',
     },
   });
 
@@ -44,6 +47,24 @@ export function RegisterPage() {
   const [isUserIdChecked, setIsUserIdChecked] = useState(false);
   const [hasSentEmailOtp, setHasSentEmailOtp] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
+
+  const [timeLeft, setTimeLeft] = useState(180);
+
+  useEffect(() => {
+    if (timeLeft === 0) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [timeLeft]);
+
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
+  };
 
   const handleCheckDuplicateNickname = async (nickname: string) => {
     const response = await checkDuplicateNickname(tempCode!, nickname);
@@ -113,7 +134,42 @@ export function RegisterPage() {
   };
 
   const onSubmit = async (data: SignupFormType) => {
-    const response = await signup({ ...data, tempCode: tempCode });
+    if (!isNicknameChecked) {
+      form.setError('nickName', {
+        type: 'manual',
+        message: '닉네임 중복 확인이 필요합니다.',
+      });
+      return;
+    }
+
+    if (!isUserIdChecked) {
+      form.setError('userId', {
+        type: 'manual',
+        message: '아이디 중복 확인이 필요합니다.',
+      });
+      return;
+    }
+
+    if (!isEmailChecked) {
+      form.setError('email', {
+        type: 'manual',
+        message: '이메일 인증을 완료해주세요.',
+      });
+      return;
+    }
+
+    const birthDate = data['birthDate-year'] + '-' + data['birthDate-month'] + '-' + data['birthDate-day'];
+    const payload = {
+      nickName: data.nickName,
+      userId: data.userId,
+      password: data.password,
+      email: data.email,
+      tempCode,
+      birthDate,
+      gender: data.gender,
+      confirmPassword: data.confirmPassword,
+    };
+    const response = await signup(payload);
     if (response.status === 'SUCCESS') {
       alert('회원가입이 완료되었습니다.');
       router.push('/login');
@@ -143,8 +199,11 @@ export function RegisterPage() {
                     <Input placeholder="닉네임 입력" readOnly={isNicknameChecked} {...field} />
                   </FormControl>
                   <Button
-                    disabled={isNicknameChecked}
-                    onClick={() => {
+                    disabled={isNicknameChecked || field.value.length === 0}
+                    onClick={async e => {
+                      e.preventDefault();
+                      const isValid = await form.trigger(field.name);
+                      if (!isValid) return;
                       handleCheckDuplicateNickname(field.value);
                     }}
                   >
@@ -167,7 +226,15 @@ export function RegisterPage() {
                   <FormControl>
                     <Input placeholder="아이디 입력" readOnly={isUserIdChecked} {...field} />
                   </FormControl>
-                  <Button disabled={isUserIdChecked} onClick={() => handleCheckDuplicateUserId(field.value)}>
+                  <Button
+                    disabled={isUserIdChecked || field.value.length === 0}
+                    onClick={async e => {
+                      e.preventDefault();
+                      const isValid = await form.trigger(field.name);
+                      if (!isValid) return;
+                      handleCheckDuplicateUserId(field.value);
+                    }}
+                  >
                     {isUserIdChecked ? '사용가능' : '중복확인'}
                   </Button>
                 </div>
@@ -225,8 +292,12 @@ export function RegisterPage() {
                     <Button
                       type="button"
                       className="w-[130px]"
-                      disabled={isEmailChecked || (!isEmailChecked && hasSentEmailOtp)}
-                      onClick={() => handleSendEmailOtp(field.value)}
+                      disabled={isEmailChecked || (!isEmailChecked && hasSentEmailOtp) || field.value.length === 0}
+                      onClick={async () => {
+                        const isValid = await form.trigger(field.name);
+                        if (!isValid) return;
+                        handleSendEmailOtp(field.value);
+                      }}
                     >
                       {isEmailChecked ? '인증완료' : '인증메일 발송'}
                     </Button>
@@ -243,36 +314,111 @@ export function RegisterPage() {
                   <FormItem>
                     <div className="mt-3 flex space-x-2">
                       <FormControl>
-                        <Input placeholder="인증번호 입력" {...field} />
+                        <div className="relative flex w-full">
+                          <Input
+                            placeholder="인증번호 입력"
+                            {...field}
+                            onChange={e => {
+                              const value = e.target.value.replace(/[^0-9]/g, '');
+                              if (value === '') {
+                                field.onChange(value);
+                                return;
+                              }
+                              try {
+                                tempCodeSchema.parse(value);
+                                if (value.length <= 6) {
+                                  field.onChange(value);
+                                }
+                              } catch (error) {
+                                if (error instanceof ZodError) {
+                                  form.setError(field.name, {
+                                    type: 'manual',
+                                  });
+                                } else {
+                                  console.error('알 수 없는 오류:', error);
+                                }
+                              }
+                            }}
+                          />
+                          <div className="absolute right-4 flex h-full items-center">
+                            <span>{formatTime(timeLeft)}</span>
+                          </div>
+                        </div>
                       </FormControl>
-                      <Button type="button" onClick={() => handleConfirmEmail(field.value)}>
+                      <Button
+                        className="w-[130px]"
+                        type="button"
+                        disabled={field.value.length !== 6 || timeLeft === 0}
+                        onClick={async () => {
+                          const isValid = await form.trigger(field.name);
+                          if (!isValid) return;
+                          handleConfirmEmail(field.value);
+                        }}
+                      >
                         인증메일 확인
                       </Button>
                     </div>
-                    <span>3:00</span>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             )}
           </div>
-          <FormField
-            control={form.control}
-            name="birthDate"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="text-lg font-medium">
-                  생년월일 <span className="text-destructive">*</span>
-                </FormLabel>
-                <div className="flex space-x-2">
-                  <FormControl>
-                    <Input placeholder="생년월일 입력" {...field} />
-                  </FormControl>
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex flex-col gap-3">
+            <FormLabel className="text-lg font-medium">
+              생년월일 <span className="text-destructive">*</span>
+            </FormLabel>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-1">
+                <FormField
+                  control={form.control}
+                  name="birthDate-year"
+                  render={({ field }) => (
+                    <FormItem className="w-[80px]">
+                      <div className="flex space-x-2">
+                        <FormControl className="flex space-x-2">
+                          <Input type="year" placeholder="1900" {...field} />
+                        </FormControl>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <span>년</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FormField
+                  control={form.control}
+                  name="birthDate-month"
+                  render={({ field }) => (
+                    <FormItem className="w-[60px]">
+                      <div className="flex space-x-2">
+                        <FormControl className="flex space-x-2">
+                          <Input type="year" placeholder="01" {...field} />
+                        </FormControl>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <span>월</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <FormField
+                  control={form.control}
+                  name="birthDate-day"
+                  render={({ field }) => (
+                    <FormItem className="w-[60px]">
+                      <div className="flex space-x-2">
+                        <FormControl className="flex space-x-2">
+                          <Input type="year" placeholder="01" {...field} />
+                        </FormControl>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <span>일</span>
+              </div>
+            </div>
+          </div>
           <FormField
             control={form.control}
             name="gender"
