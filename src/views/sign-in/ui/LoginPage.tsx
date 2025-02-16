@@ -30,7 +30,7 @@ export function LoginPage() {
       const { accessToken, refreshToken } = response.data.jwt;
       setClientCookie('access_token', accessToken);
       setClientCookie('refresh_token', refreshToken);
-
+      //
       router.push('/');
       router.refresh();
     } else {
