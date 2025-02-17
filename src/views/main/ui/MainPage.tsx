@@ -32,7 +32,7 @@ function MainPage() {
   const CATEGORY_ITEMS = Array.from({ length: 5 }, (_, i) => i);
 
   return (
-    <div className="mx-auto w-[900px] max-w-full px-6 lg:px-0 [&>*]:min-w-[900px]">
+    <div className="mx-auto w-full max-w-full px-6 lg:px-0">
       {/* 이번주 토론 주제 섹션 */}
       <h2 className="text-lg font-bold">이번주 토론 주제</h2>
       <p className="mb-4 mt-1 text-gray-600">
