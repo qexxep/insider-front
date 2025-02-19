@@ -3,7 +3,7 @@ import { apiClient, type ApiResponse } from '@/shared/api';
 export interface CategoryRecentPost {
   postSeq: string;
   categoryCd: string;
-  categoryName: string;
+  categoryName: string | null;
   postTitle: string;
   previewContent: string;
   viewCnt: string;
@@ -20,10 +20,19 @@ export interface CategoryRecentPost {
   updTime: string;
 }
 
-// Key is categoryCd (e.g., "003007"), value is array of posts
-type CategoryRecentPostsResponse = Record<string, CategoryRecentPost[]>;
+export interface CategoryInfo {
+  recentPostList: CategoryRecentPost[];
+  categoryCode: string;
+  categoryName: string;
+}
 
-export const getCategoryRecentPosts = async (): Promise<ApiResponse<CategoryRecentPostsResponse>> => {
-  const response = await apiClient.get('/api/mains/categories/recent-posts');
+export interface MajorCategory {
+  majorCategoryName: string;
+  commCategoryCode: string;
+  categoryList: CategoryInfo[];
+}
+
+export const getCategoryRecentPosts = async (): Promise<ApiResponse<MajorCategory[]>> => {
+  const response = await apiClient.get('mains/categories/recent-posts');
   return response.json();
 };

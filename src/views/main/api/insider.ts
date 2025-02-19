@@ -15,6 +15,6 @@ export interface InsiderRanking {
 }
 
 export const getRankings = async (): Promise<ApiResponse<InsiderRanking[]>> => {
-  const response = await apiClient.get('/api/mains/insider/rankings');
+  const response = await apiClient.get('mains/insider/rankings');
   return response.json();
 };
