@@ -6,7 +6,17 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import { useToast } from '@/shared/hooks';
-import { Button, Checkbox, Form, FormControl, FormField, FormItem, FormMessage, Input, ToastAction } from '@/shared/ui';
+import {
+  Button,
+  Checkbox,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+  Input,
+  PasswordInput,
+} from '@/shared/ui';
 import { setClientCookie } from '@/shared/utils';
 
 import { login } from '../api/auth';
@@ -67,7 +77,7 @@ export function LoginPage() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input type="password" placeholder="비밀번호를 입력해주세요." {...field} />
+                  <PasswordInput placeholder="비밀번호를 입력해주세요." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

@@ -15,6 +15,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
+  PasswordInput,
   RadioGroup,
   RadioGroupItem,
 } from '@/shared/ui';
@@ -252,7 +253,7 @@ export function RegisterPage() {
                 </FormLabel>
 
                 <FormControl className="mt-3 flex space-x-2">
-                  <Input placeholder="비밀번호 입력" type="password" {...field} />
+                  <PasswordInput placeholder="비밀번호를 입력해주세요" {...field} />
                 </FormControl>
 
                 <FormMessage />
@@ -269,7 +270,7 @@ export function RegisterPage() {
                 </FormLabel>
 
                 <FormControl className="mt-3 flex space-x-2">
-                  <Input placeholder="비밀번호 재입력" type="password" {...field} />
+                  <PasswordInput placeholder="비밀번호 재입력" {...field} />
                 </FormControl>
 
                 <FormMessage />
