@@ -1,3 +1,6 @@
+'use client';
+import React from 'react';
+
 import { Icons } from '@/shared/ui';
 
 import { InsiderRanking } from '../api/insider';
@@ -5,7 +8,7 @@ import { InsiderRanking } from '../api/insider';
 // Insider Ranking Section Component
 export function InsiderRankingSection({ rankings }: { rankings: InsiderRanking[] }) {
   return (
-    <>
+    <React.Fragment>
       <h2 className="mb-2 text-xl font-bold">인싸이더 랭킹</h2>
       <div className="mb-8 grid grid-cols-1 gap-x-6 sm:grid-cols-2">
         {rankings?.map(ranking => (
@@ -40,6 +43,6 @@ export function InsiderRankingSection({ rankings }: { rankings: InsiderRanking[]
           </div>
         ))}
       </div>
-    </>
+    </React.Fragment>
   );
 }

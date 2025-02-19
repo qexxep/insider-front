@@ -1,10 +1,21 @@
+'use client';
+
 import Image from 'next/image';
+import React from 'react';
 
 import { cn } from '@/shared/lib';
-import { Card, CarouselNext, CarouselPrevious } from '@/shared/ui';
-import { Button } from '@/shared/ui';
-import { CardContent } from '@/shared/ui';
-import { CardHeader, CardTitle, Carousel, CarouselContent, CarouselItem } from '@/shared/ui';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/shared/ui';
 
 // Weekly Discussion Section Component
 const RankIcons = {
@@ -44,7 +55,7 @@ export function WeeklyDiscussionSection({ discussionItems }: { discussionItems: 
   } as const;
 
   return (
-    <>
+    <React.Fragment>
       <h2 className="text-lg font-bold">이번주 토론 주제</h2>
       <p className="mb-4 mt-1 text-gray-600">
         이번주 토론 주제에 투표 참여해주세요! 금주 투표 결과에 따라 다음주 주제 선정에 반영됩니다.
@@ -71,17 +82,13 @@ export function WeeklyDiscussionSection({ discussionItems }: { discussionItems: 
                 >
                   <CardHeader className="relative pb-0">
                     {/* RankingLine을 순위별 아이콘으로 교체 */}
-                    {(() => {
-                      return (
-                        <Image
-                          src={RankIcons[num as 1 | 2 | 3 | 4 | 5 | 6].src}
-                          className="h-13 w-13 absolute -top-1 right-0 z-20"
-                          alt={RankIcons[num as 1 | 2 | 3 | 4 | 5 | 6].alt}
-                          width={52}
-                          height={52}
-                        />
-                      );
-                    })()}
+                    <Image
+                      src={RankIcons[num as 1 | 2 | 3 | 4 | 5 | 6].src}
+                      className="h-13 w-13 absolute -top-1 right-0 z-20"
+                      alt={RankIcons[num as 1 | 2 | 3 | 4 | 5 | 6].alt}
+                      width={52}
+                      height={52}
+                    />
                     <CardTitle className="text-sm font-medium text-white">법률</CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -118,6 +125,6 @@ export function WeeklyDiscussionSection({ discussionItems }: { discussionItems: 
           &gt;
         </CarouselNext>
       </Carousel>
-    </>
+    </React.Fragment>
   );
 }

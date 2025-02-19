@@ -42,6 +42,7 @@ function useCarousel() {
 
 const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & CarouselProps>(
   ({ orientation = 'horizontal', opts, setApi, plugins, className, children, ...props }, ref) => {
+    const [isMounted, setIsMounted] = React.useState(false);
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
@@ -83,6 +84,10 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     );
 
     React.useEffect(() => {
+      setIsMounted(true);
+    }, []);
+
+    React.useEffect(() => {
       if (!api || !setApi) {
         return;
       }
@@ -103,6 +108,10 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         api?.off('select', onSelect);
       };
     }, [api, onSelect]);
+
+    if (!isMounted) {
+      return null; // or a loading placeholder
+    }
 
     return (
       <CarouselContext.Provider

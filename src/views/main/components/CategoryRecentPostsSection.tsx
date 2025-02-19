@@ -1,3 +1,4 @@
+'use client';
 import React from 'react';
 
 import { CategoryIcon } from '@/shared/components';
@@ -8,7 +9,7 @@ import { MajorCategory } from '../api/category';
 // Category Recent Posts Section Component
 export function CategoryRecentPostsSection({ recentPosts }: { recentPosts: MajorCategory[] }) {
   return (
-    <>
+    <React.Fragment>
       {recentPosts?.map(data => (
         <React.Fragment key={data.commCategoryCode}>
           <h2 className="mb-4 mt-10 text-xl font-bold">{data.majorCategoryName}</h2>
@@ -48,6 +49,6 @@ export function CategoryRecentPostsSection({ recentPosts }: { recentPosts: Major
           </div>
         </React.Fragment>
       ))}
-    </>
+    </React.Fragment>
   );
 }
