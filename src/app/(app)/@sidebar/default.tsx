@@ -48,7 +48,6 @@ export default async function Sidebar({ className }: { className?: string }) {
       categoryCode: category.categoryCode,
       categoryName: category.categoryName,
     }));
-  console.log(data);
   return (
     <aside
       className={cn(
