@@ -23,7 +23,7 @@ export default function Layout({
       {sidebar}
 
       {/* 메인 */}
-      <div className="ml-[260px] flex min-h-[calc(100vh-48px)] flex-col">
+      <div className="min-h-[calc(100vh - 48px)] ml-[260px] flex flex-col">
         <Suspense fallback={<LoadingSpinner />}>
           <main className="relative mx-auto max-w-[868px] flex-1 flex-col p-5">{children}</main>
         </Suspense>
@@ -37,7 +37,7 @@ export default function Layout({
 
 function LoadingSpinner() {
   return (
-    <div className="-mt-12 ml-[260px] flex min-h-screen flex-1 items-center justify-center">
+    <div className="-mt-12 flex min-h-screen flex-1 items-center justify-center">
       <Loading />
     </div>
   );
