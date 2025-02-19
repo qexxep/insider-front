@@ -17,16 +17,13 @@ interface CategoryItem {
 }
 
 interface CategoryGroup {
+  majorCategoryName: string;
+  commCategoryCode: string;
   categoryList: CategoryItem[];
-  majorCategoryNm: string;
-}
-
-interface CategoriesResponse {
-  categories: CategoryGroup[];
 }
 
 // API Functions
-async function getCategories(): Promise<ApiResponse<CategoriesResponse>> {
+async function getCategories(): Promise<ApiResponse<CategoryGroup[]>> {
   return await apiClient.get('mains/categories/all').json();
 }
 
@@ -51,7 +48,7 @@ export default async function Sidebar({ className }: { className?: string }) {
       categoryCode: category.categoryCode,
       categoryName: category.categoryName,
     }));
-
+  console.log(data);
   return (
     <aside
       className={cn(
@@ -68,9 +65,9 @@ export default async function Sidebar({ className }: { className?: string }) {
       <Separator className="my-2" />
 
       {/* 카테고리 메뉴 */}
-      {data?.categories?.map(category => (
-        <React.Fragment key={category.majorCategoryNm}>
-          <MenuSection title={category.majorCategoryNm} categoryList={formatCategoryList(category.categoryList)} />
+      {(data as CategoryGroup[])?.map(category => (
+        <React.Fragment key={category.commCategoryCode}>
+          <MenuSection title={category.majorCategoryName} categoryList={formatCategoryList(category.categoryList)} />
           <Separator className="my-2" />
         </React.Fragment>
       ))}

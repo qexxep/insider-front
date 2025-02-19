@@ -167,11 +167,11 @@ body {
   }
 }
 
-@keyframes smoothCarousel {
-  from {
+@keyframes rollingAnimation {
+  0% {
     transform: translateY(0);
   }
-  to {
-    transform: translateY(-100%);
+  100% {
+    transform: translateY(-50%); /* 아이템 절반 높이만큼만 이동 */
   }
 }
