@@ -53,19 +53,19 @@ export function LoginPage() {
   };
 
   return (
-    <div className="py-15 mx-auto mt-24 flex max-w-[400px] flex-col items-center gap-16">
+    <div className="py-15 mx-auto mt-24 flex w-[560px] flex-col items-center">
       <div className="flex flex-col items-center justify-center">
-        <h1 className="text-3xl font-bold">로그인</h1>
+        <h1 className="mb-10 text-[28px] font-bold">로그인</h1>
       </div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-5">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col">
           <FormField
             control={form.control}
             name="userId"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="mb-[20px]">
                 <FormControl>
-                  <Input placeholder="아이디를 입력해주세요." {...field} />
+                  <Input placeholder="아이디를 입력해주세요." {...field} className="h-[56px]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -75,15 +75,15 @@ export function LoginPage() {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="mb-[17px]">
                 <FormControl>
-                  <PasswordInput placeholder="비밀번호를 입력해주세요." {...field} />
+                  <PasswordInput placeholder="비밀번호를 입력해주세요." {...field} className="h-[56px]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <div className="flex items-center space-x-2">
+          <div className="mb-[37px] flex items-center space-x-2">
             <Checkbox id="rememberId" />
             <label
               htmlFor="rememberId"
@@ -92,13 +92,13 @@ export function LoginPage() {
               아이디 저장
             </label>
           </div>
-          <Button>로그인</Button>
+          <Button className="mb-[28px] h-[70px] rounded-[36px] text-[18px] font-bold">로그인</Button>
         </form>
         <div>
-          <ul className="flex space-x-3">
-            <li>아이디 찾기</li>
-            <li>비밀번호 찾기</li>
-            <li>
+          <ul className="flex space-x-[48px]">
+            <li className="text-[18px] text-[#616161] underline underline-offset-[3px]">아이디 찾기</li>
+            <li className="text-[18px] text-[#616161] underline underline-offset-[3px]">비밀번호 찾기</li>
+            <li className="text-[18px] text-[#616161] underline underline-offset-[3px]">
               <Link href={'/signup'}>회원가입</Link>
             </li>
           </ul>

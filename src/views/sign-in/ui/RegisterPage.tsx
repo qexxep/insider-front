@@ -181,9 +181,9 @@ export function RegisterPage() {
 
   return (
     <Form {...form}>
-      <div className="flex flex-col gap-20 py-20">
+      <div className="flex flex-col gap-[40px] py-[40px]">
         <div className="flex flex-col items-center justify-center">
-          <h1 className="mb-5 text-3xl font-bold">회원가입</h1>
+          <h1 className="mb-[12px] text-3xl font-bold">회원가입</h1>
           <p className="text-lg font-medium text-muted-foreground">회원가입을 통해 더 많은 토론에 참여해보세요</p>
         </div>
         <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto flex w-[750px] flex-col gap-9">
@@ -208,10 +208,10 @@ export function RegisterPage() {
                       handleCheckDuplicateNickname(field.value);
                     }}
                   >
-                    {isNicknameChecked ? '사용가능' : '중복확인'}
+                    중복확인
                   </Button>
                 </div>
-                <FormMessage />
+                <FormMessage>{isNicknameChecked && '사용가능한 닉네임입니다.'}</FormMessage>
               </FormItem>
             )}
           />

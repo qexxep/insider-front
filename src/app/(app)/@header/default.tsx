@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { type ApiResponse, apiServer } from '@/shared/api';
 import { Icons, Input, Separator } from '@/shared/ui';
 
+import { LinkButton } from './link-button';
+
 export interface HotTopic {
   topicSeq: string;
   rankNum: string;
@@ -65,16 +67,9 @@ export default async function Header() {
         )}
         {!token && (
           <div className="flex items-center gap-3">
-            <Link href={'/signup'} className="transition-colors hover:font-bold hover:text-foreground">
-              회원가입
-            </Link>
+            <LinkButton label="회원가입" href={'/signup'} />
             <Separator orientation="vertical" className="h-3" />
-            <Link
-              href={'/login'}
-              className="text-primary text-opacity-80 transition-colors hover:font-bold hover:text-primary"
-            >
-              로그인
-            </Link>
+            <LinkButton label="로그인" href={'/login'} />
           </div>
         )}
       </div>
