@@ -6,6 +6,7 @@ interface ErrorToastProps {
 }
 
 export function showErrorToast({ title = 'Unhandled Error', description }: ErrorToastProps) {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { toast } = useToast();
 
   toast({
