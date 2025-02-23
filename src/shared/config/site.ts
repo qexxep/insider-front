@@ -1,7 +1,7 @@
 export const siteConfig = {
   title: 'INSIDER',
   name: 'INSIDER',
-  url: 'http://inssider.kro.kr/',
+  url: 'http://inssider.kro.kr',
   ogImage: '',
   description: 'INSIDER',
   links: {
