@@ -149,6 +149,7 @@ async function MainPage() {
         {rankings?.map(item => <RankPostCard key={item.postSeq} data={item} />)}
       </div>
 
+      {/* 게시판 / 카테고리별 최신 포스트 섹션 */}
       {recentPosts?.map(data => (
         <React.Fragment key={data.commCategoryCode}>
           <h2 className="mb-4 mt-10 text-xl font-bold">{data.majorCategoryName}</h2>
