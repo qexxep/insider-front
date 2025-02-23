@@ -2,7 +2,10 @@
 
 import { Suspense } from 'react';
 
+import { Toaster } from '@/shared/ui';
+
 import Loading from '../../../public/icons/loading.svg';
+
 export default function Layout({
   children,
   header,
@@ -31,6 +34,7 @@ export default function Layout({
         {/* 푸터 */}
         {footer}
       </div>
+      <Toaster />
     </>
   );
 }
