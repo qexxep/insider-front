@@ -174,6 +174,17 @@ const Icons = {
       />
     </svg>
   ),
+  bookmark: (props: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none" {...props}>
+      <path
+        d="M6.24805 9.75C6.24805 7.6498 6.24805 6.5997 6.65677 5.79754C7.0163 5.09193 7.58997 4.51825 8.29558 4.15873C9.09775 3.75 10.1479 3.75 12.248 3.75H17.748C19.8482 3.75 20.8983 3.75 21.7005 4.15873C22.4061 4.51825 22.9798 5.09193 23.3393 5.79754C23.748 6.5997 23.748 7.6498 23.748 9.75V26.25L14.998 21.25L6.24805 26.25V9.75Z"
+        stroke="#242424"
+        stroke-width="2.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  ),
   arrowBigUp: ArrowBigUp,
   bell: Bell,
   circleUser: CircleUser,
