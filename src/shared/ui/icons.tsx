@@ -17,6 +17,7 @@ import {
   MessageSquare,
   Search,
   Smile,
+  ThumbsDown,
   ThumbsUp,
   Users,
   Wallet,
@@ -185,6 +186,20 @@ const Icons = {
       />
     </svg>
   ),
+  comment: (props: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19" fill="none" {...props}>
+      <path
+        d="M1 11.2857V3.28571V2.71429C1 2.25714 1.38095 1.7619 1.57143 1.57143C1.7619 1.38095 2.25714 1 2.71429 1H3.85714H15.2857C15.4762 1 15.9714 1.11429 16.4286 1.57143C16.8857 2.02857 17 2.90476 17 3.28571V12.4286C17 13.8 15.8571 14.1429 15.2857 14.1429H11.2857H7.85714C6.90476 15.2857 4.88571 17.5714 4.42857 17.5714C3.97143 17.5714 3.85714 17.1905 3.85714 17V14.7143C3.85714 14.5238 3.74286 14.1429 3.28571 14.1429C2.71429 14.1429 2.14286 14.1429 1.57143 13.5714C1.11429 13.1143 1 11.8571 1 11.2857Z"
+        stroke="#242424"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <path d="M5.57129 5H13.5713" stroke="#242424" stroke-width="1.5" stroke-linecap="round" />
+      <path d="M5.57129 9.57031H8.99986" stroke="#242424" stroke-width="1.5" stroke-linecap="round" />
+      <path d="M11.2861 9.57031H13.5718" stroke="#242424" stroke-width="1.5" stroke-linecap="round" />
+    </svg>
+  ),
   arrowBigUp: ArrowBigUp,
   bell: Bell,
   circleUser: CircleUser,
@@ -205,6 +220,7 @@ const Icons = {
   clock: Clock,
   eye: Eye,
   thumbsUp: ThumbsUp,
+  thumbsDown: ThumbsDown,
   messageSquare: MessageSquare,
 } as const;
 

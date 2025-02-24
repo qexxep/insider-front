@@ -1,4 +1,5 @@
 export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './accordion';
+export { Badge, badgeVariants } from './badge';
 export { Button, buttonVariants } from './button';
 export { Calendar } from './calendar';
 export { Card, CardContent, CardHeader, CardTitle } from './card';
