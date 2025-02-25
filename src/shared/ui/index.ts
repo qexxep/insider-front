@@ -12,7 +12,20 @@ export { Label } from './label';
 export { PasswordInput } from './password-input';
 export { Popover, PopoverContent, PopoverTrigger } from './popover';
 export { RadioGroup, RadioGroupItem } from './radio-group';
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from './select';
 export { Separator } from './separator';
+export { Textarea } from './textarea';
 export {
   Toast,
   ToastAction,
