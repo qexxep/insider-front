@@ -5,14 +5,14 @@ import { ApiResponse, apiServer } from '@/shared/api';
 import { PostDetail } from '@/views/posts';
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
-const getPostFromParams = async ({ params }: PageProps) => {
+const getPostFromParams = async (id: string) => {
   try {
     const response: ApiResponse<PostDetailType> = await apiServer
       .post('posts/detail', {
-        json: { postSeq: params.id },
+        json: { postSeq: id },
       })
       .json();
     return response.data;
@@ -22,8 +22,10 @@ const getPostFromParams = async ({ params }: PageProps) => {
   }
 };
 
-export default async function Page({ params }: Readonly<PageProps>) {
-  const post = await getPostFromParams({ params });
+export default async function Page({ params }: PageProps) {
+  const id = (await params).id;
+
+  const post = await getPostFromParams(id);
 
   if (!post) {
     notFound();
