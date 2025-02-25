@@ -88,7 +88,7 @@ async function MainPage() {
   const { data: recentPosts } = await getCategoryRecentPosts();
 
   return (
-    <div className="mx-auto w-full max-w-full px-6 lg:px-0">
+    <div className="mx-auto w-full max-w-[868px] px-6 lg:px-0">
       {/* 이번주 토론 주제 섹션 */}
       <h2 className="text-lg font-bold">이번주 토론 주제</h2>
       <p className="mb-4 mt-1 text-gray-600">
