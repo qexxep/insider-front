@@ -34,3 +34,8 @@ export interface PostDetailType {
   updDate: string;
   updTime: string;
 }
+
+export interface BestWorstPostInfoType {
+  bestPostInfo: PostDetailType;
+  worstPostInfo: PostDetailType;
+}
