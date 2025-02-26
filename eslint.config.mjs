@@ -14,7 +14,7 @@ const eslintConfig = [
   {
     ignores: ['.next/'],
   },
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...compat.extends('next/core-web-vitals', 'next/typescript', 'plugin:@tanstack/eslint-plugin-query/recommended'),
   {
     plugins: {
       'simple-import-sort': simpleImportSort,
