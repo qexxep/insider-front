@@ -63,7 +63,7 @@ export function WritePostPage() {
         </Card>
 
         {/* 첨부한 이미지 미리보기 */}
-        <div className="flex flex-wrap gap-2 rounded-md bg-gray-100 p-6">
+        <div className="flex flex-wrap gap-3 rounded-md bg-gray-100 px-10 py-8">
           <div className="h-24 w-24 rounded-md bg-gray-400"></div>
           <div className="h-24 w-24 rounded-md bg-gray-400"></div>
           <div className="h-24 w-24 rounded-md bg-gray-400"></div>
