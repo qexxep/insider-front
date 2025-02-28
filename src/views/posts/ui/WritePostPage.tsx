@@ -1,3 +1,12 @@
+'use client';
+
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+import type { CategoryItem } from '@/app/(app)/@sidebar/api/category';
+// Sidebar의 useCategories 훅과 타입을 가져옵니다
+import { useCategories } from '@/app/(app)/@sidebar/hooks/useCategories';
+import { useToast } from '@/shared/hooks';
 import {
   Button,
   Card,
@@ -13,6 +22,37 @@ import {
 } from '@/shared/ui';
 
 export function WritePostPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const searchParams = useSearchParams();
+
+  // 토큰 체크와 토스트 메시지 표시를 하나의 useEffect로 통합
+  useEffect(() => {
+    const token = document.cookie.match(/access_token=([^;]+)/);
+    const showLoginRequired = searchParams.get('showLoginRequired') === 'true';
+
+    if (!token || showLoginRequired) {
+      toast({
+        variant: 'destructive',
+        title: '접근 제한',
+        description: '로그인이 필요한 작업입니다.',
+      });
+
+      if (!token) {
+        router.push('/');
+      }
+    }
+  }, [router, toast, searchParams]);
+
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const { data, isLoading, error } = useCategories();
+
+  // 모든 카테고리 그룹의 카테고리들을 하나의 배열로 평탄화
+  const allCategories =
+    data?.data?.reduce<CategoryItem[]>((acc, group) => {
+      return [...acc, ...group.categoryList];
+    }, []) || [];
+
   return (
     <div className="mx-auto w-[1200px] p-6">
       <div className="flex items-center justify-between">
@@ -26,18 +66,30 @@ export function WritePostPage() {
 
       <div className="mt-4 space-y-4">
         {/* 게시판 선택 */}
-        <Select>
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
           <SelectTrigger className="focus:ring-ring">
-            <SelectValue placeholder="게시판을 선택해주세요" />
+            <SelectValue placeholder={isLoading ? '카테고리 로딩 중...' : '게시판을 선택해주세요'} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="board1" className="text-md h-14">
-              게시판1
-            </SelectItem>
-            <SelectItem value="board2" className="text-md h-14">
-              게시판2
-            </SelectItem>
-            {/* 추가 게시판 옵션들 */}
+            {error ? (
+              <SelectItem value="error" disabled>
+                카테고리를 불러오는 중 오류가 발생했습니다
+              </SelectItem>
+            ) : isLoading ? (
+              <SelectItem value="loading" disabled>
+                로딩 중...
+              </SelectItem>
+            ) : allCategories.length === 0 ? (
+              <SelectItem value="empty" disabled>
+                사용 가능한 카테고리가 없습니다
+              </SelectItem>
+            ) : (
+              allCategories.map(category => (
+                <SelectItem key={category.categoryCode} value={category.categoryCode} className="text-md h-14">
+                  {category.categoryName}
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
 
@@ -64,16 +116,9 @@ export function WritePostPage() {
 
         {/* 첨부한 이미지 미리보기 */}
         <div className="flex flex-wrap gap-3 rounded-md bg-gray-100 px-10 py-8">
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
-          <div className="h-24 w-24 rounded-md bg-gray-400"></div>
+          {Array.from({ length: 10 }).map((_, index) => (
+            <div key={index} className="h-24 w-24 rounded-md bg-gray-400" />
+          ))}
         </div>
       </div>
     </div>
