@@ -6,14 +6,14 @@ import { ApiResponse, apiServer } from '@/shared/api';
 import { PostDetail } from '@/views/posts';
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ category: string; postId: string }>;
 }
 
-const getPostDetail = async (id: string) => {
+const getPostDetail = async (postId: string) => {
   try {
     const response: ApiResponse<PostDetailType> = await apiServer
       .post('posts/detail', {
-        json: { postSeq: id },
+        json: { postSeq: postId },
       })
       .json();
     return response.data;
@@ -38,11 +38,11 @@ const getBestWorstPostInfo = async (categoryCd: string) => {
 };
 
 export default async function Page({ params }: PageProps) {
-  const id = (await params).id;
+  const { postId, category } = await params;
 
-  const post = await getPostDetail(id);
+  const post = await getPostDetail(postId);
 
-  const bestWorstPosts = await getBestWorstPostInfo('003007');
+  const bestWorstPosts = await getBestWorstPostInfo(category);
   const bestPostInfo = bestWorstPosts?.bestPostInfo ?? null;
   const worstPostInfo = bestWorstPosts?.worstPostInfo ?? null;
 
@@ -50,5 +50,5 @@ export default async function Page({ params }: PageProps) {
     notFound();
   }
 
-  return <PostDetail post={post} bestPostInfo={bestPostInfo} worstPostInfo={worstPostInfo} />;
+  return <PostDetail post={post} category={category} bestPostInfo={bestPostInfo} worstPostInfo={worstPostInfo} />;
 }

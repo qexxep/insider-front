@@ -1,4 +1,9 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+
 import { PostDetailType } from '@/entity/post';
+import { BestWorstPostInfoDetailType } from '@/entity/post/model/types';
 import {
   Badge,
   Button,
@@ -14,20 +19,26 @@ import {
 
 interface Props {
   post: PostDetailType;
-  bestPostInfo: PostDetailType | null;
-  worstPostInfo: PostDetailType | null;
+  category: string;
+  bestPostInfo: BestWorstPostInfoDetailType | null;
+  worstPostInfo: BestWorstPostInfoDetailType | null;
 }
 
-export const PostDetail = ({ post, bestPostInfo, worstPostInfo }: Props) => {
+export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo }: Props) => {
+  const router = useRouter();
+
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       {/* 헤더 */}
       <div className="flex flex-col gap-[14px] border-b border-[#E1E1E1] pb-11">
         <div className="flex w-full justify-between">
           <div className="flex flex-col">
-            <span className="font-semibold text-primary">{post.categoryName}</span>
+            <button className="w-fit p-0 font-semibold text-primary" onClick={() => router.push(`/posts/${category}`)}>
+              {post.categoryName}
+            </button>
             <h1 className="text-xl font-bold text-gray-700">{post.postTitle}</h1>
           </div>
+          {/* TODO 본인 게시물 여부 판단 필요 */}
           <div className="flex gap-3">
             <Button variant="outlinePrimary" size="sm">
               글 삭제하기
@@ -58,7 +69,8 @@ export const PostDetail = ({ post, bestPostInfo, worstPostInfo }: Props) => {
       </div>
       {/* 메인 */}
       <div className="flex flex-col gap-24 border-b border-[#E1E1E1] py-10">
-        {post.fileList.length > 0 && post.fileList.map(file => <div key={file.id}>{file.fileName}</div>)}
+        {post.fileList?.length > 0 &&
+          post.fileList.map((file, index) => <div key={file.id + '_' + index}>{file.fileName}</div>)}
         <div>{post.content}</div>
         <div className="flex flex-col gap-6">
           <div className="flex gap-[6px]">

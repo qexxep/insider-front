@@ -33,9 +33,30 @@ export interface PostDetailType {
   updId: string;
   updDate: string;
   updTime: string;
+  thumbnailPath?: string;
+}
+
+export interface BestWorstPostInfoDetailType {
+  postSeq: string;
+  categoryCd: string;
+  categoryName: string;
+  postTitle: string;
+  previewContent: string;
+  viewCnt: number;
+  likeCnt: number;
+  unlikeCnt: number;
+  commentCnt: number;
+  postTag: string;
+  thumbnailPath: number;
+  regId: number;
+  regDate: number;
+  regTime: number;
+  updId: number;
+  updDate: number;
+  updTime: number;
 }
 
 export interface BestWorstPostInfoType {
-  bestPostInfo: PostDetailType;
-  worstPostInfo: PostDetailType;
+  bestPostInfo: BestWorstPostInfoDetailType;
+  worstPostInfo: BestWorstPostInfoDetailType;
 }
