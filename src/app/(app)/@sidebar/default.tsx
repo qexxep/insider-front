@@ -42,7 +42,7 @@ export default async function Sidebar({ className }: { className?: string }) {
 
   const formatCategoryList = (categoryList: CategoryItem[]) =>
     categoryList.map(category => ({
-      href: `/board/${category.categoryCode.toLowerCase()}`,
+      href: `/posts/${category.categoryCode.toLowerCase()}`,
       icon: CategoryIcon({ categoryName: category.categoryName }),
       label: category.categoryName,
       categoryCode: category.categoryCode,

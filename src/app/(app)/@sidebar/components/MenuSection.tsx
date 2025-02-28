@@ -1,7 +1,10 @@
 'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
+import { cn } from '@/shared/lib';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button } from '@/shared/ui';
 
 interface MenuSectionProps {
@@ -15,6 +18,7 @@ interface MenuSectionProps {
 }
 
 export function MenuSection({ title, categoryList, className }: MenuSectionProps) {
+  const pathname = usePathname();
   const [showAll, setShowAll] = useState(false);
   const INITIAL_DISPLAY_COUNT = 5;
 
@@ -31,17 +35,23 @@ export function MenuSection({ title, categoryList, className }: MenuSectionProps
         </AccordionTrigger>
         <AccordionContent className="pb-2">
           <div className="space-y-1">
-            {visibleItems.map(item => (
-              <Link
-                key={item.href}
-                href={item.href}
-                prefetch={false}
-                className="flex items-center gap-2 rounded-lg px-1 py-2 text-sm hover:bg-accent"
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </Link>
-            ))}
+            {visibleItems.map(item => {
+              const isActive = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  prefetch={false}
+                  className={cn(
+                    'flex items-center gap-2 rounded-lg px-1 py-2 text-sm hover:bg-accent',
+                    isActive ? 'bg-accent/50 font-semibold text-primary-500' : ''
+                  )}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
           </div>
           {categoryList.length > INITIAL_DISPLAY_COUNT && (
             <Button
