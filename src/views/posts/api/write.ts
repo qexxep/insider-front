@@ -7,7 +7,8 @@ interface CreatePostResponse {
 
 // 파일 업로드 응답 타입
 interface FileUploadResponse {
-  url: string;
+  fileUrl: string;
+  fileSeq: string;
 }
 
 // 파일 업로드 요청 타입
@@ -19,6 +20,23 @@ interface FileUploadRequest {
 // 게시글 생성 요청 타입 추가
 interface CreatePostRequest {
   categoryCd: string;
+}
+
+// 게시글 저장 요청 타입
+interface SavePostRequest {
+  postSeq: string;
+  postTitle: string;
+  content: string;
+  postTag: string;
+  isVote: number;
+  voteTitle?: string;
+  voteItems?: string[];
+}
+
+// 파일 삭제 요청 타입 추가
+interface FileDeleteRequest {
+  postSeq: string;
+  fileSeq: string;
 }
 
 // API 함수들
@@ -52,4 +70,18 @@ export const writeApi = {
       })
       .json<ApiResponse<FileUploadResponse>>();
   },
+
+  savePost: (params: SavePostRequest) =>
+    apiClient
+      .post('writes/save', {
+        json: params,
+      })
+      .json<ApiResponse<void>>(),
+
+  deleteFile: (params: FileDeleteRequest) =>
+    apiClient
+      .post('writes/file-delete', {
+        json: params,
+      })
+      .json<ApiResponse<void>>(),
 };

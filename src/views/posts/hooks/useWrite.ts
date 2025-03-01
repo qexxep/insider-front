@@ -9,12 +9,29 @@ export interface CreatePostResponse {
 }
 
 export interface FileUploadResponse {
-  url: string;
+  fileUrl: string;
+  fileSeq: string;
 }
 
 export interface FileUploadRequest {
   postSeq: string;
   file: File;
+}
+
+export interface SavePostRequest {
+  postSeq: string;
+  postTitle: string;
+  content: string;
+  postTag: string;
+  isVote: number;
+  voteTitle?: string;
+  voteItems?: string[];
+}
+
+// 파일 삭제 요청 인터페이스 추가
+export interface FileDeleteRequest {
+  postSeq: string;
+  fileSeq: string;
 }
 
 export function useWrite() {
@@ -40,8 +57,32 @@ export function useWrite() {
     },
   });
 
+  const deleteFileMutation = useCommonMutation<void, FileDeleteRequest>(writeApi.deleteFile, {
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: '파일 삭제 실패',
+        description: '파일 삭제에 실패했습니다.',
+        duration: 2000,
+      });
+    },
+  });
+
+  const savePostMutation = useCommonMutation<void, SavePostRequest>(writeApi.savePost, {
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: '게시글 저장 실패',
+        description: '게시글을 저장하는데 실패했습니다. 다시 시도해주세요.',
+        duration: 2000,
+      });
+    },
+  });
+
   return {
     createPostMutation,
     uploadFileMutation,
+    deleteFileMutation,
+    savePostMutation,
   };
 }
