@@ -4,8 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { PostDetailType } from '@/entity/post';
-import { PostPreviewType } from '@/entity/post/model/types';
+import { PostDetailType, PostPreviewType, VoteInfoType } from '@/entity/post';
 import { Badge, Button, Icons } from '@/shared/ui';
 import { Paginator } from '@/widgets';
 
@@ -20,15 +19,14 @@ interface Props {
 
 export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relativePosts, currentPage = 1 }: Props) => {
   const router = useRouter();
-
   const [page, setPage] = useState(currentPage);
 
-  console.log(page);
+  const parsedVoteInfo = JSON.parse(post.voteInfo as string) as VoteInfoType;
 
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       {/* 헤더 */}
-      <div className="flex flex-col gap-[14px] border-b border-[#E1E1E1] pb-11">
+      <div className="flex flex-col gap-[14px] pb-11">
         <div className="flex w-full justify-between">
           <div className="flex flex-col">
             <button className="w-fit p-0 font-semibold text-primary" onClick={() => router.push(`/posts/${category}`)}>
@@ -66,7 +64,7 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
         </div>
       </div>
       {/* 메인 */}
-      <div className="flex flex-col gap-24 border-b border-[#E1E1E1] py-10">
+      <div className="flex flex-col gap-24 border-t border-[#E1E1E1] py-10">
         {post.fileList?.length > 0 &&
           post.fileList.map((file, index) => <div key={file.id + '_' + index}>{file.fileName}</div>)}
         <div>{post.content}</div>
@@ -95,14 +93,30 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-9 py-10">
-        <div className="flex flex-col items-center gap-3">
-          <h3>이 게시물은 현재 투표를 받고 있습니다.</h3>
-          <p>투표를 해주시면 다음주 토론 주제로 올라갈 가능성이 높아집니다.</p>
+      {Boolean(post.isVote) && (
+        <div className="flex flex-col items-center gap-9 border-t border-[#E1E1E1] py-10">
+          <div className="flex flex-col items-center gap-3">
+            <h3 className="text-lg font-bold text-gray-700">이 게시물은 현재 투표를 받고 있습니다.</h3>
+            <p className="text-lg font-normal">투표를 해주시면 다음주 토론 주제로 올라갈 가능성이 높아집니다.</p>
+          </div>
+          <div className="flex w-full max-w-[1080px] flex-col rounded-lg border border-[#acacac] p-7">
+            <span className="mb-2 font-semibold text-[#0080FF]">게시물 투표</span>
+            <p className="mb-3 text-lg font-bold text-gray-700">{parsedVoteInfo.voteTitle}</p>
+            <div className="flex flex-col gap-3">
+              {parsedVoteInfo.voteItems.map(voteItem => (
+                <div
+                  key={voteItem.itemSeq}
+                  className="flex items-center justify-between rounded-[10px] bg-[#F2F3F6] p-6"
+                >
+                  <span>{voteItem.itemTitle}</span>
+                  <Icons.checkCircle className="h-9 w-9 text-[#C0C0C0]" />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
-        <div>투표 박스</div>
-      </div>
-      <div className="h-5 w-full bg-gray-100" />
+      )}
+      <div className="mb-4 h-5 w-full bg-gray-100" />
       <div>
         <div>댓글 목록</div>
         <div>댓글 작성</div>

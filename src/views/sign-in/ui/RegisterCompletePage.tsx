@@ -7,7 +7,7 @@ import { Button, Icons } from '@/shared/ui';
 export function RegisterCompletePage() {
   return (
     <div className="mt-24 flex h-full w-full flex-1 flex-col items-center">
-      <Icons.checkCircle className="mb-5 h-16 w-16" />
+      <Icons.checkCircle className="mb-5 h-16 w-16 text-primary" />
       <div className="flex flex-col items-center justify-center">
         <h1 className="mb-3 text-3xl font-bold">회원가입 완료!</h1>
         <p className="text-lg font-medium text-muted-foreground">회원가입을 통해 더 많은 토론에 참여해보세요</p>

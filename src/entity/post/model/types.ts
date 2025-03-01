@@ -21,7 +21,7 @@ export interface PostDetailType {
   commentCnt: number;
   isVote: number;
   voteTitle: string;
-  voteInfo: VoteInfoType;
+  voteInfo: VoteInfoType | string;
   postTag: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   commentInfo: any[]; // 댓글 타입이 정해지면 수정

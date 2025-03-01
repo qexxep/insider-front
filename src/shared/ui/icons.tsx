@@ -169,7 +169,7 @@ const Icons = {
     <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" {...props}>
       <path
         d="M20.0002 32.0026L28.0002 40.0026L44.0002 24.0026M58.6668 32.0026C58.6668 46.7302 46.7278 58.6693 32.0002 58.6693C17.2726 58.6693 5.3335 46.7302 5.3335 32.0026C5.3335 17.275 17.2726 5.33594 32.0002 5.33594C46.7278 5.33594 58.6668 17.275 58.6668 32.0026Z"
-        stroke="#FF4200"
+        stroke="currentColor"
         strokeWidth="5.33333"
         strokeLinecap="round"
         strokeLinejoin="round"
