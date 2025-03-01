@@ -50,7 +50,7 @@ export default async function Header() {
               투표하기
             </Link>
             <Separator orientation="vertical" className="h-3" />
-            <Link href="/posts" className="text-sm font-medium">
+            <Link href="/posts/write" className="text-sm font-medium">
               글쓰기
             </Link>
             <Separator orientation="vertical" className="h-3" />
