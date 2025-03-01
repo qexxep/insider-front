@@ -1,5 +1,4 @@
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
-import Link from 'next/link';
 import * as React from 'react';
 
 import { cn } from '@/shared/lib/tw-utils';
@@ -29,34 +28,39 @@ PaginationItem.displayName = 'PaginationItem';
 
 type PaginationLinkProps = {
   isActive?: boolean;
+  disabled?: boolean;
 } & Pick<ButtonProps, 'size'> &
-  React.ComponentProps<typeof Link>;
+  React.ComponentProps<'a'>;
 
-const PaginationLink = ({ className, isActive, size = 'icon', ...props }: PaginationLinkProps) => (
-  <Link
+const PaginationLink = ({ className, isActive, size = 'icon', disabled = false, ...props }: PaginationLinkProps) => (
+  <a
     aria-current={isActive ? 'page' : undefined}
     className={cn(
+      'cursor-pointer border-none text-lg font-bold',
       buttonVariants({
         variant: isActive ? 'outline' : 'ghost',
         size,
       }),
+      isActive && 'bg-primary text-white hover:bg-primary-400 hover:text-white',
+      disabled && 'pointer-events-none text-[#D0D0D0]',
       className
     )}
+    aria-disabled={disabled}
     {...props}
   />
 );
 PaginationLink.displayName = 'PaginationLink';
 
 const PaginationPrevious = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to previous page" size="icon" className={cn('', className)} {...props}>
-    <ChevronLeft className="h-6 w-6" />
+  <PaginationLink aria-label="Go to previous page" size="icon" className={cn('[&_svg]:size-6', className)} {...props}>
+    <ChevronLeft className="text-primary" />
   </PaginationLink>
 );
 PaginationPrevious.displayName = 'PaginationPrevious';
 
 const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to next page" size="icon" className={cn('', className)} {...props}>
-    <ChevronRight className="h-6 w-6" />
+  <PaginationLink aria-label="Go to next page" size="icon" className={cn('[&_svg]:size-6', className)} {...props}>
+    <ChevronRight className="text-primary" />
   </PaginationLink>
 );
 PaginationNext.displayName = 'PaginationNext';

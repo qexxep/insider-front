@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { BestWorstPostInfoType, PostDetailType } from '@/entity/post/model/types';
+import { BestWorstPostInfoType, PostDetailType } from '@/entity/post';
 import { ApiResponse, apiServer } from '@/shared/api';
 import { CategoryPostList } from '@/views/posts';
 

@@ -233,7 +233,7 @@ const Icons = {
       />
     </svg>
   ),
-  ArrowUpDown: ArrowUpDown,
+  arrowUpDown: ArrowUpDown,
   arrowBigUp: ArrowBigUp,
   bell: Bell,
   circleUser: CircleUser,

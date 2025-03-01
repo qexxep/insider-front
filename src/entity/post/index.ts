@@ -1,1 +1,1 @@
-export type { PostDetailType, VoteInfoType, VoteItemType } from './model/types';
+export type { BestWorstPostInfoType, PostDetailType, PostPreviewType, VoteInfoType, VoteItemType } from './model/types';

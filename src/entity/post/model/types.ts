@@ -36,7 +36,7 @@ export interface PostDetailType {
   thumbnailPath?: string;
 }
 
-export interface BestWorstPostInfoDetailType {
+export interface PostPreviewType {
   postSeq: string;
   categoryCd: string;
   categoryName: string;
@@ -57,6 +57,6 @@ export interface BestWorstPostInfoDetailType {
 }
 
 export interface BestWorstPostInfoType {
-  bestPostInfo: BestWorstPostInfoDetailType;
-  worstPostInfo: BestWorstPostInfoDetailType;
+  bestPostInfo: PostPreviewType;
+  worstPostInfo: PostPreviewType;
 }

@@ -1,31 +1,29 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import { PostDetailType } from '@/entity/post';
-import { BestWorstPostInfoDetailType } from '@/entity/post/model/types';
-import {
-  Badge,
-  Button,
-  Icons,
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/shared/ui';
+import { PostPreviewType } from '@/entity/post/model/types';
+import { Badge, Button, Icons } from '@/shared/ui';
+import { Paginator } from '@/widgets';
 
 interface Props {
   post: PostDetailType;
   category: string;
-  bestPostInfo: BestWorstPostInfoDetailType | null;
-  worstPostInfo: BestWorstPostInfoDetailType | null;
+  bestPostInfo: PostPreviewType | null;
+  worstPostInfo: PostPreviewType | null;
+  relativePosts: PostPreviewType[];
+  currentPage?: number;
 }
 
-export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo }: Props) => {
+export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relativePosts, currentPage = 1 }: Props) => {
   const router = useRouter();
+
+  const [page, setPage] = useState(currentPage);
+
+  console.log(page);
 
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
@@ -114,7 +112,10 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo }: Prop
         <h2 className="text-2xl font-bold text-gray-700">인싸이더 게시물</h2>
         <ul className="my-7 divide-y divide-[#c8c8c8] border-b border-t border-[#c8c8c8] [&>li]:px-5 [&>li]:py-4">
           {bestPostInfo && (
-            <li className="flex items-center justify-between gap-4 bg-[#ffebe0] px-5 py-4">
+            <Link
+              href={`/posts/${bestPostInfo.categoryCd}/${bestPostInfo.postSeq}`}
+              className="flex items-center justify-between gap-4 bg-[#ffebe0] px-5 py-4"
+            >
               <div className="flex items-center gap-12">
                 <span className="rounded-full bg-[#ff5c00] px-[10px] font-semibold leading-7 text-white">베스트</span>
                 <p className="text-lg text-gray-700">
@@ -123,10 +124,13 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo }: Prop
                 </p>
               </div>
               <span className="whitespace-nowrap text-sm text-gray-700">{bestPostInfo.updDate}</span>
-            </li>
+            </Link>
           )}
           {worstPostInfo && (
-            <li className="flex items-center justify-between gap-4 bg-[#e8e8e8] px-5 py-4">
+            <Link
+              href={`/posts/${worstPostInfo.categoryCd}/${worstPostInfo.postSeq}`}
+              className="flex items-center justify-between gap-4 bg-[#e8e8e8] px-5 py-4"
+            >
               <div className="flex items-center gap-12">
                 <span className="rounded-full bg-black px-[10px] font-semibold leading-7 text-white">워스트</span>
                 <p className="text-lg text-gray-700">
@@ -135,43 +139,26 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo }: Prop
                 </p>
               </div>
               <span className="whitespace-nowrap text-sm text-gray-700">{worstPostInfo.updDate}</span>
-            </li>
+            </Link>
           )}
-          <li className="flex items-center justify-between gap-4 px-5 py-4">
-            <div className="flex items-center gap-12">
-              <span className="font-bold leading-7 text-[#ff5c00]">12342</span>
-              <p className="line-clamp-1 text-lg text-gray-700">
-                윤대통령, 기시다 후미오 일본 총리 12번째 회담
-                <span className="ml-2 font-medium text-[#969696]">[132]</span>
-              </p>
-            </div>
-            <span className="whitespace-nowrap text-sm text-gray-700">2024-09-23</span>
-          </li>
+          {relativePosts.map(relativePost => (
+            <Link
+              key={relativePost.postSeq}
+              href={`/posts/${relativePost.categoryCd}/${relativePost.postSeq}`}
+              className="flex items-center justify-between gap-4 px-5 py-4"
+            >
+              <div className="flex items-center gap-12">
+                <span className="font-bold leading-7 text-[#ff5c00]">{relativePost.postSeq}</span>
+                <p className="line-clamp-1 text-lg text-gray-700">
+                  {relativePost.postTitle}
+                  <span className="ml-2 font-medium text-[#969696]">[{relativePost.commentCnt}]</span>
+                </p>
+              </div>
+              <span className="whitespace-nowrap text-sm text-gray-700">{relativePost.updTime}</span>
+            </Link>
+          ))}
         </ul>
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                2
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#">3</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#" />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <Paginator currentPage={page} totalPages={20} onPageChange={page => setPage(page)} showPreviousNext />
       </div>
     </div>
   );

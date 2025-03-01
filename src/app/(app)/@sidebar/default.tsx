@@ -35,8 +35,8 @@ export default async function Sidebar({ className }: { className?: string }) {
   const favoriteMenus = {
     majorCategoryNm: '즐겨찾기 게시판',
     categoryList: [
-      { categoryCode: 'job', categoryName: '취업' },
-      { categoryCode: 'love', categoryName: '연애' },
+      { categoryCode: '003001', categoryName: '취업' },
+      { categoryCode: '003002', categoryName: '연예' },
     ],
   };
 

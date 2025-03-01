@@ -4,14 +4,14 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { PostDetailType } from '@/entity/post';
-import { BestWorstPostInfoDetailType } from '@/entity/post/model/types';
+import { PostPreviewType } from '@/entity/post/model/types';
 import { Badge, Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
 import { CardFooter } from '@/shared/ui/card';
 
 interface Props {
   category: string;
-  bestPostInfo: BestWorstPostInfoDetailType | null;
-  worstPostInfo: BestWorstPostInfoDetailType | null;
+  bestPostInfo: PostPreviewType | null;
+  worstPostInfo: PostPreviewType | null;
   posts: PostDetailType[];
 }
 
@@ -75,7 +75,7 @@ export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, posts 
           <h2 className="text-lg font-bold">전체 게시물</h2>
           <Button variant="ghost" className="px-3">
             최신순
-            <Icons.ArrowUpDown />
+            <Icons.arrowUpDown />
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-4">
