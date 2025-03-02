@@ -21,7 +21,7 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
   const router = useRouter();
   const [page, setPage] = useState(currentPage);
 
-  const parsedVoteInfo = JSON.parse(post.voteInfo as string) as VoteInfoType;
+  const parsedVoteInfo = post.voteInfo && (JSON.parse(post.voteInfo as string) as VoteInfoType);
 
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
@@ -168,7 +168,7 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
                   <span className="ml-2 font-medium text-[#969696]">[{relativePost.commentCnt}]</span>
                 </p>
               </div>
-              <span className="whitespace-nowrap text-sm text-gray-700">{relativePost.updTime}</span>
+              <span className="whitespace-nowrap text-sm text-gray-700">{relativePost.updDate}</span>
             </Link>
           ))}
         </ul>
