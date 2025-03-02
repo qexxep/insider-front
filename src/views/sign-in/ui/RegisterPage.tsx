@@ -24,6 +24,7 @@ import { checkOtp, sendOtp } from '../api/auth';
 import { checkDuplicateId, checkDuplicateNickname, signup } from '../api/registers';
 import { useSignup } from '../hooks/useSignup';
 import { SignupFormSchema, SignupFormType, tempCodeSchema } from '../model';
+import { TermsAgreement } from './TermsAgreement';
 
 export function RegisterPage() {
   const router = useRouter();
@@ -452,6 +453,9 @@ export function RegisterPage() {
               </FormItem>
             )}
           />
+          <div className="flex flex-col border-t border-[#E1E1E1] py-10">
+            <TermsAgreement />
+          </div>
           <Button type="submit" className="m-auto h-[70px] w-[350px] rounded-[35px] text-lg font-bold">
             회원가입하기
           </Button>

@@ -3,6 +3,7 @@ import {
   ArrowUpDown,
   Bell,
   Building2,
+  ChevronRight,
   ChevronUp,
   Circle,
   CircleUser,
@@ -233,6 +234,29 @@ const Icons = {
       />
     </svg>
   ),
+  checkCircleFilled: (props: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none" {...props}>
+      <circle cx="15" cy="15" r="15" fill="currentColor" />
+      <path
+        d="M21.6663 10L12.4997 19.1667L8.33301 15"
+        stroke="white"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
+  check: (props: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28" fill="none" {...props}>
+      <path
+        d="M23.3327 7L10.4993 19.8333L4.66602 14"
+        stroke="currentColor"
+        strokeWidth="3.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
   arrowUpDown: ArrowUpDown,
   arrowBigUp: ArrowBigUp,
   bell: Bell,
@@ -256,6 +280,7 @@ const Icons = {
   thumbsUp: ThumbsUp,
   thumbsDown: ThumbsDown,
   messageSquare: MessageSquare,
+  chevronRight: ChevronRight,
 } as const;
 
 export { Icons };

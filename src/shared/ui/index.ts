@@ -1,4 +1,17 @@
 export { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './accordion';
+export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
+  AlertDialogPortal,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from './alert-dialog';
 export { Badge, badgeVariants } from './badge';
 export { Button, buttonVariants } from './button';
 export { Calendar } from './calendar';
