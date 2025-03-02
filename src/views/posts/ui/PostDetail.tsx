@@ -21,7 +21,8 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
   const router = useRouter();
   const [page, setPage] = useState(currentPage);
 
-  const parsedVoteInfo = post.voteInfo && (JSON.parse(post.voteInfo as string) as VoteInfoType);
+  // TODO) voteInfo 역직력화 이슈 수정 요청
+  const parsedVoteInfo = post.voteInfo ? (JSON.parse(post.voteInfo as string) as VoteInfoType) : null;
 
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
@@ -93,7 +94,7 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
           </div>
         </div>
       </div>
-      {Boolean(post.isVote) && (
+      {parsedVoteInfo && Boolean(post.isVote) && (
         <div className="flex flex-col items-center gap-9 border-t border-[#E1E1E1] py-10">
           <div className="flex flex-col items-center gap-3">
             <h3 className="text-lg font-bold text-gray-700">이 게시물은 현재 투표를 받고 있습니다.</h3>
@@ -101,17 +102,18 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
           </div>
           <div className="flex w-full max-w-[1080px] flex-col rounded-lg border border-[#acacac] p-7">
             <span className="mb-2 font-semibold text-[#0080FF]">게시물 투표</span>
-            <p className="mb-3 text-lg font-bold text-gray-700">{parsedVoteInfo.voteTitle}</p>
+            <p className="mb-3 text-lg font-bold text-gray-700">{parsedVoteInfo && parsedVoteInfo.voteTitle}</p>
             <div className="flex flex-col gap-3">
-              {parsedVoteInfo.voteItems.map(voteItem => (
-                <div
-                  key={voteItem.itemSeq}
-                  className="flex items-center justify-between rounded-[10px] bg-[#F2F3F6] p-6"
-                >
-                  <span>{voteItem.itemTitle}</span>
-                  <Icons.checkCircle className="h-9 w-9 text-[#C0C0C0]" />
-                </div>
-              ))}
+              {parsedVoteInfo &&
+                parsedVoteInfo.voteItems.map(voteItem => (
+                  <div
+                    key={voteItem.itemSeq}
+                    className="flex items-center justify-between rounded-[10px] bg-[#F2F3F6] p-6"
+                  >
+                    <span>{voteItem.itemTitle}</span>
+                    <Icons.checkCircle className="h-9 w-9 text-[#C0C0C0]" />
+                  </div>
+                ))}
             </div>
           </div>
         </div>
