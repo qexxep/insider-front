@@ -9,6 +9,15 @@ export { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 export { Icons } from './icons';
 export { Input } from './input';
 export { Label } from './label';
+export {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from './pagination';
 export { PasswordInput } from './password-input';
 export { Popover, PopoverContent, PopoverTrigger } from './popover';
 export { RadioGroup, RadioGroupItem } from './radio-group';

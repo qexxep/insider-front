@@ -35,14 +35,14 @@ export default async function Sidebar({ className }: { className?: string }) {
   const favoriteMenus = {
     majorCategoryNm: '즐겨찾기 게시판',
     categoryList: [
-      { categoryCode: 'job', categoryName: '취업' },
-      { categoryCode: 'love', categoryName: '연애' },
+      { categoryCode: '003001', categoryName: '취업' },
+      { categoryCode: '003002', categoryName: '연예' },
     ],
   };
 
   const formatCategoryList = (categoryList: CategoryItem[]) =>
     categoryList.map(category => ({
-      href: `/board/${category.categoryCode.toLowerCase()}`,
+      href: `/posts/${category.categoryCode.toLowerCase()}`,
       icon: CategoryIcon({ categoryName: category.categoryName }),
       label: category.categoryName,
       categoryCode: category.categoryCode,

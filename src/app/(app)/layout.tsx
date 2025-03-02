@@ -26,9 +26,9 @@ export default function Layout({
       {sidebar}
 
       {/* 메인 */}
-      <div className="min-h-[calc(100vh - 48px)] ml-[260px] flex flex-col">
+      <div className="min-h-[calc(100vh - 48px)] ml-[260px] flex flex-col items-center">
         <Suspense fallback={<LoadingSpinner />}>
-          <main className="relative mx-auto max-w-[1200px] flex-1 flex-col p-5">{children}</main>
+          <main className="relative w-full max-w-[1200px] flex-1 flex-col p-5">{children}</main>
         </Suspense>
 
         {/* 푸터 */}

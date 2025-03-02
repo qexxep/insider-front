@@ -21,7 +21,7 @@ export interface PostDetailType {
   commentCnt: number;
   isVote: number;
   voteTitle: string;
-  voteInfo: VoteInfoType;
+  voteInfo: VoteInfoType | string;
   postTag: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   commentInfo: any[]; // 댓글 타입이 정해지면 수정
@@ -33,4 +33,30 @@ export interface PostDetailType {
   updId: string;
   updDate: string;
   updTime: string;
+  thumbnailPath?: string;
+}
+
+export interface PostPreviewType {
+  postSeq: string;
+  categoryCd: string;
+  categoryName: string;
+  postTitle: string;
+  previewContent: string;
+  viewCnt: number;
+  likeCnt: number;
+  unlikeCnt: number;
+  commentCnt: number;
+  postTag: string;
+  thumbnailPath: number;
+  regId: number;
+  regDate: number;
+  regTime: number;
+  updId: number;
+  updDate: number;
+  updTime: number;
+}
+
+export interface BestWorstPostInfoType {
+  bestPostInfo: PostPreviewType;
+  worstPostInfo: PostPreviewType;
 }
