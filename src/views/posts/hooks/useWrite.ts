@@ -1,7 +1,7 @@
 import { useCommonMutation } from '@/shared/api';
 import { toast } from '@/shared/hooks';
 
-import { writeApi } from '../api/write';
+import { writeApi } from '../api';
 
 // 응답 타입들도 export 해서 재사용할 수 있게 합니다
 export interface CreatePostResponse {
