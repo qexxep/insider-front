@@ -17,16 +17,12 @@ import {
   Icons,
   Input,
   Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
   Separator,
   Textarea,
 } from '@/shared/ui';
 
 import { SavePostRequest, useWrite } from '../hooks/useWrite';
+import { CategorySelect } from './CategorySelect';
 
 interface UploadedImage {
   url: string;
@@ -435,33 +431,13 @@ export function WritePostPage() {
       </div>
 
       <div className="mt-4 space-y-4">
-        {/* 게시판 선택 */}
-        <Select value={selectedCategory} onValueChange={handleCategorySelect}>
-          <SelectTrigger className="focus:ring-ring">
-            <SelectValue placeholder={isLoading ? '카테고리 로딩 중...' : '게시판을 선택해주세요'} />
-          </SelectTrigger>
-          <SelectContent>
-            {error ? (
-              <SelectItem value="error" disabled>
-                카테고리를 불러오는 중 오류가 발생했습니다
-              </SelectItem>
-            ) : isLoading ? (
-              <SelectItem value="loading" disabled>
-                로딩 중...
-              </SelectItem>
-            ) : allCategories.length === 0 ? (
-              <SelectItem value="empty" disabled>
-                사용 가능한 카테고리가 없습니다
-              </SelectItem>
-            ) : (
-              allCategories.map(category => (
-                <SelectItem key={category.categoryCode} value={category.categoryCode} className="text-md h-14">
-                  {category.categoryName}
-                </SelectItem>
-              ))
-            )}
-          </SelectContent>
-        </Select>
+        <CategorySelect
+          selectedCategory={selectedCategory}
+          onCategorySelect={handleCategorySelect}
+          isLoading={isLoading}
+          error={error}
+          categories={allCategories}
+        />
 
         {/* 제목 입력 */}
         <Input type="text" placeholder="제목을 입력해주세요" value={title} onChange={e => setTitle(e.target.value)} />
@@ -623,13 +599,6 @@ export function WritePostPage() {
               </div>
             </CardContent>
           </Card>
-        )}
-
-        {/* 카테고리 로딩/에러 상태 표시 */}
-        {error && (
-          <div className="mt-4 rounded-md bg-red-50 p-4 text-red-600">
-            카테고리를 불러오는 중 오류가 발생했습니다. 페이지를 새로고침 해주세요.
-          </div>
         )}
       </div>
     </div>
