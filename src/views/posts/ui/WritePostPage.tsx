@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 // 여기서 import 하는게 맞는 것인가..?
@@ -45,17 +45,17 @@ interface VoteForm {
   options: VoteOption[];
 }
 
-export function WritePostPage() {
+interface WritePostPageProps {
+  isAuthenticated: boolean;
+  redirectPath: string;
+}
+
+export function WritePostPage({ isAuthenticated, redirectPath }: WritePostPageProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const searchParams = useSearchParams();
 
-  // 클라이언트에서 이중으로 토큰 체크
   useEffect(() => {
-    const token = document.cookie.match(/access_token=([^;]+)/);
-    const showLoginRequired = searchParams.get('showLoginRequired') === 'true';
-
-    if (!token || showLoginRequired) {
+    if (!isAuthenticated) {
       toast({
         variant: 'destructive',
         title: '접근 제한',
@@ -63,11 +63,9 @@ export function WritePostPage() {
         duration: 2000,
       });
 
-      if (!token) {
-        router.push('/');
-      }
+      router.push(`/login?redirect=${redirectPath}`);
     }
-  }, [router, toast, searchParams]);
+  }, [isAuthenticated, redirectPath, router, toast]);
 
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [postSeq, setPostSeq] = useState<string>('');

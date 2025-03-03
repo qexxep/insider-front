@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import { useToast } from '@/shared/hooks';
@@ -25,6 +25,7 @@ import { LoginFormSchema, LoginFormType } from '../model';
 export function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const searchParams = useSearchParams();
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
@@ -40,8 +41,9 @@ export function LoginPage() {
       const { accessToken, refreshToken } = response.data.jwt;
       setClientCookie('access_token', accessToken);
       setClientCookie('refresh_token', refreshToken);
-      //
-      router.push('/');
+
+      const redirectPath = searchParams.get('redirect');
+      router.push(redirectPath || '/');
       router.refresh();
     } else {
       toast({
