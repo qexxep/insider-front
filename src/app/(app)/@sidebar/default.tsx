@@ -1,25 +1,15 @@
-'use client';
-
 import { Fragment } from 'react';
 
 import { CategoryIcon } from '@/shared/components';
 import { cn } from '@/shared/lib';
 import { Separator } from '@/shared/ui';
 
-import { CategoryItem } from './api/category';
+import { CategoryItem, getCategories } from './api/category';
 import { MenuSection } from './components/MenuSection';
-import { useCategories } from './hooks/useCategories';
 
-export default function Sidebar({ className }: { className?: string }) {
-  //const { data } = await getCategories();
-  const { data, isLoading, error, isError } = useCategories();
+export default async function Sidebar({ className }: { className?: string }) {
+  const { data: categories } = await getCategories();
 
-  // 디버깅을 위한 로그
-  console.log('useCategories 결과:', { data, isLoading, error, isError });
-
-  const categories = data?.data || [];
-
-  console.log(data);
   // 즐겨찾기 더미 데이터
   const favoriteMenus = {
     majorCategoryNm: '즐겨찾기 게시판',
@@ -37,10 +27,6 @@ export default function Sidebar({ className }: { className?: string }) {
       categoryCode: category.categoryCode,
       categoryName: category.categoryName,
     }));
-
-  if (isLoading) {
-    return <aside className={cn('fixed left-0 top-14 h-screen w-[260px]', className)}>로딩 중...</aside>;
-  }
 
   return (
     <aside
