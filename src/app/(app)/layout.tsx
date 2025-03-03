@@ -1,33 +1,9 @@
-'use client';
-
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 
 import { Toaster } from '@/shared/ui';
 
 import Loading from '../../../public/icons/loading.svg';
-
-function AppProvider({ children }: { children: React.ReactNode }) {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            // TO DO: 논의 후 수정 예정
-            staleTime: 60 * 1000,
-          },
-        },
-      })
-  );
-
-  return (
-    <QueryClientProvider client={queryClient}>
-      {children}
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
-  );
-}
+import AppProvider from './_provider';
 
 export default function Layout({
   children,
