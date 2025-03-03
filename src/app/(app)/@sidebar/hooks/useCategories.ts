@@ -1,7 +1,6 @@
 'use client';
 
-import { QUERY_KEYS } from '@/shared/hooks/query/config/queryKeys';
-import { useCommonQuery } from '@/shared/hooks/query/useCommonQuery';
+import { QUERY_KEYS, useCommonQuery } from '@/shared/api';
 
 import { CategoryGroup, getCategories } from '../api/category';
 

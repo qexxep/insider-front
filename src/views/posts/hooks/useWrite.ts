@@ -1,5 +1,5 @@
+import { useCommonMutation } from '@/shared/api';
 import { toast } from '@/shared/hooks';
-import { useCommonMutation } from '@/shared/hooks/query/useCommonMutation';
 
 import { writeApi } from '../api/write';
 

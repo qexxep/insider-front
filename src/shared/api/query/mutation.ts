@@ -1,8 +1,6 @@
-// useCommonMutation.ts
-
 import { useMutation, UseMutationOptions } from '@tanstack/react-query';
 
-import { ApiResponse } from '@/shared/api/types';
+import { ApiResponse } from '../types';
 
 interface CommonMutationOptions<TData, TVariables>
   extends Omit<UseMutationOptions<ApiResponse<TData>, Error, TVariables>, 'mutationFn'> {
