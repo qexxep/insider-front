@@ -176,7 +176,7 @@ export function WritePostPage() {
   };
 
   // 투표 관련 상태 추가
-  const [showVoteForm, setShowVoteForm] = useState(false);
+  const [showVoteForm, setShowVoteForm] = useState<boolean>(false);
   const [voteForm, setVoteForm] = useState<VoteForm>({
     title: '',
     options: [
@@ -403,30 +403,29 @@ export function WritePostPage() {
     }
   };
 
-  console.log(allCategories.map(category => category.categoryName).filter(name => name === selectedCategory));
   return (
     <div className="mx-auto w-[960px] p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">글쓰기</h1>
         <div className="flex gap-2">
           <Label
-            className="text-md flex cursor-pointer items-center justify-center rounded-md border border-[#636571] bg-white px-3 py-2 font-medium text-black hover:bg-gray-300"
+            className="text-md flex cursor-pointer items-center justify-center rounded-md border border-[#636571] bg-white px-3 py-2 font-medium text-black hover:bg-gray-600 hover:text-primary-foreground"
             role="button"
           >
             <span>사진 등록</span>
             <Input type="file" accept=".jpg,.jpeg,.png,.gif" onChange={handleFileUpload} className="hidden" />
           </Label>
           <Button
-            className="border border-[#636571] bg-white px-3 text-black hover:bg-gray-300 disabled:cursor-not-allowed disabled:border-none disabled:border-gray-400 disabled:bg-gray-200 disabled:text-white"
+            className="border border-[#636571] bg-white px-3 text-black hover:bg-gray-600 hover:text-primary-foreground disabled:cursor-not-allowed disabled:border-none disabled:border-gray-400 disabled:bg-gray-200 disabled:text-white"
             onClick={() => setShowVoteForm(true)}
             disabled={showVoteForm}
           >
             투표 추가
           </Button>
           <Button
-            className="bg-[#242424] px-6 text-white transition-colors hover:bg-[#3d3d3d] disabled:bg-[#d4d4d4]"
+            className="bg-primary px-6 text-white transition-colors hover:bg-primary-500 disabled:bg-gray-400 disabled:text-primary-foreground"
             onClick={handleSubmitPost}
-            disabled={savePostMutation.isPending}
+            disabled={savePostMutation.isPending || !postSeq || !title.trim() || !content.trim()}
           >
             {savePostMutation.isPending ? '등록 중...' : '게시물 등록'}
           </Button>
@@ -434,6 +433,7 @@ export function WritePostPage() {
       </div>
 
       <div className="mt-4 space-y-4">
+        {/* 게시판 카테고리 선택 */}
         <CategorySelect
           selectedCategory={selectedCategory}
           onCategorySelect={handleCategorySelect}
@@ -474,7 +474,7 @@ export function WritePostPage() {
                 ) : (
                   <div
                     key={`${tag}-${index}`}
-                    className="group flex items-center gap-1 rounded-md bg-gray-100 px-2 py-1"
+                    className="group flex items-center gap-1 rounded-md bg-gray-200 px-2 py-1"
                   >
                     <span
                       className="cursor-pointer text-sm text-gray-700 hover:text-gray-900"
@@ -508,102 +508,149 @@ export function WritePostPage() {
 
         {/* 첨부한 이미지 미리보기 */}
         {uploadedImages.length > 0 && (
-          <div className="flex flex-wrap gap-3 rounded-md bg-gray-100 px-10 py-8">
-            {uploadedImages.map((image, index) => (
-              <div key={index} className="relative h-24 w-24">
-                <Image src={image.url} alt={`업로드된 이미지 ${index + 1}`} fill className="rounded-md object-cover" />
-                <Button
-                  onClick={() => {
-                    setUploadedImages(prev => prev.filter((_, i) => i !== index));
-                  }}
-                  className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-red-500 p-0 text-white hover:bg-red-600"
-                >
-                  <Icons.cancel width={24} height={24} />
-                </Button>
-              </div>
-            ))}
-            {uploadedImages.length < 4 && (
-              <label
-                className="flex h-24 w-24 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-gray-300 hover:border-gray-400"
-                role="button"
-              >
-                <Icons.plus width={24} height={24} />
-                <Input type="file" accept=".jpg,.jpeg,.png,.gif" onChange={handleFileUpload} className="hidden" />
-              </label>
-            )}
-          </div>
+          <PostImagePreview
+            uploadedImages={uploadedImages}
+            setUploadedImages={setUploadedImages}
+            handleFileUpload={handleFileUpload}
+          />
         )}
 
         {/* 투표 폼 */}
         {showVoteForm && (
-          <Card className="mt-4">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-              <CardTitle className="text-xl font-semibold">토론 투표 게시물 작성</CardTitle>
-              <Button onClick={() => setShowVoteForm(false)} variant="ghost" className="h-8 w-8 rounded-full p-0">
-                <Icons.cancel width={24} height={24} />
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {/* 투표 제목 입력 */}
-                <div>
-                  <Label htmlFor="vote-title" className="mb-2 hidden">
-                    투표 제목
-                  </Label>
-                  <Input
-                    id="vote-title"
-                    type="text"
-                    value={voteForm.title}
-                    onChange={e => handleVoteTitleChange(e.target.value)}
-                    placeholder="투표 제목을 입력해주세요"
-                    className="w-full"
-                  />
-                </div>
-                <Separator className="mx-auto my-0 w-full opacity-50" />
-                {/* 투표 옵션들 */}
-                <div>
-                  <Label className="mb-2 hidden">투표 항목</Label>
-                  <div className="space-y-3">
-                    {voteForm.options.map((option, index) => (
-                      <div key={option.id} className="flex items-center gap-2">
-                        <div className="flex-1">
-                          <Input
-                            type="text"
-                            value={option.content}
-                            onChange={e => handleVoteOptionChange(option.id, e.target.value)}
-                            placeholder={`항목 ${index + 1}`}
-                            className="w-full"
-                          />
-                        </div>
-                        {voteForm.options.length > 2 && (
-                          <Button
-                            onClick={() => handleRemoveVoteOption(option.id)}
-                            variant="ghost"
-                            className="h-8 w-8 rounded-full p-0 hover:bg-gray-100"
-                          >
-                            <Icons.cancel width={24} height={24} />
-                          </Button>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 투표 옵션 추가 버튼 */}
-                <Button
-                  onClick={handleAddVoteOption}
-                  variant="outline"
-                  className="mt-3 w-full border border-[#FF5C00] bg-[#FFF1EA] text-primary disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-400"
-                  disabled={voteForm.options.length >= 5}
-                >
-                  <Icons.plus width={24} height={24} />
-                  투표 내용 옵션 추가 {voteForm.options.length}/5
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+          <PostVoteForm
+            voteForm={voteForm}
+            setShowVoteForm={setShowVoteForm}
+            handleVoteTitleChange={handleVoteTitleChange}
+            handleVoteOptionChange={handleVoteOptionChange}
+            handleAddVoteOption={handleAddVoteOption}
+            handleRemoveVoteOption={handleRemoveVoteOption}
+          />
         )}
       </div>
     </div>
   );
 }
+interface PostImagePreviewProps {
+  uploadedImages: UploadedImage[];
+  setUploadedImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>; // 타입 수정
+  handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}
+const PostImagePreview = ({ uploadedImages, setUploadedImages, handleFileUpload }: PostImagePreviewProps) => {
+  return (
+    <div className="flex flex-wrap gap-3 rounded-md bg-gray-100 px-10 py-8">
+      {uploadedImages.map((image, index) => (
+        <div key={index} className="relative h-24 w-24">
+          <Image
+            src={image.url}
+            alt={`업로드된 이미지 ${index + 1}`}
+            fill
+            className="rounded-md border border-gray-400 object-cover"
+          />
+          <Button
+            onClick={() => {
+              setUploadedImages((prev: UploadedImage[]) => prev.filter((_, i) => i !== index));
+            }}
+            className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-red-500 p-0 text-white hover:bg-red-600"
+          >
+            <Icons.cancel width={24} height={24} />
+          </Button>
+        </div>
+      ))}
+      {uploadedImages.length < 4 && (
+        <label
+          className="flex h-24 w-24 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-gray-300 hover:border-gray-400"
+          role="button"
+        >
+          <Icons.plus width={24} height={24} />
+          <Input type="file" accept=".jpg,.jpeg,.png,.gif" onChange={handleFileUpload} className="hidden" />
+        </label>
+      )}
+    </div>
+  );
+};
+
+interface PostVoteFormProps {
+  setShowVoteForm: (state: boolean) => void;
+  voteForm: VoteForm;
+  handleVoteTitleChange: (title: string) => void;
+  handleVoteOptionChange: (optionId: number, value: string) => void;
+  handleRemoveVoteOption: (optionId: number) => void;
+  handleAddVoteOption: () => void;
+}
+const PostVoteForm = ({
+  setShowVoteForm,
+  voteForm,
+  handleVoteTitleChange,
+  handleVoteOptionChange,
+  handleRemoveVoteOption,
+  handleAddVoteOption,
+}: PostVoteFormProps) => {
+  return (
+    <Card className="mt-4 bg-gray-100">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+        <CardTitle className="text-xl font-semibold">토론 투표 게시물 작성</CardTitle>
+        <Button onClick={() => setShowVoteForm(false)} variant="ghost" className="h-8 w-8 rounded-full p-0">
+          <Icons.cancel width={24} height={24} />
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {/* 투표 제목 입력 */}
+          <div>
+            <Label htmlFor="vote-title" className="mb-2 hidden">
+              투표 제목
+            </Label>
+            <Input
+              id="vote-title"
+              type="text"
+              value={voteForm.title}
+              onChange={e => handleVoteTitleChange(e.target.value)}
+              placeholder="투표 제목을 입력해주세요"
+              className="w-full"
+            />
+          </div>
+          <Separator className="mx-auto my-0 w-full opacity-50" />
+          {/* 투표 옵션들 */}
+          <div>
+            <Label className="mb-2 hidden">투표 항목</Label>
+            <div className="space-y-3">
+              {voteForm.options.map((option, index) => (
+                <div key={option.id} className="flex items-center gap-2">
+                  <div className="flex-1">
+                    <Input
+                      type="text"
+                      value={option.content}
+                      onChange={e => handleVoteOptionChange(option.id, e.target.value)}
+                      placeholder={`항목 ${index + 1}`}
+                      className="w-full"
+                    />
+                  </div>
+                  {voteForm.options.length > 2 && (
+                    <Button
+                      onClick={() => handleRemoveVoteOption(option.id)}
+                      variant="ghost"
+                      className="h-8 w-8 rounded-full p-0 hover:bg-gray-100"
+                    >
+                      <Icons.cancel width={24} height={24} />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 투표 옵션 추가 버튼 */}
+          <Button
+            onClick={handleAddVoteOption}
+            variant="outline"
+            className="mt-3 w-full border border-[#FF5C00] bg-[#FFF1EA] text-primary hover:bg-primary-500 hover:text-primary-foreground disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-400 disabled:text-primary-foreground"
+            disabled={voteForm.options.length >= 5}
+          >
+            <Icons.plus width={24} height={24} />
+            투표 내용 옵션 추가 {voteForm.options.length}/5
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
