@@ -7,8 +7,8 @@ interface CreatePostResponse {
 
 // 파일 업로드 응답 타입
 interface FileUploadResponse {
-  fileUrl: string;
   fileSeq: string;
+  fileUrl: string;
 }
 
 // 파일 업로드 요청 타입
@@ -50,23 +50,14 @@ export const writeApi = {
 
   uploadFile: ({ postSeq, file }: FileUploadRequest) => {
     const formData = new FormData();
-
-    // request는 단순 문자열로
-    formData.append('request', JSON.stringify({ postSeq }));
-
-    // file은 그대로 전송
+    const requestBlob = new Blob([JSON.stringify({ postSeq })], { type: 'application/json' });
     formData.append('file', file);
-
-    // FormData 내용 확인용 로그
-    for (const [key, value] of formData.entries()) {
-      console.log(`${key}:`, value);
-    }
+    formData.append('request', requestBlob);
 
     return apiClient
       .post('writes/file-upload', {
         body: formData,
-        // headers를 완전히 제거하거나, Accept만 설정
-        // Content-Type은 설정하지 않음 - 브라우저가 자동으로 처리
+        // FormData를 사용할 때는 Content-Type 헤더를 설정하지 않음 (자동으로 설정됨)
       })
       .json<ApiResponse<FileUploadResponse>>();
   },
