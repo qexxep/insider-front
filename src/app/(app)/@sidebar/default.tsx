@@ -19,14 +19,21 @@ export default async function Sidebar({ className }: { className?: string }) {
     ],
   };
 
-  const formatCategoryList = (categoryList: CategoryItem[]) =>
-    categoryList.map(category => ({
-      href: `/posts/${category.categoryCode.toLowerCase()}`,
-      icon: CategoryIcon({ categoryName: category.categoryName }),
-      label: category.categoryName,
-      categoryCode: category.categoryCode,
-      categoryName: category.categoryName,
-    }));
+  // 즐겨찾기 카테고리 코드 Set 생성
+  const favoriteCategoryCodes = new Set(favoriteMenus.categoryList.map(cat => cat.categoryCode));
+
+  const formatCategoryList = (categoryList: CategoryItem[], excludeFavorites = false) =>
+    categoryList
+      // 즐겨찾기 제외 옵션이 true인 경우, 즐겨찾기에 없는 카테고리만 필터링
+      // TO DO: 즐겨찾기 API 추가 시 수정 예정
+      .filter(category => !excludeFavorites || !favoriteCategoryCodes.has(category.categoryCode))
+      .map(category => ({
+        href: `/posts/${category.categoryCode.toLowerCase()}`,
+        icon: CategoryIcon({ categoryName: category.categoryName }),
+        label: category.categoryName,
+        categoryCode: category.categoryCode,
+        categoryName: category.categoryName,
+      }));
 
   return (
     <aside
@@ -43,10 +50,13 @@ export default async function Sidebar({ className }: { className?: string }) {
       />
       <Separator className="my-2" />
 
-      {/* 카테고리 메뉴 */}
+      {/* 카테고리 메뉴 - 즐겨찾기 항목 제외 */}
       {categories?.map(category => (
         <Fragment key={category.commCategoryCode}>
-          <MenuSection title={category.majorCategoryName} categoryList={formatCategoryList(category.categoryList)} />
+          <MenuSection
+            title={category.majorCategoryName}
+            categoryList={formatCategoryList(category.categoryList, true)}
+          />
           <Separator className="my-2" />
         </Fragment>
       ))}
