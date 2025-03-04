@@ -14,7 +14,7 @@ const setAuthorizationHeader: BeforeRequestHook = request => {
   }
 };
 
-const baseUrl = typeof window === 'undefined' ? process.env.NEXT_PUBLIC_BASE_URL : '/api/';
+const baseUrl = typeof window === 'undefined' ? process.env.NEXT_PUBLIC_BASE_URL : '/api';
 
 export const apiClient = ky.create({
   prefixUrl: baseUrl,

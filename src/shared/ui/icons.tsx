@@ -17,12 +17,14 @@ import {
   HelpCircle,
   LandPlot,
   MessageSquare,
+  Plus,
   Search,
   Smile,
   ThumbsDown,
   ThumbsUp,
   Users,
   Wallet,
+  X,
 } from 'lucide-react';
 
 type IconProps = React.HTMLAttributes<SVGElement>;
@@ -281,6 +283,8 @@ const Icons = {
   thumbsDown: ThumbsDown,
   messageSquare: MessageSquare,
   chevronRight: ChevronRight,
+  cancel: X,
+  plus: Plus,
 } as const;
 
 export { Icons };

@@ -1,10 +1,9 @@
-'use client';
-
 import { Suspense } from 'react';
 
 import { Toaster } from '@/shared/ui';
 
 import Loading from '../../../public/icons/loading.svg';
+import AppProvider from './_provider';
 
 export default function Layout({
   children,
@@ -18,7 +17,7 @@ export default function Layout({
   footer: React.ReactNode;
 }) {
   return (
-    <>
+    <AppProvider>
       {/* 헤더 */}
       {header}
 
@@ -35,7 +34,7 @@ export default function Layout({
         {footer}
       </div>
       <Toaster />
-    </>
+    </AppProvider>
   );
 }
 

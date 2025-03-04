@@ -1,35 +1,14 @@
-import React from 'react';
+import { Fragment } from 'react';
 
-import { apiClient, type ApiResponse } from '@/shared/api';
 import { CategoryIcon } from '@/shared/components';
 import { cn } from '@/shared/lib';
 import { Separator } from '@/shared/ui';
 
+import { CategoryItem, getCategories } from './api/category';
 import { MenuSection } from './components/MenuSection';
 
-// Types
-interface CategoryItem {
-  categoryCode: string;
-  categoryName: string;
-  href?: string;
-  icon?: React.ReactNode;
-  label?: string;
-}
-
-interface CategoryGroup {
-  majorCategoryName: string;
-  commCategoryCode: string;
-  categoryList: CategoryItem[];
-}
-
-// API Functions
-async function getCategories(): Promise<ApiResponse<CategoryGroup[]>> {
-  return await apiClient.get('mains/categories/all').json();
-}
-
-// Main Sidebar Component
 export default async function Sidebar({ className }: { className?: string }) {
-  const { data } = await getCategories();
+  const { data: categories } = await getCategories();
 
   // 즐겨찾기 더미 데이터
   const favoriteMenus = {
@@ -48,6 +27,7 @@ export default async function Sidebar({ className }: { className?: string }) {
       categoryCode: category.categoryCode,
       categoryName: category.categoryName,
     }));
+
   return (
     <aside
       className={cn(
@@ -64,11 +44,11 @@ export default async function Sidebar({ className }: { className?: string }) {
       <Separator className="my-2" />
 
       {/* 카테고리 메뉴 */}
-      {(data as CategoryGroup[])?.map(category => (
-        <React.Fragment key={category.commCategoryCode}>
+      {categories?.map(category => (
+        <Fragment key={category.commCategoryCode}>
           <MenuSection title={category.majorCategoryName} categoryList={formatCategoryList(category.categoryList)} />
           <Separator className="my-2" />
-        </React.Fragment>
+        </Fragment>
       ))}
     </aside>
   );

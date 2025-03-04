@@ -1,0 +1,1 @@
+export { writeApi } from './write';
