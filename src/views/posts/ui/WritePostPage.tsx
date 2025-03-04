@@ -42,7 +42,9 @@ interface VoteForm {
 }
 
 const MAX_IMAGE_COUNT = 4;
+
 const MAX_TAG_COUNT = 5;
+const MAX_TAG_LENGTH = 10;
 
 const MAX_VOTE_COUNT = 5;
 const MIN_VOTE_COUNT = 2;
@@ -211,7 +213,7 @@ export function WritePostPage() {
       toast({
         variant: 'destructive',
         title: '투표 옵션 제한',
-        description: '투표 옵션은 최대 5개까지만 추가할 수 있습니다.',
+        description: `투표 옵션은 최대 ${MAX_VOTE_COUNT}개까지만 추가할 수 있습니다.`,
         duration: 2000,
       });
       return;
@@ -242,7 +244,7 @@ export function WritePostPage() {
       e.preventDefault();
 
       const newTag = currentTag.trim();
-      if (newTag.length > 10) {
+      if (newTag.length > MAX_TAG_LENGTH) {
         toast({
           variant: 'destructive',
           title: '태그 길이 초과',
@@ -515,7 +517,7 @@ export function WritePostPage() {
                   value={currentTag}
                   onChange={e => setCurrentTag(e.target.value.replace(/^#/, ''))}
                   onKeyDown={handleTagInput}
-                  placeholder={tags.length === 0 ? '# 태그를 입력해주세요 (최대 5개)' : '새 태그 입력'}
+                  placeholder={tags.length === 0 ? `# 태그를 입력해주세요 (최대 ${MAX_TAG_COUNT}개)` : '새 태그 입력'}
                   className="ml-0 w-auto flex-1 border-0 focus-visible:ring-0"
                 />
               )}
