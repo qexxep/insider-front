@@ -410,6 +410,16 @@ export function WritePostPage() {
     }
   };
 
+  // 이미지 삭제 핸들러
+  const handleImageRemove = (index: number) => {
+    setUploadedImages(prev => prev.filter((_, i) => i !== index));
+  };
+
+  // 투표 폼 닫기 핸들러
+  const handleVoteFormClose = () => {
+    setShowVoteForm(false);
+  };
+
   return (
     <div className="mx-auto w-[960px] p-6">
       <div className="flex items-center justify-between">
@@ -517,7 +527,7 @@ export function WritePostPage() {
         {uploadedImages.length > 0 && (
           <PostImagePreview
             uploadedImages={uploadedImages}
-            setUploadedImages={setUploadedImages}
+            onImageRemove={handleImageRemove}
             handleFileUpload={handleFileUpload}
           />
         )}
@@ -527,7 +537,7 @@ export function WritePostPage() {
           <PostVoteForm
             voteForm={voteForm}
             voteCount={voteCount}
-            setShowVoteForm={setShowVoteForm}
+            onClose={handleVoteFormClose}
             handleVoteTitleChange={handleVoteTitleChange}
             handleVoteOptionChange={handleVoteOptionChange}
             handleAddVoteOption={handleAddVoteOption}
@@ -538,12 +548,14 @@ export function WritePostPage() {
     </div>
   );
 }
+
 interface PostImagePreviewProps {
   uploadedImages: UploadedImage[];
-  setUploadedImages: React.Dispatch<React.SetStateAction<UploadedImage[]>>; // 타입 수정
+  onImageRemove: (index: number) => void;
   handleFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
-const PostImagePreview = ({ uploadedImages, setUploadedImages, handleFileUpload }: PostImagePreviewProps) => {
+
+const PostImagePreview = ({ uploadedImages, onImageRemove, handleFileUpload }: PostImagePreviewProps) => {
   return (
     <div className="flex flex-wrap gap-3 rounded-md bg-gray-100 px-10 py-8">
       {uploadedImages.map((image, index) => (
@@ -555,9 +567,7 @@ const PostImagePreview = ({ uploadedImages, setUploadedImages, handleFileUpload 
             className="rounded-md border border-gray-400 object-cover"
           />
           <Button
-            onClick={() => {
-              setUploadedImages((prev: UploadedImage[]) => prev.filter((_, i) => i !== index));
-            }}
+            onClick={() => onImageRemove(index)}
             className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-red-500 p-0 text-white hover:bg-red-600"
           >
             <Icons.cancel width={24} height={24} />
@@ -578,18 +588,19 @@ const PostImagePreview = ({ uploadedImages, setUploadedImages, handleFileUpload 
 };
 
 interface PostVoteFormProps {
-  setShowVoteForm: (state: boolean) => void;
   voteForm: VoteForm;
   voteCount: number;
+  onClose: () => void;
   handleVoteTitleChange: (title: string) => void;
   handleVoteOptionChange: (optionId: number, value: string) => void;
   handleRemoveVoteOption: (optionId: number) => void;
   handleAddVoteOption: () => void;
 }
+
 const PostVoteForm = ({
-  setShowVoteForm,
   voteForm,
   voteCount,
+  onClose,
   handleVoteTitleChange,
   handleVoteOptionChange,
   handleRemoveVoteOption,
@@ -599,7 +610,7 @@ const PostVoteForm = ({
     <Card className="mt-4 bg-gray-100">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
         <CardTitle className="text-xl font-semibold">토론 투표 게시물 작성</CardTitle>
-        <Button onClick={() => setShowVoteForm(false)} variant="ghost" className="h-8 w-8 rounded-full p-0">
+        <Button onClick={onClose} variant="ghost" className="h-8 w-8 rounded-full p-0">
           <Icons.cancel width={24} height={24} />
         </Button>
       </CardHeader>
