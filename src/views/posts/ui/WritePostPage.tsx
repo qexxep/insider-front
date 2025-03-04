@@ -83,6 +83,12 @@ export function WritePostPage() {
       return [...acc, ...group.categoryList];
     }, []) || [];
 
+  // 카테고리 코드를 이름으로 변환하는 함수
+  const getCategoryName = (categoryCode: string): string => {
+    const category = allCategories.find(cat => cat.categoryCode === categoryCode);
+    return category?.categoryName || '';
+  };
+
   // 카테고리 선택시 최초 게시글 생성
   const handleCategorySelect = async (value: string) => {
     setSelectedCategory(value);
@@ -382,12 +388,13 @@ export function WritePostPage() {
       toast({
         title: '게시글 등록 성공',
         description: '게시글이 성공적으로 등록되었습니다.',
-        duration: 1500, // 1.5초 동안 표시
+        duration: 1500,
       });
 
-      // 0.5초 후 게시글 목록 페이지로 이동 (토스트 메시지를 볼 수 있도록)
+      // 카테고리 코드를 이름으로 변환하여 리다이렉트
+      const categoryName = getCategoryName(selectedCategory);
       setTimeout(() => {
-        router.push('/posts');
+        router.push(`/posts/${categoryName}`);
       }, 500);
     } catch (error) {
       console.error('게시글 등록 실패:', error);
@@ -401,6 +408,7 @@ export function WritePostPage() {
     }
   };
 
+  console.log(allCategories.map(category => category.categoryName).filter(name => name === selectedCategory));
   return (
     <div className="mx-auto w-[1200px] p-6">
       <div className="flex items-center justify-between">
