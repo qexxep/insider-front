@@ -41,6 +41,12 @@ interface VoteForm {
   options: VoteOption[];
 }
 
+const MAX_IMAGE_COUNT = 4;
+const MAX_TAG_COUNT = 5;
+
+const MAX_VOTE_COUNT = 5;
+const MIN_VOTE_COUNT = 2;
+
 export function WritePostPage() {
   const router = useRouter();
   const { toast } = useToast();
@@ -185,6 +191,7 @@ export function WritePostPage() {
     ],
   });
 
+  const voteCount = voteForm?.options?.length;
   const handleVoteOptionChange = (id: number, content: string) => {
     setVoteForm(prev => ({
       ...prev,
@@ -200,7 +207,7 @@ export function WritePostPage() {
   };
 
   const handleAddVoteOption = () => {
-    if (voteForm.options.length >= 5) {
+    if (voteCount >= MAX_VOTE_COUNT) {
       toast({
         variant: 'destructive',
         title: '투표 옵션 제한',
@@ -218,7 +225,7 @@ export function WritePostPage() {
   };
 
   const handleRemoveVoteOption = (id: number) => {
-    if (voteForm.options.length > 2) {
+    if (voteCount > MIN_VOTE_COUNT) {
       setVoteForm(prev => ({
         ...prev,
         options: prev.options.filter(option => option.id !== id),
@@ -492,7 +499,7 @@ export function WritePostPage() {
                   </div>
                 )
               )}
-              {tags.length < 5 && editingTagIndex === null && (
+              {tags.length < MAX_TAG_COUNT && editingTagIndex === null && (
                 <Input
                   type="text"
                   value={currentTag}
@@ -519,6 +526,7 @@ export function WritePostPage() {
         {showVoteForm && (
           <PostVoteForm
             voteForm={voteForm}
+            voteCount={voteCount}
             setShowVoteForm={setShowVoteForm}
             handleVoteTitleChange={handleVoteTitleChange}
             handleVoteOptionChange={handleVoteOptionChange}
@@ -556,7 +564,7 @@ const PostImagePreview = ({ uploadedImages, setUploadedImages, handleFileUpload 
           </Button>
         </div>
       ))}
-      {uploadedImages.length < 4 && (
+      {uploadedImages.length < MAX_IMAGE_COUNT && (
         <label
           className="flex h-24 w-24 cursor-pointer items-center justify-center rounded-md border-2 border-dashed border-gray-300 hover:border-gray-400"
           role="button"
@@ -572,6 +580,7 @@ const PostImagePreview = ({ uploadedImages, setUploadedImages, handleFileUpload 
 interface PostVoteFormProps {
   setShowVoteForm: (state: boolean) => void;
   voteForm: VoteForm;
+  voteCount: number;
   handleVoteTitleChange: (title: string) => void;
   handleVoteOptionChange: (optionId: number, value: string) => void;
   handleRemoveVoteOption: (optionId: number) => void;
@@ -580,6 +589,7 @@ interface PostVoteFormProps {
 const PostVoteForm = ({
   setShowVoteForm,
   voteForm,
+  voteCount,
   handleVoteTitleChange,
   handleVoteOptionChange,
   handleRemoveVoteOption,
@@ -625,7 +635,7 @@ const PostVoteForm = ({
                       className="w-full"
                     />
                   </div>
-                  {voteForm.options.length > 2 && (
+                  {voteCount > MIN_VOTE_COUNT && (
                     <Button
                       onClick={() => handleRemoveVoteOption(option.id)}
                       variant="ghost"
@@ -644,10 +654,10 @@ const PostVoteForm = ({
             onClick={handleAddVoteOption}
             variant="outline"
             className="mt-3 w-full border border-[#FF5C00] bg-[#FFF1EA] text-primary hover:bg-primary-500 hover:text-primary-foreground disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-400 disabled:text-primary-foreground"
-            disabled={voteForm.options.length >= 5}
+            disabled={voteCount >= MAX_VOTE_COUNT}
           >
             <Icons.plus width={24} height={24} />
-            투표 내용 옵션 추가 {voteForm.options.length}/5
+            투표 내용 옵션 추가 {voteCount}/{MAX_VOTE_COUNT}
           </Button>
         </div>
       </CardContent>
