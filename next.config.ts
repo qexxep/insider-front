@@ -46,6 +46,17 @@ const nextConfig = {
       },
     },
   },
+  images: {
+    // 추후에 loader로 전환해도 좋을 것 같음.
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'inssider.kro.kr',
+        port: '',
+        pathname: '/files/**',
+      },
+    ],
+  },
 };
 
 module.exports = nextConfig;
