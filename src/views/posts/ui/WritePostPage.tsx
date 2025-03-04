@@ -83,12 +83,6 @@ export function WritePostPage() {
       return [...acc, ...group.categoryList];
     }, []) || [];
 
-  // 카테고리 코드를 이름으로 변환하는 함수
-  const getCategoryName = (categoryCode: string): string => {
-    const category = allCategories.find(cat => cat.categoryCode === categoryCode);
-    return category?.categoryName || '';
-  };
-
   // 카테고리 선택시 최초 게시글 생성
   const handleCategorySelect = async (value: string) => {
     setSelectedCategory(value);
@@ -156,10 +150,13 @@ export function WritePostPage() {
       });
 
       if (result.status === 'SUCCESS') {
+        // /api를 제외한 URL 생성
+        const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.fileUrl}`;
+
         setUploadedImages(prev => [
           ...prev,
           {
-            url: result.data.fileUrl,
+            url: fullFileUrl,
             file,
             fileSeq: result.data.fileSeq,
           },
@@ -391,10 +388,8 @@ export function WritePostPage() {
         duration: 1500,
       });
 
-      // 카테고리 코드를 이름으로 변환하여 리다이렉트
-      const categoryName = getCategoryName(selectedCategory);
       setTimeout(() => {
-        router.push(`/posts/${categoryName}`);
+        router.push(`/posts/${selectedCategory}`);
       }, 500);
     } catch (error) {
       console.error('게시글 등록 실패:', error);
@@ -410,7 +405,7 @@ export function WritePostPage() {
 
   console.log(allCategories.map(category => category.categoryName).filter(name => name === selectedCategory));
   return (
-    <div className="mx-auto w-[1200px] p-6">
+    <div className="mx-auto w-[960px] p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">글쓰기</h1>
         <div className="flex gap-2">
@@ -567,7 +562,7 @@ export function WritePostPage() {
                 <Separator className="mx-auto my-0 w-full opacity-50" />
                 {/* 투표 옵션들 */}
                 <div>
-                  <Label className="mb-2 block hidden">투표 항목</Label>
+                  <Label className="mb-2 hidden">투표 항목</Label>
                   <div className="space-y-3">
                     {voteForm.options.map((option, index) => (
                       <div key={option.id} className="flex items-center gap-2">
