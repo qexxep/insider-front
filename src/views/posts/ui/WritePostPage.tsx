@@ -469,7 +469,7 @@ export function WritePostPage() {
                       setCurrentTag('');
                     }}
                     autoFocus
-                    className="!ml-0 !w-auto min-w-[100px] flex-1 border-0 focus-visible:ring-0"
+                    className="ml-0 w-auto min-w-[100px] flex-1 border-0 focus-visible:ring-0"
                   />
                 ) : (
                   <div
@@ -499,7 +499,7 @@ export function WritePostPage() {
                   onChange={e => setCurrentTag(e.target.value.replace(/^#/, ''))}
                   onKeyDown={handleTagInput}
                   placeholder={tags.length === 0 ? '# 태그를 입력해주세요 (최대 5개)' : '새 태그 입력'}
-                  className="!ml-0 !w-auto flex-1 border-0 focus-visible:ring-0"
+                  className="ml-0 w-auto flex-1 border-0 focus-visible:ring-0"
                 />
               )}
             </div>
