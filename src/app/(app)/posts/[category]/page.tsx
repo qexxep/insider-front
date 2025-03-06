@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 
-import { BestWorstPostInfoType, PostDetailType } from '@/entity/post';
 import { ApiResponse, apiServer } from '@/shared/api';
-import { CategoryPostList } from '@/views/posts';
+import { BestWorstPostInfoType, CategoryPostList, PostListResponse } from '@/views/posts';
 
 interface PageProps {
   params: Promise<{ category: string }>;
@@ -22,11 +21,11 @@ const getBestWorstPostInfo = async (categoryCd: string) => {
   }
 };
 
-const getPostsByCategory = async (categoryCd: string) => {
+const getPostListByCategory = async (categoryCd: string) => {
   const DEFAULT_CURRENT_PAGE = 1;
   const DEFAULT_PAGE_SIZE = 10;
   try {
-    const response: ApiResponse<PostDetailType[]> = await apiServer
+    const response: ApiResponse<PostListResponse> = await apiServer
       .post('posts/list', {
         json: { categoryCd, currPage: DEFAULT_CURRENT_PAGE, pageSize: DEFAULT_PAGE_SIZE },
       })
@@ -45,13 +44,18 @@ export default async function Page({ params }: PageProps) {
   const bestPostInfo = bestWorstPosts?.bestPostInfo ?? null;
   const worstPostInfo = bestWorstPosts?.worstPostInfo ?? null;
 
-  const posts = await getPostsByCategory(category);
+  const postList = await getPostListByCategory(category);
 
-  if (!posts) {
+  if (!postList) {
     notFound();
   }
 
   return (
-    <CategoryPostList category={category} posts={posts} bestPostInfo={bestPostInfo} worstPostInfo={worstPostInfo} />
+    <CategoryPostList
+      category={category}
+      postList={postList}
+      bestPostInfo={bestPostInfo}
+      worstPostInfo={worstPostInfo}
+    />
   );
 }

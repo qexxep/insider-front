@@ -2,27 +2,46 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-import { PostDetailType } from '@/entity/post';
-import { PostPreviewType } from '@/entity/post/model/types';
 import { Badge, Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
 import { CardFooter } from '@/shared/ui/card';
+import { Paginator } from '@/widgets/paginator';
+
+import { PostListResponse } from '../api/types';
+import { PostPreviewType } from '../model/types';
+
+const DEFAULT_CURRENT_PAGE = 1;
+const DEFAULT_PAGE_SIZE = 10;
 
 interface Props {
   category: string;
   bestPostInfo: PostPreviewType | null;
   worstPostInfo: PostPreviewType | null;
-  posts: PostDetailType[];
+  postList: PostListResponse;
 }
 
-export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, posts }: Props) => {
+export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, postList }: Props) => {
+  const { categoryName, posts, totalPostCnt } = postList;
   const router = useRouter();
 
-  console.log('category', category);
-  const categoryName = posts[0]?.categoryName; // todo: api 변경 요청 예정
+  // TODO) React Query 연동
+  const [currentPage, setCurrentPage] = useState(DEFAULT_CURRENT_PAGE);
+  const totalPages = Math.ceil(totalPostCnt / DEFAULT_PAGE_SIZE);
 
   const handlePostClick = (postId: string) => {
     router.push(`/posts/${category}/${postId}`);
+  };
+
+  const onPageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  // 태그 파싱 헬퍼 함수 추가
+  const parsePostTags = (tagString?: string): string[] => {
+    if (!tagString) return [];
+    // '#' 으로 시작하는 태그들을 분리하고, 빈 문자열 제거
+    return tagString.split('#').filter(Boolean);
   };
 
   return (
@@ -34,41 +53,52 @@ export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, posts 
           <span className="rounded-full bg-primary px-4 text-white">필독</span>
           <p className="text-lg">윤대통령, 기시다 후미오 일본 총리 12번째 회담</p>
         </div>
-        <button>더보기</button>
       </div>
       {/* 베스트 워스트 게시물 */}
-      <div className="mb-10 flex gap-7">
-        <Card className="flex w-full flex-col justify-between bg-[#FC6423] text-white">
-          <CardHeader className="pb-3 pt-7">
-            <span className="flex w-fit items-center justify-center gap-1 rounded-[4px] bg-[#FF885F] p-2">
-              <Icons.thumbsUp className="h-4 w-4" />
-              <span>BEST</span>
-            </span>
-          </CardHeader>
-          <CardContent>
-            <h3 className="text-lg font-bold">{bestPostInfo?.postTitle}</h3>
-            <p className="line-clamp-1 font-normal">{bestPostInfo?.previewContent}</p>
-          </CardContent>
-          <CardFooter className="flex items-center justify-center">
-            <Button className="w-full rounded-full bg-white font-bold text-primary">베스트 게시물 보러가기</Button>
-          </CardFooter>
-        </Card>
-        <Card className="white flex w-full flex-col justify-between bg-gray-600 text-white">
-          <CardHeader className="pb-3 pt-7">
-            <span className="flex w-fit items-center justify-center gap-1 rounded-[4px] bg-gray-500 p-2">
-              <Icons.thumbsDown className="h-4 w-4" />
-              <span>WORST</span>
-            </span>
-          </CardHeader>
-          <CardContent>
-            <h3 className="text-lg font-bold">{worstPostInfo?.postTitle}</h3>
-            <p className="line-clamp-1 font-normal">{worstPostInfo?.previewContent}</p>
-          </CardContent>
-          <CardFooter>
-            <Button className="w-full rounded-full bg-white font-bold text-gray-600">워스트 게시물 보러가기</Button>
-          </CardFooter>
-        </Card>
-      </div>
+      {bestPostInfo && worstPostInfo && (
+        <div className="mb-10 flex gap-7">
+          <Card className="flex w-full flex-col justify-between bg-[#FC6423] text-white">
+            <CardHeader className="pb-3 pt-7">
+              <span className="flex w-fit items-center justify-center gap-1 rounded-[4px] bg-[#FF885F] p-2">
+                <Icons.thumbsUp className="h-4 w-4" />
+                <span>BEST</span>
+              </span>
+            </CardHeader>
+            <CardContent>
+              <h3 className="text-lg font-bold">{bestPostInfo.postTitle}</h3>
+              <p className="line-clamp-1 font-normal">{bestPostInfo.previewContent}</p>
+            </CardContent>
+            <CardFooter className="flex items-center justify-center">
+              <Button
+                className="w-full rounded-full bg-white font-bold text-primary"
+                onClick={() => handlePostClick(bestPostInfo.postSeq)}
+              >
+                베스트 게시물 보러가기
+              </Button>
+            </CardFooter>
+          </Card>
+          <Card className="white flex w-full flex-col justify-between bg-gray-600 text-white">
+            <CardHeader className="pb-3 pt-7">
+              <span className="flex w-fit items-center justify-center gap-1 rounded-[4px] bg-gray-500 p-2">
+                <Icons.thumbsDown className="h-4 w-4" />
+                <span>WORST</span>
+              </span>
+            </CardHeader>
+            <CardContent>
+              <h3 className="text-lg font-bold">{worstPostInfo.postTitle}</h3>
+              <p className="line-clamp-1 font-normal">{worstPostInfo.previewContent}</p>
+            </CardContent>
+            <CardFooter>
+              <Button
+                className="w-full rounded-full bg-white font-bold text-gray-600"
+                onClick={() => handlePostClick(worstPostInfo.postSeq)}
+              >
+                워스트 게시물 보러가기
+              </Button>
+            </CardFooter>
+          </Card>
+        </div>
+      )}
       {/* 전체 게시물 */}
       <div className="flex flex-col gap-5">
         <div className="flex items-center justify-between">
@@ -99,7 +129,13 @@ export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, posts 
                 </div>
                 {post.thumbnailPath && (
                   <div>
-                    <Image src={post.thumbnailPath} alt={post.postTitle + 'thumbnail image'} width={64} height={64} />
+                    <Image
+                      // TODO) 프론트엔드 환경에서 이미지 경로 처리
+                      src={'http://inssider.kro.kr' + post.thumbnailPath}
+                      alt={post.postTitle + 'thumbnail image'}
+                      width={64}
+                      height={64}
+                    />
                   </div>
                 )}
               </CardContent>
@@ -119,8 +155,8 @@ export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, posts 
                     <span className="leading-[1] text-gray-700">{post.commentCnt}</span>
                   </div>
                 </div>
-                {['문학', '시집', '소설', '글귀'].map((tag, index) => (
-                  <Badge key={`tag-${index}`} variant="tag" className="truncate">
+                {parsePostTags(post.postTag).map(tag => (
+                  <Badge key={tag} variant="tag" className="truncate">
                     #{tag}
                   </Badge>
                 ))}
@@ -128,6 +164,12 @@ export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, posts 
             </Card>
           ))}
         </div>
+        <Paginator
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={onPageChange}
+          showPreviousNext={true}
+        />
       </div>
     </div>
   );

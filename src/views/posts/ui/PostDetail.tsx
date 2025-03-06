@@ -4,9 +4,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { PostDetailType, PostPreviewType, VoteInfoType } from '@/entity/post';
 import { Badge, Button, Icons } from '@/shared/ui';
 import { Paginator } from '@/widgets';
+
+import { PostDetailType, PostPreviewType, VoteInfoType } from '../model/types';
 
 interface Props {
   post: PostDetailType;
@@ -129,7 +130,7 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
         <ul className="my-7 divide-y divide-[#c8c8c8] border-b border-t border-[#c8c8c8] [&>li]:px-5 [&>li]:py-4">
           {bestPostInfo && (
             <Link
-              href={`/posts/${bestPostInfo.categoryCd}/${bestPostInfo.postSeq}`}
+              href={`/posts/${category}/${bestPostInfo.postSeq}`}
               className="flex items-center justify-between gap-4 bg-[#ffebe0] px-5 py-4"
             >
               <div className="flex items-center gap-12">
@@ -144,7 +145,7 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
           )}
           {worstPostInfo && (
             <Link
-              href={`/posts/${worstPostInfo.categoryCd}/${worstPostInfo.postSeq}`}
+              href={`/posts/${category}/${worstPostInfo.postSeq}`}
               className="flex items-center justify-between gap-4 bg-[#e8e8e8] px-5 py-4"
             >
               <div className="flex items-center gap-12">
@@ -160,7 +161,7 @@ export const PostDetail = ({ post, category, bestPostInfo, worstPostInfo, relati
           {relativePosts.map(relativePost => (
             <Link
               key={relativePost.postSeq}
-              href={`/posts/${relativePost.categoryCd}/${relativePost.postSeq}`}
+              href={`/posts/${category}/${relativePost.postSeq}`}
               className="flex items-center justify-between gap-4 px-5 py-4"
             >
               <div className="flex items-center gap-12">

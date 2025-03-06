@@ -1,8 +1,7 @@
 import { notFound } from 'next/navigation';
 
-import { BestWorstPostInfoType, PostDetailType, PostPreviewType } from '@/entity/post';
 import { ApiResponse, apiServer } from '@/shared/api';
-import { PostDetail } from '@/views/posts';
+import { BestWorstPostInfoType, PostDetail, PostDetailType, PostPreviewType } from '@/views/posts';
 
 interface PageProps {
   params: Promise<{ category: string; postId: string }>;

@@ -38,8 +38,6 @@ export interface PostDetailType {
 
 export interface PostPreviewType {
   postSeq: string;
-  categoryCd: string;
-  categoryName: string;
   postTitle: string;
   previewContent: string;
   viewCnt: number;
@@ -47,13 +45,16 @@ export interface PostPreviewType {
   unlikeCnt: number;
   commentCnt: number;
   postTag: string;
-  thumbnailPath: number;
+  thumbnailPath?: string;
+  nickname: string;
+  personaImage: string;
   regId: number;
   regDate: number;
   regTime: number;
   updId: number;
   updDate: number;
   updTime: number;
+  owner: boolean;
 }
 
 export interface BestWorstPostInfoType {

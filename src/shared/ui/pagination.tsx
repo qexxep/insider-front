@@ -51,16 +51,28 @@ const PaginationLink = ({ className, isActive, size = 'icon', disabled = false, 
 );
 PaginationLink.displayName = 'PaginationLink';
 
-const PaginationPrevious = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to previous page" size="icon" className={cn('[&_svg]:size-6', className)} {...props}>
-    <ChevronLeft className="text-primary" />
+const PaginationPrevious = ({ className, disabled, ...props }: React.ComponentProps<typeof PaginationLink>) => (
+  <PaginationLink
+    aria-label="Go to previous page"
+    size="icon"
+    className={cn('[&_svg]:size-6', className)}
+    disabled={disabled}
+    {...props}
+  >
+    <ChevronLeft className={cn(disabled ? 'text-gray-400' : 'text-primary')} />
   </PaginationLink>
 );
 PaginationPrevious.displayName = 'PaginationPrevious';
 
-const PaginationNext = ({ className, ...props }: React.ComponentProps<typeof PaginationLink>) => (
-  <PaginationLink aria-label="Go to next page" size="icon" className={cn('[&_svg]:size-6', className)} {...props}>
-    <ChevronRight className="text-primary" />
+const PaginationNext = ({ className, disabled, ...props }: React.ComponentProps<typeof PaginationLink>) => (
+  <PaginationLink
+    aria-label="Go to next page"
+    size="icon"
+    className={cn('[&_svg]:size-6', className)}
+    disabled={disabled}
+    {...props}
+  >
+    <ChevronRight className={cn(disabled ? 'text-gray-400' : 'text-primary')} />
   </PaginationLink>
 );
 PaginationNext.displayName = 'PaginationNext';
