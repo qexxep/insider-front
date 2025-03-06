@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
 import { ApiResponse, apiServer } from '@/shared/api';
-import { BestWorstPostInfoType, CategoryPostList, PostListResponse } from '@/views/posts';
+import { BestWorstPostInfoResponse, CategoryPostList, PostListResponse } from '@/views/posts';
 
 interface PageProps {
   params: Promise<{ category: string }>;
@@ -9,7 +9,7 @@ interface PageProps {
 
 const getBestWorstPostInfo = async (categoryCd: string) => {
   try {
-    const response: ApiResponse<BestWorstPostInfoType> = await apiServer
+    const response: ApiResponse<BestWorstPostInfoResponse> = await apiServer
       .post('posts/list/best-worst', {
         json: { categoryCd },
       })

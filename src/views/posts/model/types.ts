@@ -11,6 +11,7 @@ export interface VoteInfoType {
 
 export interface PostDetailType {
   postSeq: string;
+  categoryCd: string;
   categoryName: string;
   postStatus: string;
   postTitle: string;
@@ -21,19 +22,53 @@ export interface PostDetailType {
   commentCnt: number;
   isVote: number;
   voteTitle: string;
-  voteInfo: VoteInfoType | string;
+  voteInfo: VoteInfoType; // TODO) string인 경우 처리 필요
   postTag: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  commentInfo: any[]; // 댓글 타입이 정해지면 수정
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fileList: any[];
+  commentInfo: CommentInfoType;
+  fileList: FileType[];
+  nickname: string;
+  personaImage: string;
   regId: string;
   regDate: string;
   regTime: string;
   updId: string;
   updDate: string;
   updTime: string;
-  thumbnailPath?: string;
+  owner: boolean;
+}
+
+export interface CommentInfoType {
+  totalCommentCnt: number;
+  parentCommentCnt: number;
+  comments: CommentType[];
+}
+
+export interface CommentType {
+  commentSeq: string;
+  upCommentSeq: string;
+  comment: string;
+  commentStatus: string;
+  mentiUserId: string;
+  likeCnt: number;
+  unlikeCnt: number;
+  commentCnt: number;
+  nickname: string;
+  personaImage: string;
+  regId: string;
+  regDate: string;
+  regTime: string;
+  updId: string;
+  updDate: string;
+  updTime: string;
+  childComments: CommentType[];
+  owner: boolean;
+}
+
+export interface FileType {
+  fileSeq: string;
+  filePath: string;
+  fileUrl: string;
+  fileName: string;
 }
 
 export interface PostPreviewType {
@@ -55,9 +90,4 @@ export interface PostPreviewType {
   updDate: number;
   updTime: number;
   owner: boolean;
-}
-
-export interface BestWorstPostInfoType {
-  bestPostInfo: PostPreviewType;
-  worstPostInfo: PostPreviewType;
 }
