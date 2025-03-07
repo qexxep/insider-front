@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { CommentCard, CommentComposer } from '@/feature/comment';
 import { Badge, Button, Carousel, CarouselContent, CarouselItem, Icons } from '@/shared/ui';
 import { Paginator } from '@/widgets';
 
@@ -31,7 +32,6 @@ export const PostDetail = ({
   currentPage = 1,
 }: Props) => {
   const { voteInfo, fileList, commentInfo } = post;
-  console.log(commentInfo);
 
   const router = useRouter();
   const [page, setPage] = useState(currentPage);
@@ -150,8 +150,21 @@ export const PostDetail = ({
       )}
       <div className="mb-4 h-5 w-full bg-gray-100" />
       <div>
-        <div>댓글 목록</div>
-        <div>댓글 작성</div>
+        <div className="flex items-center justify-between px-5">
+          <h2 className="text-xl text-gray-600">
+            댓글 <span className="text-primary">{post.commentCnt}</span>
+          </h2>
+          <Button variant="ghost" className="flex gap-1 px-3">
+            등록순
+            <Icons.chevronDown className="h-5 w-5 text-primary" />
+          </Button>
+        </div>
+        <CommentComposer postSeq={post.postSeq} />
+        <div className="divide-y divide-[#D4D4D4]">
+          {commentInfo.comments.map(comment => (
+            <CommentCard key={comment.commentSeq} postSeq={post.postSeq} comment={comment} />
+          ))}
+        </div>
       </div>
       {/* 인싸이더 다른 게시물 */}
       {relativePostList && (

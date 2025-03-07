@@ -56,6 +56,7 @@ const nextConfig = {
         pathname: '/files/**',
       },
     ],
+    domains: ['inssider.kro.kr'],
   },
 };
 

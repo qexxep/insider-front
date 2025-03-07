@@ -2,11 +2,13 @@ import {
   ArrowBigUp,
   ArrowUpDown,
   Bell,
+  ChevronDown,
   ChevronRight,
   ChevronUp,
   Circle,
   CircleUser,
   Clock,
+  CornerDownRight,
   Diamond,
   Eye,
   MessageSquare,
@@ -532,8 +534,10 @@ const Icons = {
   thumbsDown: ThumbsDown,
   messageSquare: MessageSquare,
   chevronRight: ChevronRight,
+  chevronDown: ChevronDown,
   cancel: X,
   plus: Plus,
+  cornerDownRight: CornerDownRight,
 } as const;
 
 export { Icons };

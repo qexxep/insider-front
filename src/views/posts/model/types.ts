@@ -1,3 +1,5 @@
+import { CommentInfoType } from '@/feature/comment';
+
 export interface VoteItemType {
   itemTitle: string;
   voteCount: number;
@@ -34,33 +36,6 @@ export interface PostDetailType {
   updId: string;
   updDate: string;
   updTime: string;
-  owner: boolean;
-}
-
-export interface CommentInfoType {
-  totalCommentCnt: number;
-  parentCommentCnt: number;
-  comments: CommentType[];
-}
-
-export interface CommentType {
-  commentSeq: string;
-  upCommentSeq: string;
-  comment: string;
-  commentStatus: string;
-  mentiUserId: string;
-  likeCnt: number;
-  unlikeCnt: number;
-  commentCnt: number;
-  nickname: string;
-  personaImage: string;
-  regId: string;
-  regDate: string;
-  regTime: string;
-  updId: string;
-  updDate: string;
-  updTime: string;
-  childComments: CommentType[];
   owner: boolean;
 }
 
