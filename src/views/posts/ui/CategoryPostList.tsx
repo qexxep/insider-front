@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { Badge, Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
 import { CardFooter } from '@/shared/ui/card';
@@ -19,28 +19,19 @@ interface Props {
 export const CategoryPostList = ({ category }: Props) => {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(DEFAULT_CURRENT_PAGE);
-  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const { data: relativePostListData, isLoading: isPostsLoading } = useGetCategoryPostList({
+    categoryCd: category,
+    currPage: currentPage,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+  const { data: bestWorstPostsData, isLoading: isBestWorstLoading } = useGetBestWorstPostInfo({
+    categoryCd: category,
+  });
 
-  const { data: relativePostListData } = useGetCategoryPostList(
-    {
-      categoryCd: category,
-      currPage: currentPage,
-      pageSize: DEFAULT_PAGE_SIZE,
-    },
-    {
-      enabled: mounted,
-    }
-  );
-  const { data: bestWorstPostsData } = useGetBestWorstPostInfo(
-    { categoryCd: category },
-    {
-      enabled: mounted,
-    }
-  );
+  if (isPostsLoading || isBestWorstLoading) {
+    return null;
+  }
 
   if (!relativePostListData || !bestWorstPostsData) {
     throw new Error('Post not found');
@@ -65,8 +56,6 @@ export const CategoryPostList = ({ category }: Props) => {
     // '#' 으로 시작하는 태그들을 분리하고, 빈 문자열 제거
     return tagString.split('#').filter(Boolean);
   };
-
-  if (!mounted) return null;
 
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">

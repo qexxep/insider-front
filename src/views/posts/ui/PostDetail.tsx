@@ -20,6 +20,8 @@ interface Props {
 const DEFAULT_PAGE_SIZE = 10;
 
 export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
+  const [page, setPage] = useState(currentPage);
+
   const { data: postData } = useGetPostDetail({ postSeq: postId });
   const { data: commentsData } = useCommentList({
     postSeq: postId,
@@ -30,7 +32,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
   const { data: bestWorstPostsData } = useGetBestWorstPostInfo({ categoryCd: category });
   const { data: relativePostListData } = useGetCategoryPostList({
     categoryCd: category,
-    currPage: currentPage,
+    currPage: page,
     pageSize: DEFAULT_PAGE_SIZE,
   });
 
@@ -44,7 +46,6 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
   const bestWorstPosts = bestWorstPostsData.data;
 
   const router = useRouter();
-  const [page, setPage] = useState(currentPage);
 
   const totalPages = Math.ceil(totalPostCnt / DEFAULT_PAGE_SIZE);
 
