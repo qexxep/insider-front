@@ -1,61 +1,31 @@
 import { notFound } from 'next/navigation';
 
-import { ApiResponse, apiServer } from '@/shared/api';
-import { BestWorstPostInfoResponse, CategoryPostList, PostListResponse } from '@/views/posts';
+import {
+  CategoryPostList,
+  DEFAULT_CURRENT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  getBestWorstPostInfo,
+  getPostListByCategory,
+} from '@/views/posts';
 
 interface PageProps {
   params: Promise<{ category: string }>;
 }
 
-const getBestWorstPostInfo = async (categoryCd: string) => {
-  try {
-    const response: ApiResponse<BestWorstPostInfoResponse> = await apiServer
-      .post('posts/list/best-worst', {
-        json: { categoryCd },
-      })
-      .json();
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch post:', error);
-    return null;
-  }
-};
-
-const getPostListByCategory = async (categoryCd: string) => {
-  const DEFAULT_CURRENT_PAGE = 1;
-  const DEFAULT_PAGE_SIZE = 10;
-  try {
-    const response: ApiResponse<PostListResponse> = await apiServer
-      .post('posts/list', {
-        json: { categoryCd, currPage: DEFAULT_CURRENT_PAGE, pageSize: DEFAULT_PAGE_SIZE },
-      })
-      .json();
-    return response.data;
-  } catch (error) {
-    console.error('Failed to fetch post:', error);
-    return null;
-  }
-};
-
 export default async function Page({ params }: PageProps) {
   const { category } = await params;
 
-  const bestWorstPosts = await getBestWorstPostInfo(category);
-  const bestPostInfo = bestWorstPosts?.bestPostInfo ?? null;
-  const worstPostInfo = bestWorstPosts?.worstPostInfo ?? null;
+  const bestWorstPosts = await getBestWorstPostInfo({ categoryCd: category });
 
-  const postList = await getPostListByCategory(category);
+  const postListResponse = await getPostListByCategory({
+    categoryCd: category,
+    currPage: DEFAULT_CURRENT_PAGE,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
 
-  if (!postList) {
+  if (!postListResponse.data) {
     notFound();
   }
 
-  return (
-    <CategoryPostList
-      category={category}
-      postList={postList}
-      bestPostInfo={bestPostInfo}
-      worstPostInfo={worstPostInfo}
-    />
-  );
+  return <CategoryPostList category={category} postList={postListResponse.data} bestWorstPosts={bestWorstPosts.data} />;
 }

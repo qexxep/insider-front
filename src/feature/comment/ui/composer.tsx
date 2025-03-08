@@ -31,7 +31,7 @@ export const Composer = ({ className, postSeq, mentiUser, onCancel }: Props) => 
     <div
       className={cn('mb-8 flex flex-col rounded-lg border-[2px] border-gray-300 bg-background px-5 py-4', className)}
     >
-      {mentiUser && <span className="ml-[13px] mt-[9px] whitespace-nowrap text-primary">@{mentiUser.nickname}</span>}
+      {mentiUser && <span className="ml-[13px] mt-[9px] whitespace-nowrap text-[#1888FF]">@{mentiUser.nickname}</span>}
       <div className="flex">
         <Textarea
           value={comment}

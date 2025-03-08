@@ -9,28 +9,20 @@ import { CommentCard, CommentComposer } from '@/feature/comment';
 import { Badge, Button, Carousel, CarouselContent, CarouselItem, Icons } from '@/shared/ui';
 import { Paginator } from '@/widgets';
 
-import { PostListResponse } from '../api/types';
-import { PostDetailType, PostPreviewType } from '../model/types';
+import { BestWorstPostInfoResponse, PostListResponse } from '../api/types';
+import { PostDetailType } from '../model/types';
 
 interface Props {
   post: PostDetailType;
   category: string;
-  bestPostInfo: PostPreviewType | null;
-  worstPostInfo: PostPreviewType | null;
+  bestWorstPosts: BestWorstPostInfoResponse;
   relativePostList: PostListResponse | null;
   currentPage?: number;
 }
 
 const DEFAULT_PAGE_SIZE = 10;
 
-export const PostDetail = ({
-  post,
-  category,
-  bestPostInfo,
-  worstPostInfo,
-  relativePostList,
-  currentPage = 1,
-}: Props) => {
+export const PostDetail = ({ post, category, bestWorstPosts, relativePostList, currentPage = 1 }: Props) => {
   const { voteInfo, fileList, commentInfo } = post;
 
   const router = useRouter();
@@ -171,34 +163,34 @@ export const PostDetail = ({
         <div className="pt-20">
           <h2 className="text-2xl font-bold text-gray-700">인싸이더 게시물</h2>
           <ul className="my-7 divide-y divide-[#c8c8c8] border-b border-t border-[#c8c8c8] [&>li]:px-5 [&>li]:py-4">
-            {bestPostInfo && (
+            {bestWorstPosts.bestPostInfo && (
               <Link
-                href={`/posts/${category}/${bestPostInfo.postSeq}`}
+                href={`/posts/${category}/${bestWorstPosts.bestPostInfo.postSeq}`}
                 className="flex items-center justify-between gap-4 bg-[#ffebe0] px-5 py-4"
               >
                 <div className="flex items-center gap-12">
                   <span className="rounded-full bg-[#ff5c00] px-[10px] font-semibold leading-7 text-white">베스트</span>
                   <p className="text-lg text-gray-700">
-                    {bestPostInfo.postTitle}
-                    <span className="ml-2 font-medium text-[#969696]">[{bestPostInfo.commentCnt}]</span>
+                    {bestWorstPosts.bestPostInfo.postTitle}
+                    <span className="ml-2 font-medium text-[#969696]">[{bestWorstPosts.bestPostInfo.commentCnt}]</span>
                   </p>
                 </div>
-                <span className="whitespace-nowrap text-gray-700">{bestPostInfo.updDate}</span>
+                <span className="whitespace-nowrap text-gray-700">{bestWorstPosts.bestPostInfo.updDate}</span>
               </Link>
             )}
-            {worstPostInfo && (
+            {bestWorstPosts.worstPostInfo && (
               <Link
-                href={`/posts/${category}/${worstPostInfo.postSeq}`}
+                href={`/posts/${category}/${bestWorstPosts.worstPostInfo.postSeq}`}
                 className="flex items-center justify-between gap-4 bg-[#e8e8e8] px-5 py-4"
               >
                 <div className="flex items-center gap-12">
                   <span className="rounded-full bg-black px-[10px] font-semibold leading-7 text-white">워스트</span>
                   <p className="text-lg text-gray-700">
-                    {worstPostInfo.postTitle}
-                    <span className="ml-2 font-medium text-[#969696]">[{worstPostInfo.commentCnt}]</span>
+                    {bestWorstPosts.worstPostInfo.postTitle}
+                    <span className="ml-2 font-medium text-[#969696]">[{bestWorstPosts.worstPostInfo.commentCnt}]</span>
                   </p>
                 </div>
-                <span className="whitespace-nowrap text-gray-700">{worstPostInfo.updDate}</span>
+                <span className="whitespace-nowrap text-gray-700">{bestWorstPosts.worstPostInfo.updDate}</span>
               </Link>
             )}
             {relativePostList.posts.map(relativePost => (

@@ -1,3 +1,5 @@
+import { createApiClient } from './apiClient';
+
 export { apiClient } from './client';
 export { apiServer } from './server';
 export type { ApiResponse } from './types';
@@ -8,3 +10,10 @@ export { DEFAULT_MUTATION_OPTIONS, DEFAULT_QUERY_OPTIONS, ENV_SPECIFIC_OPTIONS }
 export { QUERY_KEYS } from './query/keys';
 export { useCommonMutation } from './query/mutation';
 export { useCommonQuery } from './query/query';
+
+// --- REFACTORING ---- //
+const baseUrl = typeof window === 'undefined' ? process.env.NEXT_PUBLIC_BASE_URL : '/api';
+
+export const baseApi = createApiClient({
+  baseUrl: baseUrl!,
+});

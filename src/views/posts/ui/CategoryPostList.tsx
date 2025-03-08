@@ -8,20 +8,18 @@ import { Badge, Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui
 import { CardFooter } from '@/shared/ui/card';
 import { Paginator } from '@/widgets/paginator';
 
-import { PostListResponse } from '../api/types';
-import { PostPreviewType } from '../model/types';
+import { BestWorstPostInfoResponse, PostListResponse } from '../api/types';
 
 const DEFAULT_CURRENT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
 
 interface Props {
   category: string;
-  bestPostInfo: PostPreviewType | null;
-  worstPostInfo: PostPreviewType | null;
+  bestWorstPosts: BestWorstPostInfoResponse;
   postList: PostListResponse;
 }
 
-export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, postList }: Props) => {
+export const CategoryPostList = ({ category, bestWorstPosts, postList }: Props) => {
   const { categoryName, posts, totalPostCnt } = postList;
   const router = useRouter();
 
@@ -55,7 +53,7 @@ export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, postLi
         </div>
       </div>
       {/* 베스트 워스트 게시물 */}
-      {bestPostInfo && worstPostInfo && (
+      {bestWorstPosts && (
         <div className="mb-10 flex gap-7">
           <Card className="flex w-full flex-col justify-between bg-[#FC6423] text-white">
             <CardHeader className="pb-3 pt-7">
@@ -65,13 +63,13 @@ export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, postLi
               </span>
             </CardHeader>
             <CardContent>
-              <h3 className="text-lg font-bold">{bestPostInfo.postTitle}</h3>
-              <p className="line-clamp-1 font-normal">{bestPostInfo.previewContent}</p>
+              <h3 className="text-lg font-bold">{bestWorstPosts.bestPostInfo.postTitle}</h3>
+              <p className="line-clamp-1 font-normal">{bestWorstPosts.bestPostInfo.previewContent}</p>
             </CardContent>
             <CardFooter className="flex items-center justify-center">
               <Button
                 className="w-full rounded-full bg-white font-bold text-primary"
-                onClick={() => handlePostClick(bestPostInfo.postSeq)}
+                onClick={() => handlePostClick(bestWorstPosts.bestPostInfo.postSeq)}
               >
                 베스트 게시물 보러가기
               </Button>
@@ -85,13 +83,13 @@ export const CategoryPostList = ({ category, bestPostInfo, worstPostInfo, postLi
               </span>
             </CardHeader>
             <CardContent>
-              <h3 className="text-lg font-bold">{worstPostInfo.postTitle}</h3>
-              <p className="line-clamp-1 font-normal">{worstPostInfo.previewContent}</p>
+              <h3 className="text-lg font-bold">{bestWorstPosts.worstPostInfo.postTitle}</h3>
+              <p className="line-clamp-1 font-normal">{bestWorstPosts.worstPostInfo.previewContent}</p>
             </CardContent>
             <CardFooter>
               <Button
                 className="w-full rounded-full bg-white font-bold text-gray-600"
-                onClick={() => handlePostClick(worstPostInfo.postSeq)}
+                onClick={() => handlePostClick(bestWorstPosts.worstPostInfo.postSeq)}
               >
                 워스트 게시물 보러가기
               </Button>
