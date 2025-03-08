@@ -15,10 +15,11 @@ export default async function Sidebar({ className }: { className?: string }) {
     majorCategoryNm: '즐겨찾기 게시판',
     categoryList: [
       { categoryCode: '003001', categoryName: '취업' },
-      { categoryCode: '003002', categoryName: '연예' },
+      { categoryCode: '003002', categoryName: '연애' },
     ],
   };
 
+  console.log(categories);
   // 즐겨찾기 카테고리 코드 Set 생성
   const favoriteCategoryCodes = new Set(favoriteMenus.categoryList.map(cat => cat.categoryCode));
 
