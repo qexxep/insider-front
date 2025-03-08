@@ -28,10 +28,6 @@ export default {
           300: 'var(--primary-300)',
           400: 'var(--primary-400)',
           500: 'var(--primary-500)',
-          600: 'var(--primary-600)',
-          700: 'var(--primary-700)',
-          800: 'var(--primary-800)',
-          900: 'var(--primary-900)',
         },
         gray: {
           DEFAULT: 'var(--gray-500)',
@@ -42,8 +38,6 @@ export default {
           500: 'var(--gray-500)',
           600: 'var(--gray-600)',
           700: 'var(--gray-700)',
-          800: 'var(--gray-800)',
-          900: 'var(--gray-900)',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -80,13 +74,6 @@ export default {
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
-        },
-        button: {
-          enabled: 'var(--button-enabled)',
-          disabled: 'var(--button-disabled)',
-          hover: 'var(--button-hover)',
-          pressed: 'var(--button-pressed)',
-          loading: 'var(--button-loading)',
         },
       },
       keyframes: {

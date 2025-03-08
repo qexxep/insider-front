@@ -10,11 +10,11 @@ export function CategoryPostCard({ data }: { data: CategoryInfo }) {
     <Card key={data.categoryCode}>
       <CardHeader className="flex flex-row items-center justify-between px-3 pb-0 pt-2">
         <CardTitle className="text-md flex items-center gap-2 text-orange-500">
-          <CategoryIcon categoryName={data.categoryName} />
+          <CategoryIcon categoryName={data.categoryName} className="text-orange-500" />
           <span>{data.categoryName}</span>
         </CardTitle>
         <Link href={`/posts/${data.categoryCode}`}>
-          <Button variant="ghost" className="!mt-0 h-5 justify-end p-2 !text-right text-sm text-gray-400">
+          <Button variant="ghost" className="text-gray-[#242424] !mt-0 h-5 justify-end p-2 !text-right text-sm">
             더보기 &gt;
           </Button>
         </Link>
