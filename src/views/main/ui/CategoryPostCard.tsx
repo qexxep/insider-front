@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { CategoryIcon } from '@/shared/components';
 import { Button, Card, CardContent, CardHeader, CardTitle, Icons } from '@/shared/ui';
 
@@ -11,14 +13,20 @@ export function CategoryPostCard({ data }: { data: CategoryInfo }) {
           <CategoryIcon categoryName={data.categoryName} />
           <span>{data.categoryName}</span>
         </CardTitle>
-        <Button variant="ghost" className="!mt-0 h-5 justify-end p-2 !text-right text-sm text-gray-400">
-          더보기 &gt;
-        </Button>
+        <Link href={`/posts/${data.categoryCode}`}>
+          <Button variant="ghost" className="!mt-0 h-5 justify-end p-2 !text-right text-sm text-gray-400">
+            더보기 &gt;
+          </Button>
+        </Link>
       </CardHeader>
       <CardContent className="p-2 px-3">
         <div className="space-y-1">
           {data.recentPostList.map(post => (
-            <div key={post.postSeq} className="flex justify-between border-b py-2 last:border-0">
+            <Link
+              key={post.postSeq}
+              href={`/posts/${data.categoryCode}/${post.postSeq}`}
+              className="flex justify-between border-b py-2 last:border-0 hover:bg-gray-50"
+            >
               <span className="text-sm">{post.postTitle}</span>
               <div className="flex items-center gap-3 text-sm text-gray-500">
                 <span className="flex items-center gap-1">
@@ -30,7 +38,7 @@ export function CategoryPostCard({ data }: { data: CategoryInfo }) {
                   {post.commentCnt}
                 </span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </CardContent>

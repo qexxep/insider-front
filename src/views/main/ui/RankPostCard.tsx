@@ -1,10 +1,15 @@
+import Link from 'next/link';
+
 import { Icons } from '@/shared/ui';
 
 import { InsiderRanking } from '../api/insider';
 
 export function RankPostCard({ data }: { data: InsiderRanking }) {
   return (
-    <div key={data.postSeq} className="flex items-center gap-4 border-b border-[#d4d4d4] px-2 py-4">
+    <Link
+      href={`/posts/${data.categoryCd}/${data.postSeq}`}
+      className="flex items-center gap-4 border-b border-[#d4d4d4] px-2 py-4 hover:bg-gray-50"
+    >
       <span className="text-md w-6 self-start font-bold text-orange-500">{data.rankNum}</span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
@@ -32,6 +37,6 @@ export function RankPostCard({ data }: { data: InsiderRanking }) {
         <span className="text-sm font-bold text-gray-600">{data.commentCnt}</span>
         <span className="text-xs text-gray-500">댓글</span>
       </div>
-    </div>
+    </Link>
   );
 }
