@@ -25,12 +25,12 @@ const RankIcons = {
   },
 } as const;
 const RANK_COLORS = {
-  1: 'bg-primary-600',
-  2: 'bg-primary-500',
-  3: 'bg-primary-400',
-  4: 'bg-primary-600',
-  5: 'bg-primary-500',
-  6: 'bg-primary-400',
+  1: 'bg-[#FC6423]',
+  2: 'bg-[#FF7E3D]',
+  3: 'bg-[#FFA375]',
+  4: 'bg-[#FC6423]',
+  5: 'bg-[#FF7E3D]',
+  6: 'bg-[#FFA375]',
 } as const;
 const DISCUSSION_ITEMS = [
   {
