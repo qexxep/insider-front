@@ -26,3 +26,11 @@ export interface PostDetailRequest {
 }
 
 export type PostDetailResponse = PostDetailType;
+
+export interface PostReactionRequest {
+  postSeq: string;
+  reactionType: 'like' | 'unlike';
+  actionType: 'add' | 'remove' | 'toggle';
+}
+
+export type PostReactionResponse = void;

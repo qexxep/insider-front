@@ -1,14 +1,19 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { QUERY_CONFIG, QueryConfig } from '@/shared/lib';
+import { ApiResponse } from '@/shared/api/types';
+import { MutationConfig, QUERY_CONFIG, QueryConfig } from '@/shared/lib';
 
 import { commentReaction, createComment, deleteComment, getCommentList, updateComment } from './commentApi';
 import {
   CommentListRequest,
   CommentReactionRequest,
+  CommentReactionResponse,
   CreateCommentRequest,
+  CreateCommentResponse,
   DeleteCommentRequest,
+  DeleteCommentResponse,
   UpdateCommentRequest,
+  UpdateCommentResponse,
 } from './type';
 
 export const queryKeys = {
@@ -31,38 +36,38 @@ export const useCommentList = (data: CommentListRequest, config?: QueryConfig) =
   });
 };
 
-export const useCreateComment = (data: CreateCommentRequest, config?: QueryConfig) => {
+export const useCreateComment = (
+  config?: MutationConfig<ApiResponse<CreateCommentResponse>, Error, CreateCommentRequest>
+) => {
   return useMutation({
-    mutationKey: queryKeys.comments.create(data),
-    mutationFn: () => createComment(data),
-    ...QUERY_CONFIG.REGULAR,
+    mutationFn: (data: CreateCommentRequest) => createComment(data),
     ...config,
   });
 };
 
-export const useDeleteComment = (data: DeleteCommentRequest, config?: QueryConfig) => {
+export const useDeleteComment = (
+  config?: MutationConfig<ApiResponse<DeleteCommentResponse>, Error, DeleteCommentRequest>
+) => {
   return useMutation({
-    mutationKey: queryKeys.comments.delete(data),
-    mutationFn: () => deleteComment(data),
-    ...QUERY_CONFIG.REGULAR,
+    mutationFn: (data: DeleteCommentRequest) => deleteComment(data),
     ...config,
   });
 };
 
-export const useUpdateComment = (data: UpdateCommentRequest, config?: QueryConfig) => {
+export const useUpdateComment = (
+  config?: MutationConfig<ApiResponse<UpdateCommentResponse>, Error, UpdateCommentRequest>
+) => {
   return useMutation({
-    mutationKey: queryKeys.comments.update(data),
-    mutationFn: () => updateComment(data),
-    ...QUERY_CONFIG.REGULAR,
+    mutationFn: (data: UpdateCommentRequest) => updateComment(data),
     ...config,
   });
 };
 
-export const useCommentReaction = (data: CommentReactionRequest, config?: QueryConfig) => {
+export const useCommentReaction = (
+  config?: MutationConfig<ApiResponse<CommentReactionResponse>, Error, CommentReactionRequest>
+) => {
   return useMutation({
-    mutationKey: queryKeys.comments.reaction(data),
-    mutationFn: () => commentReaction(data),
-    ...QUERY_CONFIG.REGULAR,
+    mutationFn: (data: CommentReactionRequest) => commentReaction(data),
     ...config,
   });
 };

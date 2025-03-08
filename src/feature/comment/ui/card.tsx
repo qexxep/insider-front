@@ -1,13 +1,23 @@
+'use client';
+
 import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 
 import { PersonalityIcon } from '@/feature/personality';
+import { invalidateQueries } from '@/shared/lib/tanstack-query/utils';
 import { cn } from '@/shared/lib/tw-utils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button, Icons } from '@/shared/ui';
 
+import { useDeleteComment } from '../api/queries';
 import { CommentType } from '../model/types';
 import { Composer } from './composer';
+
+interface MentiUser {
+  regId: string;
+  commentSeq: string;
+  nickname: string;
+}
 
 interface Props {
   postSeq: string;
@@ -18,17 +28,15 @@ interface Props {
 export const Card = ({ postSeq, comment, parent }: Props) => {
   const [openCommentId, setOpenCommentId] = useState<string>();
   const [isReply, setIsReply] = useState(false);
-  const [mentiUser, setMentiUser] = useState<{
-    regId: string;
-    commentSeq: string;
-    nickname: string;
-  }>();
+  const [target, setTarget] = useState<MentiUser>();
+
+  const { mutate: deleteComment } = useDeleteComment();
 
   const onClickReply = () => {
     setOpenCommentId(comment.commentSeq);
     setIsReply(true);
     if (parent) {
-      setMentiUser({
+      setTarget({
         regId: comment.regId,
         commentSeq: comment.commentSeq,
         nickname: comment.nickname,
@@ -39,7 +47,18 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
   const toggleReply = (value: string | undefined) => {
     setOpenCommentId(value);
     setIsReply(false);
-    setMentiUser(undefined);
+    setTarget(undefined);
+  };
+
+  const handleDeleteComment = () => {
+    deleteComment(
+      { commentSeq: comment.commentSeq },
+      {
+        onSuccess: () => {
+          invalidateQueries.comments.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'D' });
+        },
+      }
+    );
   };
 
   return (
@@ -51,6 +70,8 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
       )}
       <div className="flex w-full flex-col gap-2">
         <div className="flex items-center gap-1">
+          {/* TODO) nickname으로 변경 필요 */}
+          {comment.mentiUserId && <span className="text-primary">@{comment.mentiUserId}</span>}
           <div className="flex items-center gap-2">
             <PersonalityIcon code={'CSEM'} />
             <span>{comment.nickname}</span>
@@ -79,7 +100,11 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
           </button>
           {comment.owner && (
             <div className="flex gap-3">
-              <Button variant="link" className="h-fit p-0 text-primary-500 underline underline-offset-2">
+              <Button
+                variant="link"
+                className="h-fit p-0 text-primary-500 underline underline-offset-2"
+                onClick={handleDeleteComment}
+              >
                 댓글 삭제하기
               </Button>
               <Button variant="link" className="h-fit p-0 text-primary-500 underline underline-offset-2">
@@ -89,7 +114,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
           )}
         </div>
         {comment.childComments.length > 0 && (
-          <Accordion type="single" value={openCommentId} onValueChange={toggleReply} collapsible className="w-fit">
+          <Accordion type="single" value={openCommentId} onValueChange={toggleReply} collapsible className="w-full">
             <AccordionItem value={comment.commentSeq} className="border-none p-0">
               <AccordionTrigger
                 iconPosition="left"
@@ -111,10 +136,11 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
           <Composer
             className="mb-0"
             postSeq={postSeq}
-            mentiUser={mentiUser}
+            upCommentSeq={parent ? parent.commentSeq : comment.commentSeq}
+            mentiUser={target}
             onCancel={() => {
               setIsReply(false);
-              setMentiUser(undefined);
+              setTarget(undefined);
             }}
           />
         )}

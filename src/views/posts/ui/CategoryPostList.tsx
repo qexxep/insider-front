@@ -2,29 +2,53 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Badge, Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
 import { CardFooter } from '@/shared/ui/card';
+import { useGetBestWorstPostInfo, useGetCategoryPostList } from '@/views/posts';
 import { Paginator } from '@/widgets/paginator';
-
-import { BestWorstPostInfoResponse, PostListResponse } from '../api/types';
 
 const DEFAULT_CURRENT_PAGE = 1;
 const DEFAULT_PAGE_SIZE = 10;
 
 interface Props {
   category: string;
-  bestWorstPosts: BestWorstPostInfoResponse;
-  postList: PostListResponse;
 }
 
-export const CategoryPostList = ({ category, bestWorstPosts, postList }: Props) => {
-  const { categoryName, posts, totalPostCnt } = postList;
+export const CategoryPostList = ({ category }: Props) => {
   const router = useRouter();
-
-  // TODO) React Query 연동
   const [currentPage, setCurrentPage] = useState(DEFAULT_CURRENT_PAGE);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const { data: relativePostListData } = useGetCategoryPostList(
+    {
+      categoryCd: category,
+      currPage: currentPage,
+      pageSize: DEFAULT_PAGE_SIZE,
+    },
+    {
+      enabled: mounted,
+    }
+  );
+  const { data: bestWorstPostsData } = useGetBestWorstPostInfo(
+    { categoryCd: category },
+    {
+      enabled: mounted,
+    }
+  );
+
+  if (!relativePostListData || !bestWorstPostsData) {
+    throw new Error('Post not found');
+  }
+
+  const { posts, totalPostCnt, categoryName } = relativePostListData.data;
+  const bestWorstPosts = bestWorstPostsData.data;
+
   const totalPages = Math.ceil(totalPostCnt / DEFAULT_PAGE_SIZE);
 
   const handlePostClick = (postId: string) => {
@@ -41,6 +65,8 @@ export const CategoryPostList = ({ category, bestWorstPosts, postList }: Props) 
     // '#' 으로 시작하는 태그들을 분리하고, 빈 문자열 제거
     return tagString.split('#').filter(Boolean);
   };
+
+  if (!mounted) return null;
 
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">

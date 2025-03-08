@@ -1,15 +1,13 @@
-import { CommentType } from '../model/types';
+import { CommentInfoType } from '../model/types';
 
 export interface CommentListRequest {
   postSeq: string;
   currPage: number;
   pageSize: number;
-  sortType: string;
+  sortType: 'D' | 'R'; // D: 최신순, R: 추천순
 }
 
-export interface CommentListResponse {
-  commentList: CommentType[];
-}
+export type CommentListResponse = CommentInfoType;
 
 export interface CreateCommentRequest {
   postSeq: string;

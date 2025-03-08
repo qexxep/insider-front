@@ -5,30 +5,47 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { CommentCard, CommentComposer } from '@/feature/comment';
+import { CommentCard, CommentComposer, useCommentList } from '@/feature/comment';
 import { Badge, Button, Carousel, CarouselContent, CarouselItem, Icons } from '@/shared/ui';
 import { Paginator } from '@/widgets';
 
-import { BestWorstPostInfoResponse, PostListResponse } from '../api/types';
-import { PostDetailType } from '../model/types';
+import { useGetBestWorstPostInfo, useGetCategoryPostList, useGetPostDetail } from '../api/queries';
 
 interface Props {
-  post: PostDetailType;
+  postId: string;
   category: string;
-  bestWorstPosts: BestWorstPostInfoResponse;
-  relativePostList: PostListResponse | null;
   currentPage?: number;
 }
 
 const DEFAULT_PAGE_SIZE = 10;
 
-export const PostDetail = ({ post, category, bestWorstPosts, relativePostList, currentPage = 1 }: Props) => {
-  const { voteInfo, fileList, commentInfo } = post;
+export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
+  const { data: postData } = useGetPostDetail({ postSeq: postId });
+  const { data: commentsData } = useCommentList({
+    postSeq: postId,
+    currPage: currentPage,
+    pageSize: DEFAULT_PAGE_SIZE,
+    sortType: 'D',
+  });
+  const { data: bestWorstPostsData } = useGetBestWorstPostInfo({ categoryCd: category });
+  const { data: relativePostListData } = useGetCategoryPostList({
+    categoryCd: category,
+    currPage: currentPage,
+    pageSize: DEFAULT_PAGE_SIZE,
+  });
+
+  if (!postData || !relativePostListData || !bestWorstPostsData || !commentsData) {
+    throw new Error('Post not found');
+  }
+
+  const { voteInfo, fileList, ...post } = postData.data;
+  const { comments } = commentsData.data;
+  const { posts, totalPostCnt } = relativePostListData.data;
+  const bestWorstPosts = bestWorstPostsData.data;
 
   const router = useRouter();
   const [page, setPage] = useState(currentPage);
 
-  const totalPostCnt = relativePostList?.totalPostCnt ?? 0;
   const totalPages = Math.ceil(totalPostCnt / DEFAULT_PAGE_SIZE);
 
   const onPageChange = (page: number) => {
@@ -151,68 +168,66 @@ export const PostDetail = ({ post, category, bestWorstPosts, relativePostList, c
             <Icons.chevronDown className="h-5 w-5 text-primary" />
           </Button>
         </div>
-        <CommentComposer postSeq={post.postSeq} />
+        <CommentComposer postSeq={post.postSeq} onCancel={() => {}} />
         <div className="divide-y divide-[#D4D4D4]">
-          {commentInfo.comments.map(comment => (
+          {comments.map(comment => (
             <CommentCard key={comment.commentSeq} postSeq={post.postSeq} comment={comment} />
           ))}
         </div>
       </div>
       {/* 인싸이더 다른 게시물 */}
-      {relativePostList && (
-        <div className="pt-20">
-          <h2 className="text-2xl font-bold text-gray-700">인싸이더 게시물</h2>
-          <ul className="my-7 divide-y divide-[#c8c8c8] border-b border-t border-[#c8c8c8] [&>li]:px-5 [&>li]:py-4">
-            {bestWorstPosts.bestPostInfo && (
-              <Link
-                href={`/posts/${category}/${bestWorstPosts.bestPostInfo.postSeq}`}
-                className="flex items-center justify-between gap-4 bg-[#ffebe0] px-5 py-4"
-              >
-                <div className="flex items-center gap-12">
-                  <span className="rounded-full bg-[#ff5c00] px-[10px] font-semibold leading-7 text-white">베스트</span>
-                  <p className="text-lg text-gray-700">
-                    {bestWorstPosts.bestPostInfo.postTitle}
-                    <span className="ml-2 font-medium text-[#969696]">[{bestWorstPosts.bestPostInfo.commentCnt}]</span>
-                  </p>
-                </div>
-                <span className="whitespace-nowrap text-gray-700">{bestWorstPosts.bestPostInfo.updDate}</span>
-              </Link>
-            )}
-            {bestWorstPosts.worstPostInfo && (
-              <Link
-                href={`/posts/${category}/${bestWorstPosts.worstPostInfo.postSeq}`}
-                className="flex items-center justify-between gap-4 bg-[#e8e8e8] px-5 py-4"
-              >
-                <div className="flex items-center gap-12">
-                  <span className="rounded-full bg-black px-[10px] font-semibold leading-7 text-white">워스트</span>
-                  <p className="text-lg text-gray-700">
-                    {bestWorstPosts.worstPostInfo.postTitle}
-                    <span className="ml-2 font-medium text-[#969696]">[{bestWorstPosts.worstPostInfo.commentCnt}]</span>
-                  </p>
-                </div>
-                <span className="whitespace-nowrap text-gray-700">{bestWorstPosts.worstPostInfo.updDate}</span>
-              </Link>
-            )}
-            {relativePostList.posts.map(relativePost => (
-              <Link
-                key={relativePost.postSeq}
-                href={`/posts/${category}/${relativePost.postSeq}`}
-                className="flex items-center justify-between gap-4 px-5 py-4"
-              >
-                <div className="flex items-center gap-12">
-                  <span className="font-bold leading-7 text-[#ff5c00]">{relativePost.postSeq}</span>
-                  <p className="line-clamp-1 text-lg text-gray-700">
-                    {relativePost.postTitle}
-                    <span className="ml-2 font-medium text-[#969696]">[{relativePost.commentCnt}]</span>
-                  </p>
-                </div>
-                <span className="whitespace-nowrap text-gray-700">{relativePost.updDate}</span>
-              </Link>
-            ))}
-          </ul>
-          <Paginator currentPage={page} totalPages={totalPages} onPageChange={onPageChange} showPreviousNext />
-        </div>
-      )}
+      <div className="pt-20">
+        <h2 className="text-2xl font-bold text-gray-700">인싸이더 게시물</h2>
+        <ul className="my-7 divide-y divide-[#c8c8c8] border-b border-t border-[#c8c8c8] [&>li]:px-5 [&>li]:py-4">
+          {bestWorstPosts.bestPostInfo && (
+            <Link
+              href={`/posts/${category}/${bestWorstPosts.bestPostInfo.postSeq}`}
+              className="flex items-center justify-between gap-4 bg-[#ffebe0] px-5 py-4"
+            >
+              <div className="flex items-center gap-12">
+                <span className="rounded-full bg-[#ff5c00] px-[10px] font-semibold leading-7 text-white">베스트</span>
+                <p className="text-lg text-gray-700">
+                  {bestWorstPosts.bestPostInfo.postTitle}
+                  <span className="ml-2 font-medium text-[#969696]">[{bestWorstPosts.bestPostInfo.commentCnt}]</span>
+                </p>
+              </div>
+              <span className="whitespace-nowrap text-gray-700">{bestWorstPosts.bestPostInfo.updDate}</span>
+            </Link>
+          )}
+          {bestWorstPosts.worstPostInfo && (
+            <Link
+              href={`/posts/${category}/${bestWorstPosts.worstPostInfo.postSeq}`}
+              className="flex items-center justify-between gap-4 bg-[#e8e8e8] px-5 py-4"
+            >
+              <div className="flex items-center gap-12">
+                <span className="rounded-full bg-black px-[10px] font-semibold leading-7 text-white">워스트</span>
+                <p className="text-lg text-gray-700">
+                  {bestWorstPosts.worstPostInfo.postTitle}
+                  <span className="ml-2 font-medium text-[#969696]">[{bestWorstPosts.worstPostInfo.commentCnt}]</span>
+                </p>
+              </div>
+              <span className="whitespace-nowrap text-gray-700">{bestWorstPosts.worstPostInfo.updDate}</span>
+            </Link>
+          )}
+          {posts.map(relativePost => (
+            <Link
+              key={relativePost.postSeq}
+              href={`/posts/${category}/${relativePost.postSeq}`}
+              className="flex items-center justify-between gap-4 px-5 py-4"
+            >
+              <div className="flex items-center gap-12">
+                <span className="font-bold leading-7 text-[#ff5c00]">{relativePost.postSeq}</span>
+                <p className="line-clamp-1 text-lg text-gray-700">
+                  {relativePost.postTitle}
+                  <span className="ml-2 font-medium text-[#969696]">[{relativePost.commentCnt}]</span>
+                </p>
+              </div>
+              <span className="whitespace-nowrap text-gray-700">{relativePost.updDate}</span>
+            </Link>
+          ))}
+        </ul>
+        <Paginator currentPage={page} totalPages={totalPages} onPageChange={onPageChange} showPreviousNext />
+      </div>
     </div>
   );
 };

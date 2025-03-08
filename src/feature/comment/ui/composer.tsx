@@ -2,29 +2,49 @@
 
 import { useState } from 'react';
 
+import { invalidateQueries } from '@/shared/lib/tanstack-query/utils';
 import { cn } from '@/shared/lib/tw-utils';
 import { Button, Textarea } from '@/shared/ui';
+
+import { useCreateComment } from '../api/queries';
 
 interface Props {
   className?: string;
   postSeq: string;
+  upCommentSeq?: string;
   mentiUser?: {
     regId: string;
     commentSeq: string;
     nickname: string;
   };
-  onCancel?: () => void;
+  onCancel: () => void;
 }
 
-export const Composer = ({ className, postSeq, mentiUser, onCancel }: Props) => {
+export const Composer = ({ className, postSeq, upCommentSeq, mentiUser, onCancel }: Props) => {
   const [comment, setComment] = useState('');
+
+  const { mutate: createComment } = useCreateComment();
 
   const handleComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
   };
 
   const handleSubmit = () => {
-    console.log(comment, postSeq);
+    createComment(
+      {
+        postSeq,
+        comment,
+        upCommentSeq: upCommentSeq || '',
+        mentiUserId: mentiUser?.regId || '',
+      },
+      {
+        onSuccess: () => {
+          invalidateQueries.comments.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'D' });
+          setComment('');
+          onCancel();
+        },
+      }
+    );
   };
 
   return (
