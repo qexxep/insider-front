@@ -1,9 +1,25 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  type UseMutationOptions,
+  useQuery,
+  type UseQueryOptions,
+} from '@tanstack/react-query';
 
-import { QUERY_CONFIG, QueryConfig } from '@/shared/lib';
+import { ApiResponse } from '@/shared/api/types';
+import { QUERY_CONFIG, queryClient } from '@/shared/lib';
 
 import { getBestWorstPostInfo, getPostDetail, getPostListByCategory, postReaction } from './postApi';
-import { BestWorstPostInfoRequest, PostDetailRequest, PostListByCategoryRequest, PostReactionRequest } from './types';
+import {
+  BestWorstPostInfoRequest,
+  BestWorstPostInfoResponse,
+  PostDetailRequest,
+  PostDetailResponse,
+  PostListByCategoryRequest,
+  PostListResponse,
+  PostReactionRequest,
+  PostReactionResponse,
+} from './types';
 
 export const queryKeys = {
   posts: {
@@ -15,7 +31,40 @@ export const queryKeys = {
   },
 } as const;
 
-export const useGetCategoryPostList = (payload: PostListByCategoryRequest, config?: QueryConfig) => {
+export const invalidateQueries = {
+  all: () => queryClient.invalidateQueries({ queryKey: queryKeys.posts.all }),
+  list: (payload: PostListByCategoryRequest) =>
+    queryClient.invalidateQueries({ queryKey: queryKeys.posts.list(payload) }),
+  detail: (payload: PostDetailRequest) => queryClient.invalidateQueries({ queryKey: queryKeys.posts.detail(payload) }),
+  bestWorst: (payload: BestWorstPostInfoRequest) =>
+    queryClient.invalidateQueries({ queryKey: queryKeys.posts.bestWorst(payload) }),
+};
+
+export const prefetchQueries = {
+  list: async (queryClient: QueryClient, payload: PostListByCategoryRequest) => {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.posts.list(payload),
+      queryFn: () => getPostListByCategory(payload),
+    });
+  },
+  detail: async (queryClient: QueryClient, payload: PostDetailRequest) => {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.posts.detail(payload),
+      queryFn: () => getPostDetail(payload),
+    });
+  },
+  bestWorst: async (queryClient: QueryClient, payload: BestWorstPostInfoRequest) => {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.posts.bestWorst(payload),
+      queryFn: () => getBestWorstPostInfo(payload),
+    });
+  },
+};
+
+export const useGetCategoryPostList = (
+  payload: PostListByCategoryRequest,
+  config?: UseQueryOptions<ApiResponse<PostListResponse>>
+) => {
   return useQuery({
     queryKey: queryKeys.posts.list(payload),
     queryFn: () => getPostListByCategory(payload),
@@ -24,7 +73,10 @@ export const useGetCategoryPostList = (payload: PostListByCategoryRequest, confi
   });
 };
 
-export const useGetBestWorstPostInfo = (payload: BestWorstPostInfoRequest, config?: QueryConfig) => {
+export const useGetBestWorstPostInfo = (
+  payload: BestWorstPostInfoRequest,
+  config?: UseQueryOptions<ApiResponse<BestWorstPostInfoResponse>>
+) => {
   return useQuery({
     queryKey: queryKeys.posts.bestWorst(payload),
     queryFn: () => getBestWorstPostInfo(payload),
@@ -33,7 +85,10 @@ export const useGetBestWorstPostInfo = (payload: BestWorstPostInfoRequest, confi
   });
 };
 
-export const useGetPostDetail = (payload: PostDetailRequest, config?: QueryConfig) => {
+export const useGetPostDetail = (
+  payload: PostDetailRequest,
+  config?: UseQueryOptions<ApiResponse<PostDetailResponse>>
+) => {
   return useQuery({
     queryKey: queryKeys.posts.detail(payload),
     queryFn: () => getPostDetail(payload),
@@ -42,11 +97,11 @@ export const useGetPostDetail = (payload: PostDetailRequest, config?: QueryConfi
   });
 };
 
-export const usePostReaction = (payload: PostReactionRequest, config?: QueryConfig) => {
+export const usePostReaction = (
+  config?: UseMutationOptions<ApiResponse<PostReactionResponse>, Error, PostReactionRequest>
+) => {
   return useMutation({
-    mutationKey: queryKeys.posts.reaction(payload),
-    mutationFn: () => postReaction(payload),
-    ...QUERY_CONFIG.REGULAR,
+    mutationFn: (payload: PostReactionRequest) => postReaction(payload),
     ...config,
   });
 };

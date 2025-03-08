@@ -2,10 +2,10 @@
 
 import { useState } from 'react';
 
-import { invalidateQueries } from '@/shared/lib/tanstack-query/utils';
 import { cn } from '@/shared/lib/tw-utils';
 import { Button, Textarea } from '@/shared/ui';
 
+import { commentInvalidateQueries } from '..';
 import { useCreateComment } from '../api/queries';
 
 interface Props {
@@ -39,7 +39,7 @@ export const Composer = ({ className, postSeq, upCommentSeq, mentiUser, onCancel
       },
       {
         onSuccess: () => {
-          invalidateQueries.comments.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'D' });
+          commentInvalidateQueries.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'D' });
           setComment('');
           onCancel();
         },

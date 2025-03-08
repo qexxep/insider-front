@@ -1,5 +1,7 @@
 export { getBestWorstPostInfo, getPostDetail, getPostListByCategory } from './api/postApi';
 export {
+  invalidateQueries as postInvalidateQueries,
+  prefetchQueries as postPrefetchQueries,
   queryKeys as postQueryKeys,
   useGetBestWorstPostInfo,
   useGetCategoryPostList,

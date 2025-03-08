@@ -5,10 +5,10 @@ import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 
 import { PersonalityIcon } from '@/feature/personality';
-import { invalidateQueries } from '@/shared/lib/tanstack-query/utils';
 import { cn } from '@/shared/lib/tw-utils';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button, Icons } from '@/shared/ui';
 
+import { commentInvalidateQueries } from '..';
 import { useDeleteComment } from '../api/queries';
 import { CommentType } from '../model/types';
 import { Composer } from './composer';
@@ -55,7 +55,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
       { commentSeq: comment.commentSeq },
       {
         onSuccess: () => {
-          invalidateQueries.comments.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'D' });
+          commentInvalidateQueries.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'D' });
         },
       }
     );
@@ -73,7 +73,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
           {/* TODO) nickname으로 변경 필요 */}
           {comment.mentiUserId && <span className="text-primary">@{comment.mentiUserId}</span>}
           <div className="flex items-center gap-2">
-            <PersonalityIcon code={'CSEM'} />
+            <PersonalityIcon code={'PIRM'} />
             <span>{comment.nickname}</span>
           </div>
           <div className="h-[2px] w-[2px] rounded-full bg-gray-500" />

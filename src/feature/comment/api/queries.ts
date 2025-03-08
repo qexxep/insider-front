@@ -1,11 +1,18 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+  QueryClient,
+  useMutation,
+  type UseMutationOptions,
+  useQuery,
+  type UseQueryOptions,
+} from '@tanstack/react-query';
 
 import { ApiResponse } from '@/shared/api/types';
-import { MutationConfig, QUERY_CONFIG, QueryConfig } from '@/shared/lib';
+import { QUERY_CONFIG, queryClient } from '@/shared/lib';
 
 import { commentReaction, createComment, deleteComment, getCommentList, updateComment } from './commentApi';
 import {
   CommentListRequest,
+  CommentListResponse,
   CommentReactionRequest,
   CommentReactionResponse,
   CreateCommentRequest,
@@ -20,14 +27,26 @@ export const queryKeys = {
   comments: {
     all: ['comments'] as const,
     list: (params: CommentListRequest) => [...queryKeys.comments.all, 'list', params] as const,
-    create: (params: CreateCommentRequest) => [...queryKeys.comments.all, 'create', params] as const,
-    delete: (params: DeleteCommentRequest) => [...queryKeys.comments.all, 'delete', params] as const,
-    update: (params: UpdateCommentRequest) => [...queryKeys.comments.all, 'update', params] as const,
-    reaction: (params: CommentReactionRequest) => [...queryKeys.comments.all, 'reaction', params] as const,
   },
 } as const;
 
-export const useCommentList = (data: CommentListRequest, config?: QueryConfig) => {
+export const invalidateQueries = {
+  list: (data: CommentListRequest) => queryClient.invalidateQueries({ queryKey: queryKeys.comments.list(data) }),
+};
+
+export const prefetchQueries = {
+  list: async (queryClient: QueryClient, payload: CommentListRequest) => {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.comments.list(payload),
+      queryFn: () => getCommentList(payload),
+    });
+  },
+};
+
+export const useCommentList = (
+  data: CommentListRequest,
+  config?: UseQueryOptions<ApiResponse<CommentListResponse>>
+) => {
   return useQuery({
     queryKey: queryKeys.comments.list(data),
     queryFn: () => getCommentList(data),
@@ -37,7 +56,7 @@ export const useCommentList = (data: CommentListRequest, config?: QueryConfig) =
 };
 
 export const useCreateComment = (
-  config?: MutationConfig<ApiResponse<CreateCommentResponse>, Error, CreateCommentRequest>
+  config?: UseMutationOptions<ApiResponse<CreateCommentResponse>, Error, CreateCommentRequest>
 ) => {
   return useMutation({
     mutationFn: (data: CreateCommentRequest) => createComment(data),
@@ -46,7 +65,7 @@ export const useCreateComment = (
 };
 
 export const useDeleteComment = (
-  config?: MutationConfig<ApiResponse<DeleteCommentResponse>, Error, DeleteCommentRequest>
+  config?: UseMutationOptions<ApiResponse<DeleteCommentResponse>, Error, DeleteCommentRequest>
 ) => {
   return useMutation({
     mutationFn: (data: DeleteCommentRequest) => deleteComment(data),
@@ -55,7 +74,7 @@ export const useDeleteComment = (
 };
 
 export const useUpdateComment = (
-  config?: MutationConfig<ApiResponse<UpdateCommentResponse>, Error, UpdateCommentRequest>
+  config?: UseMutationOptions<ApiResponse<UpdateCommentResponse>, Error, UpdateCommentRequest>
 ) => {
   return useMutation({
     mutationFn: (data: UpdateCommentRequest) => updateComment(data),
@@ -64,7 +83,7 @@ export const useUpdateComment = (
 };
 
 export const useCommentReaction = (
-  config?: MutationConfig<ApiResponse<CommentReactionResponse>, Error, CommentReactionRequest>
+  config?: UseMutationOptions<ApiResponse<CommentReactionResponse>, Error, CommentReactionRequest>
 ) => {
   return useMutation({
     mutationFn: (data: CommentReactionRequest) => commentReaction(data),
