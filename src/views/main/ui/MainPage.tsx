@@ -23,26 +23,14 @@ const RankIcons = {
     src: '/icons/third.svg',
     alt: 'bronze rank medal',
   },
-  4: {
-    src: '/icons/first.svg',
-    alt: 'gold rank medal',
-  },
-  5: {
-    src: '/icons/second.svg',
-    alt: 'silver rank medal',
-  },
-  6: {
-    src: '/icons/third.svg',
-    alt: 'bronze rank medal',
-  },
 } as const;
 const RANK_COLORS = {
-  1: 'bg-[#FC6423]',
-  2: 'bg-[#FF7E3D]',
-  3: 'bg-[#FFA375]',
-  4: 'bg-[#FC6423]',
-  5: 'bg-[#FF7E3D]',
-  6: 'bg-[#FFA375]',
+  1: 'bg-primary-600',
+  2: 'bg-primary-500',
+  3: 'bg-primary-400',
+  4: 'bg-primary-600',
+  5: 'bg-primary-500',
+  6: 'bg-primary-400',
 } as const;
 const DISCUSSION_ITEMS = [
   {
@@ -92,7 +80,7 @@ async function MainPage() {
       {/* 이번주 토론 주제 섹션 */}
       <h2 className="text-lg font-bold">이번주 토론 주제</h2>
       <p className="mb-4 mt-1 text-gray-600">
-        이번주 토론 주제에 투표 참여해주세요! 금주 투표 결과에 따라 다음주 주제 선정에 반영됩니다.
+        이번주 토론 주제에 투표 참여해주세요! 금주 투표 결과에 라 다음주 주제 선정에 반영됩니다.
       </p>
 
       <Carousel>
@@ -100,20 +88,21 @@ async function MainPage() {
           {DISCUSSION_ITEMS.map(item => (
             <CarouselItem key={item.rankNum}>
               <div className="h-full p-1">
-                {/* 회의 후 수정 예정. 아이콘, 색상*/}
                 <Card
                   className={`relative h-full rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-lg ${
                     RANK_COLORS[item.rankNum as 1 | 2 | 3 | 4 | 5 | 6]
                   }`}
                 >
                   <CardHeader className="relative pb-0">
-                    <Image
-                      src={RankIcons[item.rankNum as 1 | 2 | 3 | 4 | 5 | 6].src}
-                      className="h-13 w-13 absolute -top-1 right-0 z-20"
-                      alt={RankIcons[item.rankNum as 1 | 2 | 3 | 4 | 5 | 6].alt}
-                      width={52}
-                      height={52}
-                    />
+                    {item.rankNum <= 3 && (
+                      <Image
+                        src={RankIcons[item.rankNum as 1 | 2 | 3].src}
+                        className="h-13 w-13 absolute -top-1 right-0 z-20"
+                        alt={RankIcons[item.rankNum as 1 | 2 | 3].alt}
+                        width={52}
+                        height={52}
+                      />
+                    )}
                     <CardTitle className="text-sm font-medium text-white">{item.categoryName}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex-1">
