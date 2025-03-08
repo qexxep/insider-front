@@ -19,7 +19,6 @@ export default async function Sidebar({ className }: { className?: string }) {
     ],
   };
 
-  console.log(categories);
   // 즐겨찾기 카테고리 코드 Set 생성
   const favoriteCategoryCodes = new Set(favoriteMenus.categoryList.map(cat => cat.categoryCode));
 
