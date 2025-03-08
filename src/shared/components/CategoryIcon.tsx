@@ -2,18 +2,18 @@ import { Icons } from '../ui';
 
 // Icon Mapping
 const iconMap: Record<string, keyof typeof Icons> = {
-  취업: 'building2',
-  연애: 'heart',
-  연예: 'smile',
-  경제: 'wallet',
-  정치: 'landPlot',
-  스포츠: 'dumbbell',
-  사회: 'users',
-  익명자유: 'smile',
-  익명고민: 'helpCircle',
-  반려동물: 'dog',
-  무한위로: 'handshake',
-  응원합시다: 'users',
+  취업: 'career',
+  연애: 'dating',
+  경제: 'economy',
+  정치: 'politics',
+  스포츠: 'sports',
+  사회: 'society',
+  익명자유: 'anonymousFree',
+  익명고민: 'anonymousWorry',
+  반려동물: 'pets',
+  무한위로: 'comfort',
+  응원합시다: 'cheer',
+  명예의전당: 'honor',
 };
 
 // Icon Component
