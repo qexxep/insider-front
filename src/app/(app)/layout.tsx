@@ -1,8 +1,8 @@
+import Image from 'next/image';
 import { Suspense } from 'react';
 
 import { Toaster } from '@/shared/ui';
 
-import Loading from '../../../public/icons/loading.svg';
 import AppProvider from './_provider';
 
 export default function Layout({
@@ -41,7 +41,7 @@ export default function Layout({
 function LoadingSpinner() {
   return (
     <div className="-mt-12 flex min-h-screen flex-1 items-center justify-center">
-      <Loading />
+      <Image src="/icons/loading.svg" alt="loading" width={200} height={200} priority />
     </div>
   );
 }
