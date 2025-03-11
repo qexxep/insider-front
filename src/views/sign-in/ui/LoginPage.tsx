@@ -19,12 +19,13 @@ import {
 } from '@/shared/ui';
 import { setClientCookie } from '@/shared/utils';
 
-import { login } from '../api/auth';
+import { useSignIn } from '../api/queries';
 import { LoginFormSchema, LoginFormType } from '../model';
 
 export function LoginPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { mutate: signIn } = useSignIn();
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
@@ -35,21 +36,22 @@ export function LoginPage() {
   });
 
   const onSubmit = async (data: LoginFormType) => {
-    const response = await login(data);
-    if (response.status === 'SUCCESS') {
-      const { accessToken, refreshToken } = response.data.jwt;
-      setClientCookie('access_token', accessToken);
-      setClientCookie('refresh_token', refreshToken);
-      //
-      router.push('/');
-      router.refresh();
-    } else {
-      toast({
-        variant: 'destructive',
-        title: '로그인에 실패했습니다.',
-        description: response.message,
-      });
-    }
+    await signIn(data, {
+      onSuccess: response => {
+        const { accessToken, refreshToken } = response.data.jwt;
+        setClientCookie('access_token', accessToken);
+        setClientCookie('refresh_token', refreshToken);
+        router.push('/');
+        router.refresh();
+      },
+      onError: error => {
+        toast({
+          variant: 'destructive',
+          title: '로그인에 실패했습니다.',
+          description: error.message,
+        });
+      },
+    });
   };
 
   return (

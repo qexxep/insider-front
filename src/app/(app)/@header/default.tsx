@@ -28,7 +28,7 @@ export default async function Header() {
         <div className="flex items-center gap-24">
           <Link href="/" className="flex items-center gap-2">
             <Icons.logo className="h-10 w-10" />
-            <span className="text-2xl font-extrabold text-primary">INSIDER</span>
+            <span className="text-2xl font-extrabold text-primary">INSSIDER</span>
           </Link>
           <HotTopics />
         </div>

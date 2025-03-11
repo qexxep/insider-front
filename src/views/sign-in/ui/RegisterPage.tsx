@@ -20,14 +20,27 @@ import {
   RadioGroupItem,
 } from '@/shared/ui';
 
-import { checkOtp, sendOtp } from '../api/auth';
-import { checkDuplicateId, checkDuplicateNickname, signup } from '../api/registers';
-import { useSignup } from '../hooks/useSignup';
+import {
+  useCheckDuplicateId,
+  useCheckDuplicateNickname,
+  useCheckOtp,
+  useSendOtp,
+  useSignUp,
+  useSignUpInit,
+} from '../api/queries';
 import { SignupFormSchema, SignupFormType, tempCodeSchema } from '../model';
 import { TermsAgreement } from './TermsAgreement';
 
 export function RegisterPage() {
   const router = useRouter();
+  const { data: signUpInitData } = useSignUpInit();
+  const { mutate: checkDuplicateNickname } = useCheckDuplicateNickname();
+  const { mutate: checkDuplicateId } = useCheckDuplicateId();
+  const { mutate: sendOtp } = useSendOtp();
+  const { mutate: checkOtp } = useCheckOtp();
+  const { mutate: signup } = useSignUp();
+
+  const tempCode = signUpInitData?.data.tempCode ?? '';
 
   const form = useForm<SignupFormType>({
     resolver: zodResolver(SignupFormSchema),
@@ -44,7 +57,6 @@ export function RegisterPage() {
     },
   });
 
-  const { tempCode } = useSignup();
   const [isNicknameChecked, setIsNicknameChecked] = useState(false);
   const [isUserIdChecked, setIsUserIdChecked] = useState(false);
   const [hasSentEmailOtp, setHasSentEmailOtp] = useState(false);
@@ -69,33 +81,43 @@ export function RegisterPage() {
   };
 
   const handleCheckDuplicateNickname = async (nickname: string) => {
-    const response = await checkDuplicateNickname(tempCode!, nickname);
-    if (response.status === 'SUCCESS') {
-      form.clearErrors('nickName');
-      form.setValue('nickName', nickname);
-      setIsNicknameChecked(true);
-    } else {
-      form.setError('nickName', {
-        type: 'manual',
-        message: response.message,
-      });
-      setIsNicknameChecked(false);
-    }
+    await checkDuplicateNickname(
+      { tempCode, userNickname: nickname },
+      {
+        onSuccess: () => {
+          form.clearErrors('nickName');
+          form.setValue('nickName', nickname);
+          setIsNicknameChecked(true);
+        },
+        onError: error => {
+          form.setError('nickName', {
+            type: 'manual',
+            message: error.message,
+          });
+          setIsNicknameChecked(false);
+        },
+      }
+    );
   };
 
   const handleCheckDuplicateUserId = async (userId: string) => {
-    const response = await checkDuplicateId(tempCode!, userId);
-    if (response.status === 'SUCCESS') {
-      form.clearErrors('userId');
-      form.setValue('userId', userId);
-      setIsUserIdChecked(true);
-    } else {
-      form.setError('userId', {
-        type: 'manual',
-        message: response.message,
-      });
-      setIsUserIdChecked(false);
-    }
+    await checkDuplicateId(
+      { tempCode, userId },
+      {
+        onSuccess: () => {
+          form.clearErrors('userId');
+          form.setValue('userId', userId);
+          setIsUserIdChecked(true);
+        },
+        onError: error => {
+          form.setError('userId', {
+            type: 'manual',
+            message: error.message,
+          });
+          setIsUserIdChecked(false);
+        },
+      }
+    );
   };
 
   const handleSendEmailOtp = async (email: string) => {
@@ -104,16 +126,18 @@ export function RegisterPage() {
       tempCode,
       userEmail: email,
     };
-    const response = await sendOtp(payload);
-    if (response.status === 'SUCCESS') {
-      setHasSentEmailOtp(true);
-    } else {
-      setHasSentEmailOtp(false);
-      form.setError('email', {
-        type: 'manual',
-        message: response.message,
-      });
-    }
+    await sendOtp(payload, {
+      onSuccess: () => {
+        setHasSentEmailOtp(true);
+      },
+      onError: error => {
+        setHasSentEmailOtp(false);
+        form.setError('email', {
+          type: 'manual',
+          message: error.message,
+        });
+      },
+    });
   };
 
   const handleConfirmEmail = async (inputOtp: string) => {
@@ -123,16 +147,18 @@ export function RegisterPage() {
       email: form.getValues('email'),
       inputOtp,
     };
-    const response = await checkOtp(payload);
-    if (response.status === 'SUCCESS') {
-      setIsEmailChecked(true);
-    } else {
-      setIsEmailChecked(false);
-      form.setError('email', {
-        type: 'manual',
-        message: response.message,
-      });
-    }
+    await checkOtp(payload, {
+      onSuccess: () => {
+        setIsEmailChecked(true);
+      },
+      onError: error => {
+        setIsEmailChecked(false);
+        form.setError('email', {
+          type: 'manual',
+          message: error.message,
+        });
+      },
+    });
   };
 
   const onSubmit = async (data: SignupFormType) => {
@@ -171,13 +197,18 @@ export function RegisterPage() {
       gender: data.gender,
       confirmPassword: data.confirmPassword,
     };
-    const response = await signup(payload);
-    if (response.status === 'SUCCESS') {
-      alert('회원가입이 완료되었습니다.');
-      router.push('/signup/complete');
-    } else {
-      console.error(response.message);
-    }
+
+    console.log(payload);
+
+    await signup(payload, {
+      onSuccess: () => {
+        alert('회원가입이 완료되었습니다.');
+        router.push('/signup/complete');
+      },
+      onError: error => {
+        console.error(error.message);
+      },
+    });
   };
 
   return (

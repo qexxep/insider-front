@@ -11,7 +11,7 @@ import {
   DeleteCommentResponse,
   UpdateCommentRequest,
   UpdateCommentResponse,
-} from './type';
+} from './types';
 
 export const getCommentList = (data: CommentListRequest) => baseApi.post<CommentListResponse>('comments/list', data);
 

@@ -1,17 +1,17 @@
 export const siteConfig = {
-  title: 'INSIDER',
-  name: 'INSIDER',
+  title: 'INSSIDER',
+  name: 'INSSIDER',
   url: 'http://inssider.kro.kr',
   ogImage: '',
-  description: 'INSIDER',
+  description: 'INSSIDER',
   links: {
-    github: 'https://github.com/qexxep/insider-front',
+    github: 'https://github.com/qexxep/inssider-front',
   },
   locale: 'ko_KR',
   keywords: ['insdier', 'inssider', '커뮤니티', '토론'],
   authors: [
     {
-      name: 'insider',
+      name: 'inssider',
       url: '',
     },
   ],

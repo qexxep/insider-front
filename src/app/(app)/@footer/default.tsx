@@ -17,7 +17,7 @@ export default function Footer() {
           <span>개인정보처리방침</span>
         </div>
         <small className="mt-5 block text-center text-sm text-black">
-          Copyright © 2025 INSIDER. All rights reserved.
+          Copyright © 2025 INSSIDER. All rights reserved.
         </small>
       </div>
     </footer>
