@@ -21,7 +21,7 @@ import {
   DeleteCommentResponse,
   UpdateCommentRequest,
   UpdateCommentResponse,
-} from './type';
+} from './types';
 
 export const queryKeys = {
   comments: {

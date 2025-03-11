@@ -1,71 +1,27 @@
-import { apiClient } from '@/shared/api';
+import { baseApi } from '@/shared/api';
 
-interface LoginRequest {
-  userId: string;
-  password: string;
-}
-interface LoginResponse {
-  status: 'SUCCESS' | 'FAILURE';
-  message: string;
-  id: string;
-  data: {
-    jwt: {
-      accessToken: string;
-      refreshToken: string;
-    };
-  };
-}
+import {
+  ChangePasswordRequest,
+  CheckOtpRequest,
+  FindIdRequest,
+  FindPasswordRequest,
+  SendOtpRequest,
+  SignInRequest,
+  SignInResponse,
+} from './types';
 
-export const login = async (payload: LoginRequest): Promise<LoginResponse> => {
-  const response = await apiClient.post('auth/sign-in', {
-    json: payload,
-  });
-  return response.json<LoginResponse>();
-};
+export const signOut = () => baseApi.get<void>('auth/sign-out');
 
-interface SendOtpRequest {
-  otpPurpose: string;
-  tempCode: string;
-  userEmail: string;
-}
+export const createAccessToken = () => baseApi.post<void>('auth/create-access-token');
 
-interface SendOtpResponse {
-  status: 'SUCCESS' | 'FAILURE';
-  message: string;
-}
+export const signIn = (data: SignInRequest) => baseApi.post<SignInResponse>('auth/sign-in', data);
 
-export const sendOtp = async (payload: SendOtpRequest): Promise<SendOtpResponse> => {
-  const response = await apiClient.post('auth/send-otp', {
-    json: payload,
-  });
-  return response.json();
-};
+export const sendOtp = (data: SendOtpRequest) => baseApi.post<void>('auth/send-otp', data);
 
-interface CheckOtpRequest {
-  otpPurpose: string;
-  tempCode: string;
-  email: string;
-  inputOtp: string;
-}
+export const findPassword = (data: FindPasswordRequest) => baseApi.post<void>('auth/find-password', data);
 
-interface CheckOtpResponse {
-  status: 'SUCCESS' | 'FAILURE';
-  message: string;
-}
+export const findId = (data: FindIdRequest) => baseApi.post<void>('auth/find-id', data);
 
-export const checkOtp = async (payload: CheckOtpRequest): Promise<CheckOtpResponse> => {
-  const response = await apiClient.post('auth/check-otp', {
-    json: payload,
-  });
-  return response.json();
-};
+export const checkOtp = (data: CheckOtpRequest) => baseApi.post<void>('auth/check-otp', data);
 
-interface SignOutResponse {
-  status: 'SUCCESS' | 'FAILURE';
-  message: string;
-}
-
-export const signOut = async (): Promise<SignOutResponse> => {
-  const response = await apiClient.get('auth/sign-out');
-  return response.json();
-};
+export const changePassword = (data: ChangePasswordRequest) => baseApi.post<void>('auth/change-password', data);

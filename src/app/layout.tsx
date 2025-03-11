@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   description: siteConfig.description,
   keywords: siteConfig.keywords,
   authors: siteConfig.authors,
-  creator: 'insider',
+  creator: 'inssider',
   openGraph: {
     type: 'website',
     locale: siteConfig.locale,
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     title: siteConfig.name,
     description: siteConfig.description,
     images: [siteConfig.ogImage],
-    // creator: '@insider',
+    // creator: '@inssider',
   },
   icons: {
     icon: '/logo.svg',
