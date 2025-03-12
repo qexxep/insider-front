@@ -56,6 +56,10 @@ body {
     --gray-500: #8f8f8f;
     --gray-600: #616161;
     --gray-700: #242424;
+
+    --input-success: #12b76a;
+    --input-error: #ff4200;
+    --input-warning: #f79009;
   }
   .dark {
     --background: 222.2 84% 4.9%;

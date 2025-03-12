@@ -103,7 +103,7 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
             <Checkbox id="rememberId" checked={rememberId} onCheckedChange={handleRememberId} />
             <label
               htmlFor="rememberId"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              className="cursor-pointer select-none text-[19px] font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
             >
               아이디 저장
             </label>
