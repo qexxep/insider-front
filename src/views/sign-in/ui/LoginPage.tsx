@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { useToast } from '@/shared/hooks';
@@ -17,20 +18,22 @@ import {
   Input,
   PasswordInput,
 } from '@/shared/ui';
-import { setClientCookie } from '@/shared/utils';
+import { removeClientCookie, setClientCookie } from '@/shared/utils';
 
 import { useSignIn } from '../api/queries';
 import { LoginFormSchema, LoginFormType } from '../model';
 
-export function LoginPage() {
+export function LoginPage({ initialRememberId }: { initialRememberId: string | null }) {
   const router = useRouter();
   const { toast } = useToast();
   const { mutate: signIn } = useSignIn();
 
+  const [rememberId, setRememberId] = useState<boolean>(!!initialRememberId);
+
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
     defaultValues: {
-      userId: '',
+      userId: initialRememberId ?? '',
       password: '',
     },
   });
@@ -41,6 +44,13 @@ export function LoginPage() {
         const { accessToken, refreshToken } = response.data.jwt;
         setClientCookie('access_token', accessToken);
         setClientCookie('refresh_token', refreshToken);
+
+        if (rememberId) {
+          setClientCookie('remember_id', data.userId);
+        } else {
+          removeClientCookie('remember_id');
+        }
+
         router.push('/');
         router.refresh();
       },
@@ -52,6 +62,10 @@ export function LoginPage() {
         });
       },
     });
+  };
+
+  const handleRememberId = (checked: boolean) => {
+    setRememberId(checked);
   };
 
   return (
@@ -86,7 +100,7 @@ export function LoginPage() {
             )}
           />
           <div className="mb-[37px] flex items-center space-x-2">
-            <Checkbox id="rememberId" />
+            <Checkbox id="rememberId" checked={rememberId} onCheckedChange={handleRememberId} />
             <label
               htmlFor="rememberId"
               className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
