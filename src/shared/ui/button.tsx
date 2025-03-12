@@ -3,6 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 
 import { cn } from '../lib/tw-utils';
+import { Icons } from './icons';
 
 const buttonVariants = cva(
   cn(
@@ -38,12 +39,25 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
+  isLoading?: boolean;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, isLoading = false, ...props }, ref) => {
     const Comp = asChild ? Slot : 'button';
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    return (
+      <Comp
+        className={cn(
+          buttonVariants({ variant, size, className }),
+          isLoading && 'pointer-events-none select-none bg-[#FFA375] [&_svg]:size-7'
+        )}
+        ref={ref}
+        {...props}
+      >
+        {isLoading && <Icons.loading className="size-7 animate-spin" />}
+        {props.children}
+      </Comp>
+    );
   }
 );
 Button.displayName = 'Button';

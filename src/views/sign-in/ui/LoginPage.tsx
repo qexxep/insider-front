@@ -26,7 +26,7 @@ import { LoginFormSchema, LoginFormType } from '../model';
 export function LoginPage({ initialRememberId }: { initialRememberId: string | null }) {
   const router = useRouter();
   const { toast } = useToast();
-  const { mutate: signIn } = useSignIn();
+  const { mutate: signIn, isPending } = useSignIn();
 
   const [rememberId, setRememberId] = useState<boolean>(!!initialRememberId);
 
@@ -108,7 +108,9 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
               아이디 저장
             </label>
           </div>
-          <Button className="mb-[28px] h-[70px] rounded-[36px] text-[18px] font-bold">로그인</Button>
+          <Button className={'mb-[28px] h-[70px] rounded-[36px] text-[18px] font-bold'} isLoading={isPending}>
+            로그인
+          </Button>
         </form>
         <div>
           <ul className="flex space-x-[48px]">
