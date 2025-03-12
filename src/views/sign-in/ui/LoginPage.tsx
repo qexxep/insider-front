@@ -6,15 +6,15 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useToast } from '@/shared/hooks';
 import {
+  Alert,
   Button,
   Checkbox,
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormMessage,
+  Icons,
   Input,
   PasswordInput,
 } from '@/shared/ui';
@@ -25,10 +25,9 @@ import { LoginFormSchema, LoginFormType } from '../model';
 
 export function LoginPage({ initialRememberId }: { initialRememberId: string | null }) {
   const router = useRouter();
-  const { toast } = useToast();
   const { mutate: signIn, isPending } = useSignIn();
-
   const [rememberId, setRememberId] = useState<boolean>(!!initialRememberId);
+  const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
   const form = useForm<LoginFormType>({
     resolver: zodResolver(LoginFormSchema),
@@ -38,7 +37,12 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
     },
   });
 
+  form.watch(() => {
+    setErrorInfo(null);
+  });
+
   const onSubmit = async (data: LoginFormType) => {
+    setErrorInfo(null);
     await signIn(data, {
       onSuccess: response => {
         const { accessToken, refreshToken } = response.data.jwt;
@@ -55,17 +59,17 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
         router.refresh();
       },
       onError: error => {
-        toast({
-          variant: 'destructive',
-          title: '로그인에 실패했습니다.',
-          description: error.message,
-        });
+        handleErrorInfo(error.message);
       },
     });
   };
 
   const handleRememberId = (checked: boolean) => {
     setRememberId(checked);
+  };
+
+  const handleErrorInfo = (errorInfo: string) => {
+    setErrorInfo(errorInfo);
   };
 
   return (
@@ -81,9 +85,13 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
             render={({ field }) => (
               <FormItem className="mb-[20px]">
                 <FormControl>
-                  <Input placeholder="아이디를 입력해주세요." {...field} className="h-[56px]" />
+                  <Input
+                    placeholder="아이디를 입력해주세요."
+                    {...field}
+                    className="h-[56px]"
+                    status={form.formState.errors.userId ? 'error' : undefined}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
@@ -93,13 +101,17 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
             render={({ field }) => (
               <FormItem className="mb-[17px]">
                 <FormControl>
-                  <PasswordInput placeholder="비밀번호를 입력해주세요." {...field} className="h-[56px]" />
+                  <PasswordInput
+                    placeholder="비밀번호를 입력해주세요."
+                    {...field}
+                    className="h-[56px]"
+                    status={form.formState.errors.password ? 'error' : undefined}
+                  />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
-          <div className="mb-[37px] flex items-center space-x-2">
+          <div className="mb-3 flex items-center space-x-2">
             <Checkbox id="rememberId" checked={rememberId} onCheckedChange={handleRememberId} />
             <label
               htmlFor="rememberId"
@@ -108,6 +120,7 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
               아이디 저장
             </label>
           </div>
+          <div className="mb-6 h-[60px]">{errorInfo && <Alert variant="error">{errorInfo}</Alert>}</div>
           <Button className={'mb-[28px] h-[70px] rounded-[36px] text-[18px] font-bold'} isLoading={isPending}>
             로그인
           </Button>
@@ -122,6 +135,26 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
           </ul>
         </div>
       </Form>
+      <div className="mb-[40px] mt-[60px] flex w-full items-center">
+        <div className="h-[1px] flex-1 bg-[#9E9E9E]"></div>
+        <span className="mx-4 text-lg text-[#242424]">또는 다음으로 로그인</span>
+        <div className="h-[1px] flex-1 bg-[#9E9E9E]"></div>
+      </div>
+      <div className="mb-12 flex w-full items-center justify-center gap-10">
+        <Button variant="ghost" size="icon" className="h-[60px] w-[60px] rounded-full [&_svg]:size-[60px]">
+          <Icons.naver />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-[60px] w-[60px] rounded-full [&_svg]:size-[60px]">
+          <Icons.kakao />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-[60px] w-[60px] rounded-full border-[2px] border-gray-200 [&_svg]:size-[32px]"
+        >
+          <Icons.google />
+        </Button>
+      </div>
     </div>
   );
 }

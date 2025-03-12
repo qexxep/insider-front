@@ -5,9 +5,9 @@ import React, { forwardRef, useState } from 'react';
 
 import { cn } from '../lib';
 import { Button } from './button';
-import { Input } from './input';
+import { Input, InputProps } from './input';
 
-const PasswordInput = forwardRef<HTMLInputElement, React.ComponentProps<'input'>>(({ className, ...props }, ref) => {
+const PasswordInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...props }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
