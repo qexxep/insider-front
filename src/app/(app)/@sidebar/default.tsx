@@ -1,6 +1,5 @@
 import { Fragment } from 'react';
 
-import { CategoryIcon } from '@/shared/components';
 import { cn } from '@/shared/lib';
 import { Separator } from '@/shared/ui';
 
@@ -29,10 +28,10 @@ export default async function Sidebar({ className }: { className?: string }) {
       .filter(category => !excludeFavorites || !favoriteCategoryCodes.has(category.categoryCode))
       .map(category => ({
         href: `/posts/${category.categoryCode.toLowerCase()}`,
-        icon: CategoryIcon({ categoryName: category.categoryName }),
+        // icon을 미리 생성하지 않고 categoryName만 전달
+        categoryName: category.categoryName,
         label: category.categoryName,
         categoryCode: category.categoryCode,
-        categoryName: category.categoryName,
       }));
 
   return (

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useMemo, useState } from 'react';
 
+import { CategoryIcon } from '@/shared/components';
 import { cn } from '@/shared/lib';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button } from '@/shared/ui';
 
@@ -11,8 +12,8 @@ interface MenuSectionProps {
   title: string;
   categoryList: {
     href: string;
-    icon: React.ReactNode;
     label: string;
+    categoryName: string;
   }[];
   className?: string;
 }
@@ -47,7 +48,10 @@ export function MenuSection({ title, categoryList, className }: MenuSectionProps
                     isActive ? 'bg-accent/50 font-semibold text-primary-500' : ''
                   )}
                 >
-                  {item.icon}
+                  <CategoryIcon
+                    categoryName={item.categoryName}
+                    className={isActive ? 'stroke-primary-500' : 'stroke-gray-500'}
+                  />
                   <span>{item.label}</span>
                 </Link>
               );
