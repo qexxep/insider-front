@@ -1,5 +1,6 @@
 'use client';
 
+import Autoplay from 'embla-carousel-autoplay';
 import useEmblaCarousel, { type UseEmblaCarouselType } from 'embla-carousel-react';
 import Image from 'next/image';
 import * as React from 'react';
@@ -48,10 +49,17 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         ...opts,
         axis: orientation === 'horizontal' ? 'x' : 'y',
         loop: true,
-        slidesToScroll: 3,
+        slidesToScroll: 1,
         align: 'start',
       },
-      plugins
+      [
+        Autoplay({
+          delay: 4000, // 4초마다 슬라이드
+          stopOnInteraction: false, // 사용자 상호작용 후에도 계속 재생
+          stopOnMouseEnter: true, // 마우스 호버시 일시정지
+        }),
+        ...(plugins || []),
+      ]
     );
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
@@ -66,11 +74,11 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     }, []);
 
     const scrollPrev = React.useCallback(() => {
-      api?.scrollPrev();
+      api?.scrollTo(api.selectedScrollSnap() - 3);
     }, [api]);
 
     const scrollNext = React.useCallback(() => {
-      api?.scrollNext();
+      api?.scrollTo(api.selectedScrollSnap() + 3);
     }, [api]);
 
     const handleKeyDown = React.useCallback(
@@ -122,7 +130,7 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
           carouselRef,
           api: api,
           opts: {
-            slidesToScroll: 3,
+            slidesToScroll: 1,
             containScroll: 'trimSnaps',
             align: 'start',
             dragFree: false,
