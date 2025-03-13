@@ -1,4 +1,5 @@
-import { Icons } from '../ui';
+import { cn } from '@/shared/lib';
+import { Icons } from '@/shared/ui';
 
 // Icon Mapping
 const iconMap: Record<string, keyof typeof Icons> = {
@@ -16,8 +17,13 @@ const iconMap: Record<string, keyof typeof Icons> = {
   명예의전당: 'honor',
 };
 
+interface CategoryIconProps {
+  categoryName: string;
+  className?: string;
+}
+
 // Icon Component
-export function CategoryIcon({ categoryName, className = 'h-4 w-4' }: { categoryName: string; className?: string }) {
+export function CategoryIcon({ categoryName, className }: CategoryIconProps) {
   const IconComponent = Icons[iconMap[categoryName] ?? 'circle'];
-  return <IconComponent className={className} />;
+  return <IconComponent className={cn('h-4 w-4', className)} />;
 }
