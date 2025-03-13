@@ -50,15 +50,21 @@ export default async function Sidebar({ className }: { className?: string }) {
       <Separator className="my-2" />
 
       {/* 카테고리 메뉴 - 즐겨찾기 항목 제외 */}
-      {categories?.map(category => (
-        <Fragment key={category.commCategoryCode}>
-          <MenuSection
-            title={category.majorCategoryName}
+      {categories?.map(category => {
+        // 현재 즐겨찾기 게시판이 title만 있고 카테고리가 없기에 임시 제외.
+        if (category.categoryList.length === 0) {
+          return null;
+        }
+
+        return (
+          <Fragment key={category.commCategoryCode}>
+            <MenuSection
+              title={category.majorCategoryName}
             categoryList={formatCategoryList(category.categoryList, true)}
           />
           <Separator className="my-2" />
         </Fragment>
-      ))}
+    )})}
     </aside>
   );
 }

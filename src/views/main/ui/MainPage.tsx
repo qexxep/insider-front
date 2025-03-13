@@ -139,16 +139,23 @@ async function MainPage() {
       </div>
 
       {/* 게시판 / 카테고리별 최신 포스트 섹션 */}
-      {recentPosts?.map(data => (
-        <React.Fragment key={data.commCategoryCode}>
-          <h2 className="mb-4 mt-10 text-xl font-bold">{data.majorCategoryName}</h2>
-          <div className="grid grid-cols-2 gap-5">
+      {recentPosts?.map(data => {
+        // 현재 즐겨찾기 게시판이 title만 있고 카테고리가 없기에 임시 제외.
+        if (data.categoryList.length === 0) {
+          return null;
+        }
+
+        return (
+          <React.Fragment key={data.commCategoryCode}>
+            <h2 className="mb-4 mt-10 text-xl font-bold">{data.majorCategoryName}</h2>
+            <div className="grid grid-cols-2 gap-5">
             {data.categoryList.map(category => (
               <CategoryPostCard key={category.categoryCode} data={category} />
             ))}
           </div>
-        </React.Fragment>
-      ))}
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
