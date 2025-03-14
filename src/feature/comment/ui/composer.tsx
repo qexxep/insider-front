@@ -39,7 +39,7 @@ export const Composer = ({ className, postSeq, upCommentSeq, mentiUser, onCancel
       },
       {
         onSuccess: () => {
-          commentInvalidateQueries.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'D' });
+          commentInvalidateQueries.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'A' });
           setComment('');
           onCancel();
         },

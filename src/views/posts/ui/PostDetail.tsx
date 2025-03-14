@@ -27,8 +27,9 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
     postSeq: postId,
     currPage: currentPage,
     pageSize: DEFAULT_PAGE_SIZE,
-    sortType: 'D',
+    sortType: 'A',
   });
+
   const { data: bestWorstPostsData } = useGetBestWorstPostInfo({ categoryCd: category });
   const { data: relativePostListData } = useGetCategoryPostList({
     categoryCd: category,

@@ -55,7 +55,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
       { commentSeq: comment.commentSeq },
       {
         onSuccess: () => {
-          commentInvalidateQueries.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'D' });
+          commentInvalidateQueries.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'A' });
         },
       }
     );
