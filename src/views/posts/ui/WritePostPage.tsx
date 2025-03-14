@@ -53,6 +53,7 @@ export function WritePostPage() {
   const router = useRouter();
   const { toast } = useToast();
   const searchParams = useSearchParams();
+  const category = searchParams.get('category') || '';
 
   // 클라이언트에서 이중으로 토큰 체크
   useEffect(() => {
@@ -73,7 +74,7 @@ export function WritePostPage() {
     }
   }, [router, toast, searchParams]);
 
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>(category);
   const [postSeq, setPostSeq] = useState<string>('');
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [tags, setTags] = useState<string[]>([]);
