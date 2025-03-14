@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { ZodError } from 'zod';
 
+import { useToast } from '@/shared/hooks';
+import { cn } from '@/shared/lib';
 import {
   Button,
   Form,
@@ -33,9 +35,10 @@ import { TermsAgreement } from './TermsAgreement';
 
 export function RegisterPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const { data: signUpInitData } = useSignUpInit();
-  const { mutate: checkDuplicateNickname } = useCheckDuplicateNickname();
-  const { mutate: checkDuplicateId } = useCheckDuplicateId();
+  const { mutate: checkDuplicateNickname, isPending: isCheckingDuplicateNickname } = useCheckDuplicateNickname();
+  const { mutate: checkDuplicateId, isPending: isCheckingDuplicateId } = useCheckDuplicateId();
   const { mutate: sendOtp } = useSendOtp();
   const { mutate: checkOtp } = useCheckOtp();
   const { mutate: signup } = useSignUp();
@@ -61,6 +64,7 @@ export function RegisterPage() {
   const [isUserIdChecked, setIsUserIdChecked] = useState(false);
   const [hasSentEmailOtp, setHasSentEmailOtp] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [isAllTermsAgreed, setIsAllTermsAgreed] = useState(false);
 
   const [timeLeft, setTimeLeft] = useState(180);
 
@@ -161,6 +165,10 @@ export function RegisterPage() {
     });
   };
 
+  const handleAgreementComplete = (isAllAgreed: boolean) => {
+    setIsAllTermsAgreed(isAllAgreed);
+  };
+
   const onSubmit = async (data: SignupFormType) => {
     if (!isNicknameChecked) {
       form.setError('nickName', {
@@ -182,6 +190,14 @@ export function RegisterPage() {
       form.setError('email', {
         type: 'manual',
         message: '이메일 인증을 완료해주세요.',
+      });
+      return;
+    }
+
+    if (!isAllTermsAgreed) {
+      toast({
+        title: '모든 약관에 동의해주세요.',
+        variant: 'destructive',
       });
       return;
     }
@@ -211,6 +227,7 @@ export function RegisterPage() {
     });
   };
 
+  console.log(form.formState.errors.nickName);
   return (
     <Form {...form}>
       <div className="flex flex-col gap-[40px] py-[40px]">
@@ -229,21 +246,32 @@ export function RegisterPage() {
                 </FormLabel>
                 <div className="mt-3 flex space-x-2">
                   <FormControl>
-                    <Input placeholder="닉네임 입력" readOnly={isNicknameChecked} {...field} />
+                    <Input
+                      placeholder="닉네임 입력"
+                      status={isNicknameChecked ? 'success' : form.formState.errors.nickName ? 'error' : 'default'}
+                      {...field}
+                      onChange={e => {
+                        field.onChange(e);
+                        setIsNicknameChecked(false);
+                      }}
+                    />
                   </FormControl>
                   <Button
-                    disabled={isNicknameChecked || field.value.length === 0}
+                    disabled={field.value.length === 0}
                     onClick={async e => {
                       e.preventDefault();
                       const isValid = await form.trigger(field.name);
                       if (!isValid) return;
                       handleCheckDuplicateNickname(field.value);
                     }}
+                    isLoading={isCheckingDuplicateNickname}
                   >
                     중복확인
                   </Button>
                 </div>
-                <FormMessage>{isNicknameChecked && '사용가능한 닉네임입니다.'}</FormMessage>
+                <FormMessage className={cn(isNicknameChecked && 'text-input-success')}>
+                  {isNicknameChecked && '사용가능한 닉네임입니다.'}
+                </FormMessage>
               </FormItem>
             )}
           />
@@ -257,21 +285,32 @@ export function RegisterPage() {
                 </FormLabel>
                 <div className="mt-3 flex space-x-2">
                   <FormControl>
-                    <Input placeholder="아이디 입력" readOnly={isUserIdChecked} {...field} />
+                    <Input
+                      placeholder="아이디 입력"
+                      status={isUserIdChecked ? 'success' : form.formState.errors.userId ? 'error' : 'default'}
+                      {...field}
+                      onChange={e => {
+                        field.onChange(e);
+                        setIsUserIdChecked(false);
+                      }}
+                    />
                   </FormControl>
                   <Button
-                    disabled={isUserIdChecked || field.value.length === 0}
+                    disabled={field.value.length === 0}
                     onClick={async e => {
                       e.preventDefault();
                       const isValid = await form.trigger(field.name);
                       if (!isValid) return;
                       handleCheckDuplicateUserId(field.value);
                     }}
+                    isLoading={isCheckingDuplicateId}
                   >
-                    {isUserIdChecked ? '사용가능' : '중복확인'}
+                    중복확인
                   </Button>
                 </div>
-                <FormMessage />
+                <FormMessage className={cn(isUserIdChecked && 'text-input-success')}>
+                  {isUserIdChecked ? '사용가능한 아이디입니다.' : form.formState.errors.userId?.message}
+                </FormMessage>
               </FormItem>
             )}
           />
@@ -285,7 +324,11 @@ export function RegisterPage() {
                 </FormLabel>
 
                 <FormControl className="mt-3 flex space-x-2">
-                  <PasswordInput placeholder="비밀번호를 입력해주세요" {...field} />
+                  <PasswordInput
+                    placeholder="비밀번호를 입력해주세요"
+                    {...field}
+                    status={form.formState.errors.password ? 'error' : 'default'}
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -302,7 +345,11 @@ export function RegisterPage() {
                 </FormLabel>
 
                 <FormControl className="mt-3 flex space-x-2">
-                  <PasswordInput placeholder="비밀번호 재입력" {...field} />
+                  <PasswordInput
+                    placeholder="비밀번호 재입력"
+                    {...field}
+                    status={form.formState.errors.confirmPassword ? 'error' : 'default'}
+                  />
                 </FormControl>
 
                 <FormMessage />
@@ -320,19 +367,22 @@ export function RegisterPage() {
                   </FormLabel>
                   <div className="mt-3 flex space-x-2">
                     <FormControl>
-                      <Input placeholder="이메일 입력" readOnly={isEmailChecked} {...field} />
+                      <Input
+                        placeholder="이메일 입력"
+                        status={form.formState.errors.email ? 'error' : 'default'}
+                        {...field}
+                      />
                     </FormControl>
                     <Button
                       type="button"
                       className="w-[130px]"
-                      disabled={isEmailChecked || (!isEmailChecked && hasSentEmailOtp) || field.value.length === 0}
                       onClick={async () => {
                         const isValid = await form.trigger(field.name);
                         if (!isValid) return;
                         handleSendEmailOtp(field.value);
                       }}
                     >
-                      {isEmailChecked ? '인증완료' : '인증메일 발송'}
+                      인증메일 발송
                     </Button>
                   </div>
                   <FormMessage />
@@ -485,9 +535,9 @@ export function RegisterPage() {
             )}
           />
           <div className="flex flex-col border-t border-[#E1E1E1] py-10">
-            <TermsAgreement />
+            <TermsAgreement onAgreementComplete={handleAgreementComplete} />
           </div>
-          <Button type="submit" className="m-auto h-[70px] w-[350px] rounded-[35px] text-lg font-bold">
+          <Button type="submit" size="lg" className="m-auto h-[70px] w-[350px] rounded-[35px] text-lg font-bold">
             회원가입하기
           </Button>
         </form>
