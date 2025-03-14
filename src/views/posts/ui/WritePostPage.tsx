@@ -114,6 +114,12 @@ export function WritePostPage() {
     }
   };
 
+  useEffect(() => {
+    if (category && !postSeq) {
+      handleCategorySelect(category);
+    }
+  }, []);
+
   // 파일 검증
   const validateFile = (file: File) => {
     const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
