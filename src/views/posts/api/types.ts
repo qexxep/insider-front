@@ -34,3 +34,10 @@ export interface PostReactionRequest {
 }
 
 export type PostReactionResponse = void;
+
+export interface PostDeleteRequest {
+  postSeq: string;
+  fileExistYn: 'N' | 'Y'; // 파일 등록 여부(
+}
+
+export type PostDeleteResponse = void;

@@ -6,7 +6,23 @@ import { useState } from 'react';
 
 import { PersonalityIcon } from '@/feature/personality';
 import { cn } from '@/shared/lib/tw-utils';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button, Icons } from '@/shared/ui';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Button,
+  Icons,
+} from '@/shared/ui';
 
 import { commentInvalidateQueries } from '..';
 import { useDeleteComment } from '../api/queries';
@@ -70,8 +86,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
       )}
       <div className="flex w-full flex-col gap-2">
         <div className="flex items-center gap-1">
-          {/* TODO) nickname으로 변경 필요 */}
-          {comment.mentiUserId && <span className="text-primary">@{comment.mentiUserId}</span>}
+          {comment.mentiUserId && <span className="text-primary">@{comment.nickname}</span>}
           <div className="flex items-center gap-2">
             <PersonalityIcon code={'PIRM'} />
             <span>{comment.nickname}</span>
@@ -100,13 +115,30 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
           </button>
           {comment.owner && (
             <div className="flex gap-3">
-              <Button
-                variant="link"
-                className="h-fit p-0 text-primary-500 underline underline-offset-2"
-                onClick={handleDeleteComment}
-              >
-                댓글 삭제하기
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="link" className="h-fit p-0 text-primary-500 underline underline-offset-2">
+                    댓글 삭제하기
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="w-[671px]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>댓글 삭제</AlertDialogTitle>
+                    <AlertDialogDescription>(디자인 시안 필요)</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="m-auto h-[70px] w-[196px] rounded-[35px] text-lg font-bold">
+                      취소
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="m-auto h-[70px] w-[196px] rounded-[35px] text-lg font-bold"
+                      onClick={handleDeleteComment}
+                    >
+                      확인
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <Button variant="link" className="h-fit p-0 text-primary-500 underline underline-offset-2">
                 댓글 수정하기
               </Button>

@@ -13,6 +13,8 @@ import { getBestWorstPostInfo, getPostDetail, getPostListByCategory, postReactio
 import {
   BestWorstPostInfoRequest,
   BestWorstPostInfoResponse,
+  PostDeleteRequest,
+  PostDeleteResponse,
   PostDetailRequest,
   PostDetailResponse,
   PostListByCategoryRequest,
@@ -20,6 +22,7 @@ import {
   PostReactionRequest,
   PostReactionResponse,
 } from './types';
+import { deletePost } from './writeApi';
 
 export const queryKeys = {
   posts: {
@@ -28,6 +31,10 @@ export const queryKeys = {
     detail: (params: PostDetailRequest) => [...queryKeys.posts.all, 'detail', params] as const,
     bestWorst: (params: BestWorstPostInfoRequest) => [...queryKeys.posts.all, 'bestWorst', params] as const,
     reaction: (params: PostReactionRequest) => [...queryKeys.posts.all, 'reaction', params] as const,
+  },
+  writes: {
+    all: ['writes'] as const,
+    delete: (params: PostDeleteRequest) => [...queryKeys.writes.all, 'delete', params] as const,
   },
 } as const;
 
@@ -45,6 +52,7 @@ export const prefetchQueries = {
     await queryClient.prefetchQuery({
       queryKey: queryKeys.posts.list(payload),
       queryFn: () => getPostListByCategory(payload),
+      ...QUERY_CONFIG.REAL_TIME,
     });
   },
   detail: async (queryClient: QueryClient, payload: PostDetailRequest) => {
@@ -102,6 +110,15 @@ export const usePostReaction = (
 ) => {
   return useMutation({
     mutationFn: (payload: PostReactionRequest) => postReaction(payload),
+    ...config,
+  });
+};
+
+export const useDeletePost = (
+  config?: UseMutationOptions<ApiResponse<PostDeleteResponse>, Error, PostDeleteRequest>
+) => {
+  return useMutation({
+    mutationFn: (payload: PostDeleteRequest) => deletePost(payload),
     ...config,
   });
 };

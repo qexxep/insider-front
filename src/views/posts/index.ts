@@ -3,6 +3,7 @@ export {
   invalidateQueries as postInvalidateQueries,
   prefetchQueries as postPrefetchQueries,
   queryKeys as postQueryKeys,
+  useDeletePost,
   useGetBestWorstPostInfo,
   useGetCategoryPostList,
   useGetPostDetail,
