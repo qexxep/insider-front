@@ -20,6 +20,7 @@ interface Props {
 const DEFAULT_PAGE_SIZE = 10;
 
 export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
+  const router = useRouter();
   const [page, setPage] = useState(currentPage);
 
   const { data: postData } = useGetPostDetail({ postSeq: postId });
@@ -38,15 +39,14 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
   });
 
   if (!postData || !relativePostListData || !bestWorstPostsData || !commentsData) {
-    throw new Error('Post not found');
+    return null;
   }
 
   const { voteInfo, fileList, ...post } = postData.data;
   const { comments } = commentsData.data;
+
   const { posts, totalPostCnt } = relativePostListData.data;
   const bestWorstPosts = bestWorstPostsData.data;
-
-  const router = useRouter();
 
   const totalPages = Math.ceil(totalPostCnt / DEFAULT_PAGE_SIZE);
 
