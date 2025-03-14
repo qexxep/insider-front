@@ -121,7 +121,7 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
             </label>
           </div>
           <div className="mb-6 h-[60px]">{errorInfo && <Alert variant="error">{errorInfo}</Alert>}</div>
-          <Button className={'mb-[28px] h-[70px] rounded-[36px] text-[18px] font-bold'} isLoading={isPending}>
+          <Button size="lg" className={'mb-[28px] h-[70px] rounded-[36px] text-[18px] font-bold'} isLoading={isPending}>
             로그인
           </Button>
         </form>

@@ -146,14 +146,26 @@ export const useCheckDuplicateNickname = (
   config?: UseMutationOptions<ApiResponse<void>, Error, CheckDuplicateNicknameRequest>
 ) => {
   return useMutation({
-    mutationFn: (payload: CheckDuplicateNicknameRequest) => checkDuplicateNickname(payload),
+    mutationFn: async (payload: CheckDuplicateNicknameRequest) => {
+      const response = await checkDuplicateNickname(payload);
+      if (response.status === 'SUCCESS') {
+        return response;
+      }
+      return Promise.reject(response);
+    },
     ...config,
   });
 };
 
 export const useCheckDuplicateId = (config?: UseMutationOptions<ApiResponse<void>, Error, CheckDuplicateIdRequest>) => {
   return useMutation({
-    mutationFn: (payload: CheckDuplicateIdRequest) => checkDuplicateId(payload),
+    mutationFn: async (payload: CheckDuplicateIdRequest) => {
+      const response = await checkDuplicateId(payload);
+      if (response.status === 'SUCCESS') {
+        return response;
+      }
+      return Promise.reject(response);
+    },
     ...config,
   });
 };
