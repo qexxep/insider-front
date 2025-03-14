@@ -7,11 +7,33 @@ import { useState } from 'react';
 
 import { CommentCard, CommentComposer, useCommentList } from '@/feature/comment';
 import { toast } from '@/shared/hooks';
-import { Badge, Button, Carousel, CarouselContent, CarouselItem, Icons } from '@/shared/ui';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  Badge,
+  Button,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  Icons,
+} from '@/shared/ui';
 import { Paginator } from '@/widgets';
 
 import { postInvalidateQueries } from '..';
-import { useDeletePost, useGetBestWorstPostInfo, useGetCategoryPostList, useGetPostDetail } from '../api/queries';
+import {
+  useDeletePost,
+  useGetBestWorstPostInfo,
+  useGetCategoryPostList,
+  useGetPostDetail,
+  usePostReaction,
+} from '../api/queries';
 
 interface Props {
   postId: string;
@@ -41,7 +63,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
   });
 
   const { mutate: deletePost } = useDeletePost();
-
+  const { mutate: postReaction } = usePostReaction();
   if (!postData || !relativePostListData || !bestWorstPostsData || !commentsData) {
     return null;
   }
@@ -77,6 +99,23 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
     );
   };
 
+  const handlePostReaction = (reactionType: 'like' | 'unlike', actionType: 'add' | 'remove' | 'toggle') => {
+    postReaction(
+      { postSeq: postId, reactionType, actionType },
+      {
+        onSuccess: () => {
+          postInvalidateQueries.detail({ postSeq: postId });
+        },
+        onError: () => {
+          toast({
+            title: '게시물 좋아요 실패',
+            description: '게시물 좋아요에 실패했습니다. 다시 시도해주세요.',
+          });
+        },
+      }
+    );
+  };
+
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       {/* 헤더 */}
@@ -91,9 +130,30 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
           {/* TODO 본인 게시물 여부 판단 필요 */}
           {post.owner && (
             <div className="flex gap-3">
-              <Button variant="outlinePrimary" size="sm" onClick={handleDeletePost}>
-                글 삭제하기
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="outlinePrimary" size="sm">
+                    글 삭제하기
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="w-[671px]">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>게시글 삭제</AlertDialogTitle>
+                    <AlertDialogDescription>(디자인 시안 필요)</AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="m-auto h-[70px] w-[196px] rounded-[35px] text-lg font-bold">
+                      취소
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="m-auto h-[70px] w-[196px] rounded-[35px] text-lg font-bold"
+                      onClick={handleDeletePost}
+                    >
+                      확인
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
               <Button variant="outlinePrimary" size="sm">
                 글 수정하기
               </Button>
@@ -144,11 +204,11 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">
-              <button>
+              <button onClick={() => handlePostReaction('like', 'add')}>
                 <Icons.thumbsUp className="h-4 w-4 text-gray-700" />
               </button>
-              <span className="leading-[1] text-gray-700">{post.likeCnt}</span>
-              <button>
+              <span className="leading-[1] text-gray-700">{post.likeCnt - post.unlikeCnt}</span>
+              <button onClick={() => handlePostReaction('unlike', 'add')}>
                 <Icons.thumbsDown className="h-4 w-4 text-gray-700" />
               </button>
             </div>
