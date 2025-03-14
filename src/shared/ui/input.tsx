@@ -14,7 +14,7 @@ const inputVariants = cva(
       status: {
         default: 'bg-background border-[#8F8F8F]',
         success: 'border-input-success text-input-success',
-        error: 'border-input-error text-input-error',
+        error: 'border-[#FF4200] text-[#F04438]',
         warning: 'border-input-warning text-input-warning',
       },
     },

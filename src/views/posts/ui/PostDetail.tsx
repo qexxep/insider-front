@@ -6,10 +6,12 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { CommentCard, CommentComposer, useCommentList } from '@/feature/comment';
+import { toast } from '@/shared/hooks';
 import { Badge, Button, Carousel, CarouselContent, CarouselItem, Icons } from '@/shared/ui';
 import { Paginator } from '@/widgets';
 
-import { useGetBestWorstPostInfo, useGetCategoryPostList, useGetPostDetail } from '../api/queries';
+import { postInvalidateQueries } from '..';
+import { useDeletePost, useGetBestWorstPostInfo, useGetCategoryPostList, useGetPostDetail } from '../api/queries';
 
 interface Props {
   postId: string;
@@ -38,6 +40,8 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
     pageSize: DEFAULT_PAGE_SIZE,
   });
 
+  const { mutate: deletePost } = useDeletePost();
+
   if (!postData || !relativePostListData || !bestWorstPostsData || !commentsData) {
     return null;
   }
@@ -54,6 +58,25 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
     setPage(page);
   };
 
+  const handleDeletePost = () => {
+    deletePost(
+      { postSeq: postId, fileExistYn: fileList.length > 0 ? 'Y' : 'N' },
+      {
+        onSuccess: () => {
+          router.push(`/posts/${category}`);
+          postInvalidateQueries.list({ categoryCd: category, currPage: 1, pageSize: DEFAULT_PAGE_SIZE });
+          postInvalidateQueries.detail({ postSeq: postId });
+        },
+        onError: () => {
+          toast({
+            title: '게시물 삭제 실패',
+            description: '게시물 삭제에 실패했습니다. 다시 시도해주세요.',
+          });
+        },
+      }
+    );
+  };
+
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       {/* 헤더 */}
@@ -68,7 +91,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
           {/* TODO 본인 게시물 여부 판단 필요 */}
           {post.owner && (
             <div className="flex gap-3">
-              <Button variant="outlinePrimary" size="sm">
+              <Button variant="outlinePrimary" size="sm" onClick={handleDeletePost}>
                 글 삭제하기
               </Button>
               <Button variant="outlinePrimary" size="sm">

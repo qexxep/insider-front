@@ -49,7 +49,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant, size, className }),
-          isLoading && 'pointer-events-none select-none gap-3 bg-[#FFA375] [&_svg]:size-7'
+          isLoading && 'pointer-events-none select-none bg-[#FFA375] [&_svg]:size-4',
+          isLoading && size === 'lg' && 'gap-3 [&_svg]:size-7'
         )}
         ref={ref}
         {...props}
