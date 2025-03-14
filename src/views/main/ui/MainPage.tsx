@@ -149,10 +149,10 @@ async function MainPage() {
           <React.Fragment key={data.commCategoryCode}>
             <h2 className="mb-4 mt-10 text-xl font-bold">{data.majorCategoryName}</h2>
             <div className="grid grid-cols-2 gap-5">
-            {data.categoryList.map(category => (
-              <CategoryPostCard key={category.categoryCode} data={category} />
-            ))}
-          </div>
+              {data.categoryList.map(category => (
+                <CategoryPostCard key={category.categoryCode} data={category} />
+              ))}
+            </div>
           </React.Fragment>
         );
       })}

@@ -137,7 +137,7 @@ export const CategoryPostList = ({ category }: Props) => {
                 <div className="flex flex-col items-start gap-3">
                   <div className="flex items-center gap-1">
                     <Icons.inssiderType />
-                    <span className="text-gray-700">엠드르</span>
+                    <span className="text-gray-700">{post.nickname}</span>
                   </div>
                   <h4 className="font-bold text-gray-700">{post.postTitle}</h4>
                   <div className="flex items-center gap-1 text-sm text-[#989898]">
