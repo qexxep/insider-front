@@ -4,7 +4,7 @@ export interface CommentListRequest {
   postSeq: string;
   currPage: number;
   pageSize: number;
-  sortType: 'D' | 'R'; // D: 최신순, R: 추천순
+  sortType: 'D' | 'R' | 'A'; // A: 등록순/ D:최신순 / R:추천순
 }
 
 export type CommentListResponse = CommentInfoType;
