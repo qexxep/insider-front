@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
@@ -59,7 +60,15 @@ export const CategoryPostList = ({ category }: Props) => {
 
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
-      <h1 className="mb-5 w-full text-[28px] font-bold text-gray-700">{categoryName}</h1>
+      <div className="mb-[21px] flex items-center justify-between">
+        <h1 className="w-full text-[28px] font-bold text-gray-700">{categoryName}</h1>
+        <Link href={`/posts/write?category=${category}`}>
+          <Button variant="default" size="sm" className="h-[46px] p-4 text-lg font-semibold [&_svg]:size-6">
+            <Icons.pencil />
+            글쓰기
+          </Button>
+        </Link>
+      </div>
       {/* 필독 게시물 */}
       <div className="mb-6 flex items-center justify-between bg-primary-200 px-6 py-3">
         <div className="flex items-center gap-3">
