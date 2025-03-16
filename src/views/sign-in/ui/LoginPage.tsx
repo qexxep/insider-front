@@ -127,9 +127,9 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
         </form>
         <div>
           <ul className="flex space-x-[48px]">
-            <li className="text-[18px] text-[#616161] underline underline-offset-[3px]">아이디 찾기</li>
-            <li className="text-[18px] text-[#616161] underline underline-offset-[3px]">비밀번호 찾기</li>
-            <li className="text-[18px] text-[#616161] underline underline-offset-[3px]">
+            <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">아이디 찾기</li>
+            <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">비밀번호 찾기</li>
+            <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">
               <Link href={'/signup'}>회원가입</Link>
             </li>
           </ul>
@@ -137,7 +137,7 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
       </Form>
       <div className="mb-[40px] mt-[60px] flex w-full items-center">
         <div className="h-[1px] flex-1 bg-[#9E9E9E]"></div>
-        <span className="mx-4 text-lg text-[#242424]">또는 다음으로 로그인</span>
+        <span className="mx-4 text-lg text-gray-900">또는 다음으로 로그인</span>
         <div className="h-[1px] flex-1 bg-[#9E9E9E]"></div>
       </div>
       <div className="mb-12 flex w-full items-center justify-center gap-10">

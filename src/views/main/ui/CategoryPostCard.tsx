@@ -14,7 +14,7 @@ export function CategoryPostCard({ data }: { data: CategoryInfo }) {
           <span>{data.categoryName}</span>
         </CardTitle>
         <Link href={`/posts/${data.categoryCode}`}>
-          <Button variant="ghost" className="text-gray-[#242424] !mt-0 h-5 justify-end p-2 !text-right text-sm">
+          <Button variant="ghost" className="text-gray-gray-900 !mt-0 h-5 justify-end p-2 !text-right text-sm">
             더보기 &gt;
           </Button>
         </Link>

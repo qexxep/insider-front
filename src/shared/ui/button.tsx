@@ -8,12 +8,12 @@ import { Icons } from './icons';
 const buttonVariants = cva(
   cn(
     'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-medium font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
-    'disabled:pointer-events-none disabled:bg-[#D4D4D4]'
+    'disabled:pointer-events-none disabled:bg-gray-400'
   ),
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground hover:bg-[#FF7E3D] active:bg-[#CA3400]',
+        default: 'bg-primary text-primary-foreground hover:bg-primary-500 active:bg-primary-400',
         destructive: 'bg-destructive text-destructive-foreground hover:bg-destructive/90',
         outline: 'border border-input bg-background hover:bg-accent hover:text-accent-foreground',
         outlinePrimary: 'border border-primary text-primary bg-background hover:bg-primary-100 hover:text-primary',
@@ -49,7 +49,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(
           buttonVariants({ variant, size, className }),
-          isLoading && 'pointer-events-none select-none bg-[#FFA375] [&_svg]:size-4',
+          isLoading && 'pointer-events-none select-none bg-primary-400 [&_svg]:size-4',
           isLoading && size === 'lg' && 'gap-3 [&_svg]:size-7'
         )}
         ref={ref}

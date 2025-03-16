@@ -117,7 +117,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
             <div className="flex gap-3">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="link" className="h-fit p-0 text-primary-500 underline underline-offset-2">
+                  <Button variant="link" className="text-primary-700 h-fit p-0 underline underline-offset-2">
                     댓글 삭제하기
                   </Button>
                 </AlertDialogTrigger>
@@ -139,7 +139,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button variant="link" className="h-fit p-0 text-primary-500 underline underline-offset-2">
+              <Button variant="link" className="text-primary-700 h-fit p-0 underline underline-offset-2">
                 댓글 수정하기
               </Button>
             </div>
@@ -156,8 +156,8 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
               >
                 <p className="text-gray-600">답글 {comment.childComments.length}개</p>
               </AccordionTrigger>
-              <AccordionContent className="divide-y divide-[#D4D4D4] border-none p-0 text-base">
-                {comment.childComments.map(child => (
+              <AccordionContent className="divide-y divide-gray-400 border-none p-0 text-base">
+                {comment.childComments?.map(child => (
                   <Card key={child.commentSeq} postSeq={postSeq} comment={child} parent={comment} />
                 ))}
               </AccordionContent>

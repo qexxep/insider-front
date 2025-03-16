@@ -449,7 +449,7 @@ export function WritePostPage() {
             투표 추가
           </Button>
           <Button
-            className="bg-primary px-6 text-white transition-colors hover:bg-primary-500 disabled:bg-gray-400 disabled:text-primary-foreground"
+            className="hover:bg-primary-700 bg-primary px-6 text-white transition-colors disabled:bg-gray-400 disabled:text-primary-foreground"
             onClick={handleSubmitPost}
             disabled={savePostMutation.isPending || !postSeq || !title.trim() || !content.trim()}
           >
@@ -503,7 +503,7 @@ export function WritePostPage() {
                     className="group flex items-center gap-1 rounded-md bg-gray-200 px-2 py-1"
                   >
                     <span
-                      className="cursor-pointer text-sm text-gray-700 hover:text-gray-900"
+                      className="cursor-pointer text-sm text-gray-900 hover:text-gray-900"
                       onClick={() => handleTagEdit(index)}
                     >
                       #{tag}
@@ -673,7 +673,7 @@ const PostVoteForm = ({
           <Button
             onClick={handleAddVoteOption}
             variant="outline"
-            className="mt-3 w-full border border-[#FF5C00] bg-[#FFF1EA] text-primary hover:bg-primary-500 hover:text-primary-foreground disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-400 disabled:text-primary-foreground"
+            className="hover:bg-primary-700 mt-3 w-full border border-[#FF5C00] bg-[#FFF1EA] text-primary hover:text-primary-foreground disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-400 disabled:text-primary-foreground"
             disabled={voteCount >= MAX_VOTE_COUNT}
           >
             <Icons.plus width={24} height={24} />

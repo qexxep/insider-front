@@ -8,7 +8,7 @@ export function RankPostCard({ data }: { data: InsiderRanking }) {
   return (
     <Link
       href={`/posts/${data.categoryCd}/${data.postSeq}`}
-      className="flex items-center gap-4 border-b border-[#d4d4d4] px-2 py-4 hover:bg-gray-50"
+      className="flex items-center gap-4 border-b border-gray-400 px-2 py-4 hover:bg-gray-50"
     >
       <span className="text-md w-6 self-start font-bold text-orange-500">{data.rankNum}</span>
       <div className="min-w-0 flex-1">
@@ -16,7 +16,7 @@ export function RankPostCard({ data }: { data: InsiderRanking }) {
           <div className="rounded-sm bg-orange-100 px-1.5 py-0.5 text-sm font-medium text-orange-600">
             {data.categoryName}
           </div>
-          <div className="text-md truncate font-medium text-[#242424]">{data.postTitle}</div>
+          <div className="text-md truncate font-medium text-gray-900">{data.postTitle}</div>
         </div>
         <div className="mt-2 flex items-center gap-3 text-sm text-gray-500">
           <span className="flex items-center gap-1 text-xs">

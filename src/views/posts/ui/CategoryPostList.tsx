@@ -61,7 +61,7 @@ export const CategoryPostList = ({ category }: Props) => {
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       <div className="mb-[21px] flex items-center justify-between">
-        <h1 className="w-full text-[28px] font-bold text-gray-700">{categoryName}</h1>
+        <h1 className="w-full text-[28px] font-bold text-gray-900">{categoryName}</h1>
         <Link href={`/posts/write?category=${category}`}>
           <Button variant="default" size="sm" className="h-[46px] p-4 text-lg font-semibold [&_svg]:size-6">
             <Icons.pencil />
@@ -79,7 +79,7 @@ export const CategoryPostList = ({ category }: Props) => {
       {/* 베스트 워스트 게시물 */}
       {bestWorstPosts && (
         <div className="mb-10 flex gap-7">
-          <Card className="flex w-full flex-col justify-between bg-[#FC6423] text-white">
+          <Card className="bg-primary-600 flex w-full flex-col justify-between text-white">
             <CardHeader className="pb-3 pt-7">
               <span className="flex w-fit items-center justify-center gap-1 rounded-[4px] bg-[#FF885F] p-2">
                 <Icons.thumbsUp className="h-4 w-4" />
@@ -137,9 +137,9 @@ export const CategoryPostList = ({ category }: Props) => {
                 <div className="flex flex-col items-start gap-3">
                   <div className="flex items-center gap-1">
                     <Icons.inssiderType />
-                    <span className="text-gray-700">{post.nickname}</span>
+                    <span className="text-gray-900">{post.nickname}</span>
                   </div>
-                  <h4 className="font-bold text-gray-700">{post.postTitle}</h4>
+                  <h4 className="font-bold text-gray-900">{post.postTitle}</h4>
                   <div className="flex items-center gap-1 text-sm text-[#989898]">
                     <span>{post.regDate}</span>
                     <div className="h-[2px] w-[2px] rounded-full bg-[#D9D9D9] p-0" />
@@ -165,16 +165,16 @@ export const CategoryPostList = ({ category }: Props) => {
                 <div className="mr-2 flex items-center gap-3">
                   <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">
                     <button>
-                      <Icons.thumbsUp className="h-4 w-4 text-gray-700" />
+                      <Icons.thumbsUp className="h-4 w-4 text-gray-900" />
                     </button>
-                    <span className="leading-[1] text-gray-700">{post.likeCnt}</span>
+                    <span className="leading-[1] text-gray-900">{post.likeCnt}</span>
                     <button>
-                      <Icons.thumbsDown className="h-4 w-4 text-gray-700" />
+                      <Icons.thumbsDown className="h-4 w-4 text-gray-900" />
                     </button>
                   </div>
                   <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">
-                    <Icons.comment className="h-4 w-4 text-gray-700" />
-                    <span className="leading-[1] text-gray-700">{post.commentCnt}</span>
+                    <Icons.comment className="h-4 w-4 text-gray-900" />
+                    <span className="leading-[1] text-gray-900">{post.commentCnt}</span>
                   </div>
                 </div>
                 {parsePostTags(post.postTag).map(tag => (

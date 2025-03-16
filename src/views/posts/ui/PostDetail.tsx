@@ -125,7 +125,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
             <button className="w-fit p-0 font-semibold text-primary" onClick={() => router.push(`/posts/${category}`)}>
               {post.categoryName}
             </button>
-            <h1 className="text-xl font-bold text-gray-700">{post.postTitle}</h1>
+            <h1 className="text-xl font-bold text-gray-900">{post.postTitle}</h1>
           </div>
           {/* TODO 본인 게시물 여부 판단 필요 */}
           {post.owner && (
@@ -182,7 +182,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
       {/* 메인 */}
       <div className="flex flex-col gap-24 border-t border-[#E1E1E1] py-10">
         {/* TODO) 게시물 상세 이미지 캐러셀 추가 or 에디터 적용 */}
-        {fileList.length > 0 && (
+        {fileList?.length > 0 && (
           <Carousel>
             <CarouselContent>
               {fileList.map(file => (
@@ -205,16 +205,16 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">
               <button onClick={() => handlePostReaction('like', 'add')}>
-                <Icons.thumbsUp className="h-4 w-4 text-gray-700" />
+                <Icons.thumbsUp className="h-4 w-4 text-gray-900" />
               </button>
-              <span className="leading-[1] text-gray-700">{post.likeCnt - post.unlikeCnt}</span>
+              <span className="leading-[1] text-gray-900">{post.likeCnt - post.unlikeCnt}</span>
               <button onClick={() => handlePostReaction('unlike', 'add')}>
-                <Icons.thumbsDown className="h-4 w-4 text-gray-700" />
+                <Icons.thumbsDown className="h-4 w-4 text-gray-900" />
               </button>
             </div>
             <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">
-              <Icons.comment className="h-4 w-4 text-gray-700" />
-              <span className="leading-[1] text-gray-700">{post.commentCnt}</span>
+              <Icons.comment className="h-4 w-4 text-gray-900" />
+              <span className="leading-[1] text-gray-900">{post.commentCnt}</span>
             </div>
           </div>
         </div>
@@ -222,12 +222,12 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
       {voteInfo && Boolean(post.isVote) && (
         <div className="flex flex-col items-center gap-9 border-t border-[#E1E1E1] py-10">
           <div className="flex flex-col items-center gap-3">
-            <h3 className="text-lg font-bold text-gray-700">이 게시물은 현재 투표를 받고 있습니다.</h3>
+            <h3 className="text-lg font-bold text-gray-900">이 게시물은 현재 투표를 받고 있습니다.</h3>
             <p className="text-lg font-normal">투표를 해주시면 다음주 토론 주제로 올라갈 가능성이 높아집니다.</p>
           </div>
           <div className="flex w-full max-w-[1080px] flex-col rounded-lg border border-[#acacac] p-7">
             <span className="mb-2 font-semibold text-[#0080FF]">게시물 투표</span>
-            <p className="mb-3 text-lg font-bold text-gray-700">{voteInfo && voteInfo.voteTitle}</p>
+            <p className="mb-3 text-lg font-bold text-gray-900">{voteInfo && voteInfo.voteTitle}</p>
             <div className="flex flex-col gap-3">
               {voteInfo.voteItems.map(voteItem => (
                 <div
@@ -254,15 +254,13 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
           </Button>
         </div>
         <CommentComposer postSeq={post.postSeq} onCancel={() => {}} />
-        <div className="divide-y divide-[#D4D4D4]">
-          {comments.map(comment => (
-            <CommentCard key={comment.commentSeq} postSeq={post.postSeq} comment={comment} />
-          ))}
+        <div className="divide-y divide-gray-400">
+          {comments?.map(comment => <CommentCard key={comment.commentSeq} postSeq={post.postSeq} comment={comment} />)}
         </div>
       </div>
       {/* 인싸이더 다른 게시물 */}
       <div className="pt-20">
-        <h2 className="text-2xl font-bold text-gray-700">인싸이더 게시물</h2>
+        <h2 className="text-2xl font-bold text-gray-900">인싸이더 게시물</h2>
         <ul className="my-7 divide-y divide-[#c8c8c8] border-b border-t border-[#c8c8c8] [&>li]:px-5 [&>li]:py-4">
           {bestWorstPosts.bestPostInfo && (
             <Link
@@ -271,12 +269,12 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
             >
               <div className="flex items-center gap-12">
                 <span className="rounded-full bg-[#ff5c00] px-[10px] font-semibold leading-7 text-white">베스트</span>
-                <p className="text-lg text-gray-700">
+                <p className="text-lg text-gray-900">
                   {bestWorstPosts.bestPostInfo.postTitle}
                   <span className="ml-2 font-medium text-[#969696]">[{bestWorstPosts.bestPostInfo.commentCnt}]</span>
                 </p>
               </div>
-              <span className="whitespace-nowrap text-gray-700">{bestWorstPosts.bestPostInfo.updDate}</span>
+              <span className="whitespace-nowrap text-gray-900">{bestWorstPosts.bestPostInfo.updDate}</span>
             </Link>
           )}
           {bestWorstPosts.worstPostInfo && (
@@ -286,12 +284,12 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
             >
               <div className="flex items-center gap-12">
                 <span className="rounded-full bg-black px-[10px] font-semibold leading-7 text-white">워스트</span>
-                <p className="text-lg text-gray-700">
+                <p className="text-lg text-gray-900">
                   {bestWorstPosts.worstPostInfo.postTitle}
                   <span className="ml-2 font-medium text-[#969696]">[{bestWorstPosts.worstPostInfo.commentCnt}]</span>
                 </p>
               </div>
-              <span className="whitespace-nowrap text-gray-700">{bestWorstPosts.worstPostInfo.updDate}</span>
+              <span className="whitespace-nowrap text-gray-900">{bestWorstPosts.worstPostInfo.updDate}</span>
             </Link>
           )}
           {posts.map(relativePost => (
@@ -302,12 +300,12 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
             >
               <div className="flex items-center gap-12">
                 <span className="font-bold leading-7 text-[#ff5c00]">{relativePost.postSeq}</span>
-                <p className="line-clamp-1 text-lg text-gray-700">
+                <p className="line-clamp-1 text-lg text-gray-900">
                   {relativePost.postTitle}
                   <span className="ml-2 font-medium text-[#969696]">[{relativePost.commentCnt}]</span>
                 </p>
               </div>
-              <span className="whitespace-nowrap text-gray-700">{relativePost.updDate}</span>
+              <span className="whitespace-nowrap text-gray-900">{relativePost.updDate}</span>
             </Link>
           ))}
         </ul>

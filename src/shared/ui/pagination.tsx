@@ -41,7 +41,7 @@ const PaginationLink = ({ className, isActive, size = 'icon', disabled = false, 
         variant: isActive ? 'outline' : 'ghost',
         size,
       }),
-      isActive && 'bg-primary text-white hover:bg-primary-400 hover:text-white',
+      isActive && 'bg-primary text-white hover:bg-primary-500 hover:text-white',
       disabled && 'pointer-events-none text-[#D0D0D0]',
       className
     )}
