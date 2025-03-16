@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { type ApiResponse, apiServer } from '@/shared/api';
 import { Icons, Input, Separator } from '@/shared/ui';
 
+import UserProfile from './_components/UserProfile';
 import { LinkButton } from './link-button';
 
 export interface HotTopic {
@@ -60,9 +61,7 @@ export default async function Header() {
                 0
               </span>
             </button>
-            <button>
-              <Icons.circleUser className="h-5 w-5" />
-            </button>
+            <UserProfile />
           </div>
         )}
         {!token && (
