@@ -33,15 +33,20 @@ import {
 import { SignupFormSchema, SignupFormType, tempCodeSchema } from '../model';
 import { TermsAgreement } from './TermsAgreement';
 
+const TIME_LEFT = 180;
+
 export function RegisterPage() {
   const router = useRouter();
   const { toast } = useToast();
   const { data: signUpInitData } = useSignUpInit();
   const { mutate: checkDuplicateNickname, isPending: isCheckingDuplicateNickname } = useCheckDuplicateNickname();
   const { mutate: checkDuplicateId, isPending: isCheckingDuplicateId } = useCheckDuplicateId();
-  const { mutate: sendOtp } = useSendOtp();
-  const { mutate: checkOtp } = useCheckOtp();
-  const { mutate: signup } = useSignUp();
+  const { mutate: sendOtp, isPending: isSendingOtp } = useSendOtp();
+  const { mutate: checkOtp, isPending: isCheckingOtp } = useCheckOtp();
+  const { mutate: signup, isPending: isSigningUp } = useSignUp();
+
+  const [otpCode, setOtpCode] = useState('');
+  const [otpCodeError, setOtpCodeError] = useState('');
 
   const tempCode = signUpInitData?.data.tempCode ?? '';
 
@@ -53,10 +58,7 @@ export function RegisterPage() {
       password: '',
       confirmPassword: '',
       email: '',
-      tempCode: '',
-      'birthDate-year': '',
-      'birthDate-month': '',
-      'birthDate-day': '',
+      birthDate: '',
     },
   });
 
@@ -66,17 +68,23 @@ export function RegisterPage() {
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isAllTermsAgreed, setIsAllTermsAgreed] = useState(false);
 
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [timeLeft, setTimeLeft] = useState(TIME_LEFT);
 
   useEffect(() => {
-    if (timeLeft === 0) return;
+    if (timeLeft === 0) {
+      setHasSentEmailOtp(false);
+      setOtpCode('');
+      return;
+    }
+
+    if (isEmailChecked || timeLeft === 0) return;
 
     const timer = setInterval(() => {
       setTimeLeft(prev => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [timeLeft, isEmailChecked]);
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -125,14 +133,28 @@ export function RegisterPage() {
   };
 
   const handleSendEmailOtp = async (email: string) => {
+    setHasSentEmailOtp(false);
+    setOtpCode('');
+    setOtpCodeError('');
     const payload = {
       otpPurpose: 'SIGN_UP',
       tempCode,
       userEmail: email,
     };
     await sendOtp(payload, {
-      onSuccess: () => {
-        setHasSentEmailOtp(true);
+      onSuccess: response => {
+        console.log(response);
+        if (response.status === 'SUCCESS') {
+          setTimeLeft(TIME_LEFT);
+          setHasSentEmailOtp(true);
+        } else {
+          setHasSentEmailOtp(false);
+          form.setError('email', {
+            type: 'manual',
+            message: response.message,
+          });
+          return;
+        }
       },
       onError: error => {
         setHasSentEmailOtp(false);
@@ -152,15 +174,17 @@ export function RegisterPage() {
       inputOtp,
     };
     await checkOtp(payload, {
-      onSuccess: () => {
-        setIsEmailChecked(true);
+      onSuccess: response => {
+        if (response.status === 'SUCCESS') {
+          setIsEmailChecked(true);
+        } else {
+          setIsEmailChecked(false);
+          setOtpCodeError(response.message);
+        }
       },
       onError: error => {
         setIsEmailChecked(false);
-        form.setError('email', {
-          type: 'manual',
-          message: error.message,
-        });
+        setOtpCodeError(error.message);
       },
     });
   };
@@ -202,7 +226,8 @@ export function RegisterPage() {
       return;
     }
 
-    const birthDate = data['birthDate-year'] + '-' + data['birthDate-month'] + '-' + data['birthDate-day'];
+    const birthDate = `${data.birthDate.slice(0, 4)}-${data.birthDate.slice(4, 6)}-${data.birthDate.slice(6, 8)}`;
+
     const payload = {
       nickName: data.nickName,
       userId: data.userId,
@@ -227,7 +252,16 @@ export function RegisterPage() {
     });
   };
 
-  console.log(form.formState.errors.nickName);
+  const submitButtonDisabled =
+    !isNicknameChecked ||
+    !isUserIdChecked ||
+    !isEmailChecked ||
+    !isAllTermsAgreed ||
+    !!form.formState.errors.password ||
+    !!form.formState.errors.confirmPassword ||
+    !!form.formState.errors.birthDate ||
+    !!form.formState.errors.gender;
+
   return (
     <Form {...form}>
       <div className="flex flex-col gap-[40px] py-[40px]">
@@ -240,7 +274,7 @@ export function RegisterPage() {
             control={form.control}
             name="nickName"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="h-[120px]">
                 <FormLabel className="text-lg font-medium">
                   닉네임 <span className="text-destructive">*</span>
                 </FormLabel>
@@ -248,6 +282,7 @@ export function RegisterPage() {
                   <FormControl>
                     <Input
                       placeholder="닉네임 입력"
+                      readOnly={isCheckingDuplicateNickname}
                       status={isNicknameChecked ? 'success' : form.formState.errors.nickName ? 'error' : 'default'}
                       {...field}
                       onChange={e => {
@@ -265,6 +300,7 @@ export function RegisterPage() {
                       handleCheckDuplicateNickname(field.value);
                     }}
                     isLoading={isCheckingDuplicateNickname}
+                    className="w-[150px] text-lg"
                   >
                     중복확인
                   </Button>
@@ -279,7 +315,7 @@ export function RegisterPage() {
             control={form.control}
             name="userId"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="h-[120px]">
                 <FormLabel className="text-lg font-medium">
                   아이디 <span className="text-destructive">*</span>
                 </FormLabel>
@@ -287,6 +323,7 @@ export function RegisterPage() {
                   <FormControl>
                     <Input
                       placeholder="아이디 입력"
+                      readOnly={isCheckingDuplicateId}
                       status={isUserIdChecked ? 'success' : form.formState.errors.userId ? 'error' : 'default'}
                       {...field}
                       onChange={e => {
@@ -304,6 +341,7 @@ export function RegisterPage() {
                       handleCheckDuplicateUserId(field.value);
                     }}
                     isLoading={isCheckingDuplicateId}
+                    className="w-[150px] text-lg"
                   >
                     중복확인
                   </Button>
@@ -318,19 +356,21 @@ export function RegisterPage() {
             control={form.control}
             name="password"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="h-[120px]">
                 <FormLabel className="text-lg font-medium">
                   비밀번호<span className="text-destructive">*</span>
                 </FormLabel>
-
                 <FormControl className="mt-3 flex space-x-2">
                   <PasswordInput
                     placeholder="비밀번호를 입력해주세요"
                     {...field}
+                    onChange={e => {
+                      field.onChange(e);
+                      form.trigger('confirmPassword');
+                    }}
                     status={form.formState.errors.password ? 'error' : 'default'}
                   />
                 </FormControl>
-
                 <FormMessage />
               </FormItem>
             )}
@@ -339,11 +379,10 @@ export function RegisterPage() {
             control={form.control}
             name="confirmPassword"
             render={({ field }) => (
-              <FormItem>
+              <FormItem className="h-[120px]">
                 <FormLabel className="text-lg font-medium">
                   비밀번호 확인<span className="text-destructive">*</span>
                 </FormLabel>
-
                 <FormControl className="mt-3 flex space-x-2">
                   <PasswordInput
                     placeholder="비밀번호 재입력"
@@ -361,7 +400,7 @@ export function RegisterPage() {
               control={form.control}
               name="email"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="h-[120px]">
                   <FormLabel className="text-lg font-medium">
                     이메일<span className="text-destructive">*</span>
                   </FormLabel>
@@ -371,142 +410,114 @@ export function RegisterPage() {
                         placeholder="이메일 입력"
                         status={form.formState.errors.email ? 'error' : 'default'}
                         {...field}
+                        onChange={e => {
+                          field.onChange(e);
+                          setIsEmailChecked(false);
+                        }}
                       />
                     </FormControl>
                     <Button
                       type="button"
-                      className="w-[130px]"
                       onClick={async () => {
                         const isValid = await form.trigger(field.name);
                         if (!isValid) return;
                         handleSendEmailOtp(field.value);
                       }}
+                      className="min-w-[150px] px-6 text-lg"
+                      isLoading={isSendingOtp}
                     >
                       인증메일 발송
                     </Button>
                   </div>
-                  <FormMessage />
+                  <FormMessage className={cn(isEmailChecked && 'text-input-success')}>
+                    {isEmailChecked && '사용 가능한 이메일입니다.'}
+                  </FormMessage>
                 </FormItem>
               )}
             />
             {hasSentEmailOtp && !isEmailChecked && (
-              <FormField
-                control={form.control}
-                name="tempCode"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="mt-3 flex space-x-2">
-                      <FormControl>
-                        <div className="relative flex w-full">
-                          <Input
-                            placeholder="인증번호 입력"
-                            {...field}
-                            onChange={e => {
-                              const value = e.target.value.replace(/[^0-9]/g, '');
-                              if (value === '') {
-                                field.onChange(value);
-                                return;
-                              }
-                              try {
-                                tempCodeSchema.parse(value);
-                                if (value.length <= 6) {
-                                  field.onChange(value);
-                                }
-                              } catch (error) {
-                                if (error instanceof ZodError) {
-                                  form.setError(field.name, {
-                                    type: 'manual',
-                                  });
-                                } else {
-                                  console.error('알 수 없는 오류:', error);
-                                }
-                              }
-                            }}
-                          />
-                          <div className="absolute right-4 flex h-full items-center">
-                            <span>{formatTime(timeLeft)}</span>
-                          </div>
-                        </div>
-                      </FormControl>
-                      <Button
-                        className="w-[130px]"
-                        type="button"
-                        disabled={field.value.length !== 6 || timeLeft === 0}
-                        onClick={async () => {
-                          const isValid = await form.trigger(field.name);
-                          if (!isValid) return;
-                          handleConfirmEmail(field.value);
+              <div className="mt-3 flex space-x-2">
+                <div className="flex w-full flex-col">
+                  <FormControl>
+                    <div className="relative flex w-full">
+                      <Input
+                        placeholder="인증번호 입력"
+                        value={otpCode}
+                        onChange={e => {
+                          const value = e.target.value.replace(/[^0-9]/g, '');
+                          console.log(value);
+                          if (value === '') {
+                            setOtpCode(value);
+                            return;
+                          }
+                          if (value.length > 6) {
+                            return;
+                          }
+                          try {
+                            tempCodeSchema.parse(value);
+                            if (value.length <= 6) {
+                              setOtpCode(value);
+                            }
+                          } catch (error) {
+                            if (error instanceof ZodError) {
+                              setOtpCodeError(error.message);
+                            } else {
+                              console.error('알 수 없는 오류:', error);
+                            }
+                          }
                         }}
-                      >
-                        인증메일 확인
-                      </Button>
+                      />
+                      <div className="absolute right-4 flex h-full items-center">
+                        <span>{formatTime(timeLeft)}</span>
+                      </div>
                     </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                  </FormControl>
+                  <FormMessage>{otpCodeError}</FormMessage>
+                </div>
+                <Button
+                  className="min-w-[150px] text-lg"
+                  type="button"
+                  disabled={otpCode.length !== 6 || timeLeft === 0}
+                  onClick={async () => {
+                    handleConfirmEmail(otpCode);
+                  }}
+                  isLoading={isCheckingOtp}
+                >
+                  인증메일 확인
+                </Button>
+              </div>
             )}
           </div>
-          <div className="flex flex-col gap-3">
-            <FormLabel className="text-lg font-medium">
-              생년월일 <span className="text-destructive">*</span>
-            </FormLabel>
-            <div className="flex items-center gap-6">
-              <div className="flex items-center gap-1">
-                <FormField
-                  control={form.control}
-                  name="birthDate-year"
-                  render={({ field }) => (
-                    <FormItem className="w-[80px]">
-                      <div className="flex space-x-2">
-                        <FormControl className="flex space-x-2">
-                          <Input type="year" placeholder="1900" {...field} />
-                        </FormControl>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <span>년</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <FormField
-                  control={form.control}
-                  name="birthDate-month"
-                  render={({ field }) => (
-                    <FormItem className="w-[60px]">
-                      <div className="flex space-x-2">
-                        <FormControl className="flex space-x-2">
-                          <Input type="year" placeholder="01" {...field} />
-                        </FormControl>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <span>월</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <FormField
-                  control={form.control}
-                  name="birthDate-day"
-                  render={({ field }) => (
-                    <FormItem className="w-[60px]">
-                      <div className="flex space-x-2">
-                        <FormControl className="flex space-x-2">
-                          <Input type="year" placeholder="01" {...field} />
-                        </FormControl>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-                <span>일</span>
-              </div>
-            </div>
-          </div>
+          <FormField
+            control={form.control}
+            name="birthDate"
+            render={({ field }) => (
+              <FormItem className="h-[120px]">
+                <FormLabel className="text-lg font-medium">
+                  생년월일<span className="text-destructive">*</span>
+                </FormLabel>
+                <FormControl className="mt-3 flex space-x-2">
+                  <Input
+                    type="year"
+                    placeholder="ex) 19990101"
+                    {...field}
+                    onChange={e => {
+                      const value = e.target.value;
+                      if (value.length > 8) {
+                        return;
+                      }
+                      field.onChange(value);
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
           <FormField
             control={form.control}
             name="gender"
             render={({ field }) => (
-              <FormItem className="space-y-3">
+              <FormItem className="h-[100px] space-y-3">
                 <FormLabel className="text-lg font-medium">
                   성별 <span className="text-destructive">*</span>
                 </FormLabel>
@@ -537,7 +548,13 @@ export function RegisterPage() {
           <div className="flex flex-col border-t border-[#E1E1E1] py-10">
             <TermsAgreement onAgreementComplete={handleAgreementComplete} />
           </div>
-          <Button type="submit" size="lg" className="m-auto h-[70px] w-[350px] rounded-[35px] text-lg font-bold">
+          <Button
+            type="submit"
+            size="lg"
+            className="m-auto h-[70px] w-[350px] rounded-[35px] text-lg font-bold"
+            isLoading={isSigningUp}
+            disabled={submitButtonDisabled}
+          >
             회원가입하기
           </Button>
         </form>
