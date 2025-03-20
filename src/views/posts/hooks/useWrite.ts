@@ -22,12 +22,12 @@ export interface SavePostRequest {
   postSeq: string;
   postTitle: string;
   content: string;
+  categoryCd: string;
   postTag: string;
   isVote: number;
   voteTitle?: string;
   voteItems?: string[];
 }
-
 // 파일 삭제 요청 인터페이스 추가
 export interface FileDeleteRequest {
   postSeq: string;

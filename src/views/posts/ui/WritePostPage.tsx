@@ -92,6 +92,31 @@ export function WritePostPage() {
       return [...acc, ...group.categoryList];
     }, []) || [];
 
+  // 페이지 진입시 최초 게시글 생성
+  useEffect(() => {
+    const createInitialPost = async () => {
+      if (!postSeq) {
+        // postSeq가 없을 때만 실행
+        try {
+          const result = await createPostMutation.mutateAsync({ categoryCd: '003001' });
+          if (result.status === 'SUCCESS') {
+            setPostSeq(result.data.postSeq);
+          }
+        } catch (error) {
+          console.error('게시글 생성 실패:', error);
+          toast({
+            variant: 'destructive',
+            title: '게시글 생성 실패',
+            description: '게시글을 생성하는데 실패했습니다. 다시 시도해주세요.',
+            duration: 2000,
+          });
+        }
+      }
+    };
+
+    createInitialPost();
+  }, []);
+
   // 카테고리 선택시 최초 게시글 생성
   const handleCategorySelect = async (value: string) => {
     setSelectedCategory(value);
@@ -152,22 +177,28 @@ export function WritePostPage() {
     if (!files?.length) return;
 
     const file = files[0];
-    console.log('Selected file:', file);
-    console.log('File type:', file.type);
-    console.log('File size:', file.size);
-
     if (!validateFile(file)) return;
 
     try {
+      console.log('postSeq', postSeq);
+      // 게시글이 없는 경우 먼저 생성
+      if (!postSeq) {
+        const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
+        if (postResult.status === 'SUCCESS') {
+          setPostSeq(postResult.data.postSeq);
+        } else {
+          throw new Error('게시글 생성 실패');
+        }
+      }
+
+      // 파일 업로드
       const result = await uploadFileMutation.mutateAsync({
         postSeq,
         file,
       });
 
       if (result.status === 'SUCCESS') {
-        // /api를 제외한 URL 생성
         const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.fileUrl}`;
-
         setUploadedImages(prev => [
           ...prev,
           {
@@ -289,6 +320,9 @@ export function WritePostPage() {
         setTags(prev => [...prev, newTag]);
       }
       setCurrentTag('');
+    } else if (e.key === 'Backspace' && currentTag === '' && tags.length > 0) {
+      // 입력값이 비어있고 Backspace를 눌렀을 때 마지막 태그 삭제
+      setTags(prev => prev.slice(0, -1));
     } else if (e.key === 'Escape') {
       // ESC 키로 수정 모드 취소
       setEditingTagIndex(null);
@@ -313,15 +347,6 @@ export function WritePostPage() {
 
   // 게시물 등록 핸들러
   const handleSubmitPost = async () => {
-    if (!postSeq) {
-      toast({
-        variant: 'destructive',
-        title: '게시판 선택 필요',
-        description: '게시판을 선택해주세요.',
-      });
-      return;
-    }
-
     if (!title.trim()) {
       toast({
         variant: 'destructive',
@@ -341,10 +366,23 @@ export function WritePostPage() {
     }
 
     try {
+      // 게시글이 없는 경우 먼저 생성
+      let currentPostSeq = postSeq;
+      if (!currentPostSeq) {
+        const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
+        if (postResult.status === 'SUCCESS') {
+          currentPostSeq = postResult.data.postSeq;
+          setPostSeq(currentPostSeq);
+        } else {
+          throw new Error('게시글 생성 실패');
+        }
+      }
+
       const postData: SavePostRequest = {
-        postSeq,
+        postSeq: currentPostSeq,
         postTitle: title.trim(),
         content: content.trim(),
+        categoryCd: selectedCategory,
         postTag: tags.length > 0 ? tags.map(tag => `#${tag}`).join('') : '',
         isVote: showVoteForm ? 1 : 0,
       };
@@ -405,7 +443,8 @@ export function WritePostPage() {
       });
 
       setTimeout(() => {
-        router.push(`/posts/${selectedCategory}`);
+        // 상세 페이지로 이동 (카테고리 코드와 게시글 번호 사용)
+        router.push(`/posts/${selectedCategory}/${postSeq}`);
       }, 500);
     } catch (error) {
       console.error('게시글 등록 실패:', error);
@@ -500,7 +539,7 @@ export function WritePostPage() {
                 ) : (
                   <div
                     key={`${tag}-${index}`}
-                    className="group flex items-center gap-1 rounded-md bg-gray-200 px-2 py-1"
+                    className="group relative flex items-center gap-1 rounded-md bg-gray-200 px-2 py-1"
                   >
                     <span
                       className="cursor-pointer text-sm text-gray-900 hover:text-gray-900"
@@ -508,13 +547,15 @@ export function WritePostPage() {
                     >
                       #{tag}
                     </span>
-                    <Button
-                      onClick={() => handleRemoveTag(index)}
-                      variant="ghost"
-                      className="h-4 w-4 rounded-full p-0 hover:bg-gray-200"
+                    <button
+                      onClick={e => {
+                        e.stopPropagation(); // 태그 클릭 이벤트와 겹치지 않도록
+                        handleRemoveTag(index);
+                      }}
+                      className="invisible absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-gray-500 text-white group-hover:visible"
                     >
                       <Icons.cancel width={12} height={12} />
-                    </Button>
+                    </button>
                   </div>
                 )
               )}
