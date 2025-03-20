@@ -14,7 +14,8 @@ export const signOut = () => baseApi.get<void>('auth/sign-out');
 
 export const createAccessToken = () => baseApi.post<void>('auth/create-access-token');
 
-export const signIn = (data: SignInRequest) => baseApi.post<SignInResponse>('auth/sign-in', data);
+export const signIn = (data: SignInRequest) =>
+  baseApi.post<SignInResponse>('auth/sign-in', { ...data, deviceType: 'V0VC' });
 
 export const sendOtp = (data: SendOtpRequest) => baseApi.post<void>('auth/send-otp', data);
 
