@@ -24,14 +24,7 @@ const RankIcons = {
     alt: 'bronze rank medal',
   },
 } as const;
-const RANK_COLORS = {
-  1: 'bg-[#FC6423]',
-  2: 'bg-[#FF7E3D]',
-  3: 'bg-[#FFA375]',
-  4: 'bg-[#FC6423]',
-  5: 'bg-[#FF7E3D]',
-  6: 'bg-[#FFA375]',
-} as const;
+
 const DISCUSSION_ITEMS = [
   {
     title: '저출산 문제 해결을 위한 효과적인 정책은 무엇일까?',
@@ -88,11 +81,7 @@ async function MainPage() {
           {DISCUSSION_ITEMS.map(item => (
             <CarouselItem key={item.rankNum}>
               <div className="h-full p-1">
-                <Card
-                  className={`relative h-full rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-lg ${
-                    RANK_COLORS[item.rankNum as 1 | 2 | 3 | 4 | 5 | 6]
-                  }`}
-                >
+                <Card className="relative h-full rounded-lg bg-[#FC6423] transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-lg">
                   <CardHeader className="relative pb-0">
                     {item.rankNum <= 3 && (
                       <Image
