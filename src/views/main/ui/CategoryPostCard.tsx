@@ -29,11 +29,11 @@ export function CategoryPostCard({ data }: { data: CategoryInfo }) {
             >
               <span className="text-sm">{post.postTitle}</span>
               <div className="flex items-center gap-3 text-sm text-gray-500">
-                <span className="flex items-center gap-1">
+                <span className="flex min-w-[45px] items-center gap-1">
                   <Icons.thumbsUp className="h-4 w-4" />
                   {post.likeCnt}
                 </span>
-                <span className="flex items-center gap-1">
+                <span className="flex min-w-[45px] items-center gap-1">
                   <Icons.messageSquare className="h-4 w-4" />
                   {post.commentCnt}
                 </span>

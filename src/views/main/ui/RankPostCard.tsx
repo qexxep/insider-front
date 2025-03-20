@@ -13,7 +13,7 @@ export function RankPostCard({ data }: { data: InsiderRanking }) {
       <span className="text-md w-6 self-start font-bold text-orange-500">{data.rankNum}</span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <div className="rounded-sm bg-orange-100 px-1.5 py-0.5 text-sm font-medium text-orange-600">
+          <div className="min-w-[60px] rounded-sm bg-orange-100 px-1.5 py-0.5 text-center text-sm font-medium text-orange-600">
             {data.categoryName}
           </div>
           <div className="text-md truncate font-medium text-gray-900">{data.postTitle}</div>
