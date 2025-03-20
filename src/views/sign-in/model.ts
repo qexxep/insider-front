@@ -35,10 +35,8 @@ export const SignupFormSchema = z
       .regex(/[!@#$%^&*()]/, { message: '비밀번호에는 최소 한 개의 특수문자(!@#$%^&*())가 포함되어야 합니다.' }),
     confirmPassword: z.string(),
     email: z.string().email({ message: '이메일 형식에 맞지 않습니다.' }),
-    tempCode: tempCodeSchema,
-    'birthDate-year': z.string().length(4),
-    'birthDate-month': z.string().min(1).max(2),
-    'birthDate-day': z.string().min(1).max(2),
+    // tempCode: tempCodeSchema,
+    birthDate: z.string().regex(/[0-9]/).length(8),
     gender: z.enum(['M', 'F', 'other'], {
       required_error: '성별을 선택해 주세요.',
     }),

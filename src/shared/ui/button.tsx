@@ -48,15 +48,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Comp
         className={cn(
-          buttonVariants({ variant, size, className }),
+          buttonVariants({ variant, size }),
           isLoading && 'pointer-events-none select-none bg-primary-400 [&_svg]:size-4',
-          isLoading && size === 'lg' && 'gap-3 [&_svg]:size-7'
+          isLoading && size === 'lg' && 'gap-3 [&_svg]:size-7',
+          className
         )}
         ref={ref}
         {...props}
       >
-        {isLoading && <Icons.loading className="size-7 animate-spin" />}
-        {props.children}
+        {!isLoading ? props.children : <Icons.loading className="size-7 animate-spin" />}
       </Comp>
     );
   }
