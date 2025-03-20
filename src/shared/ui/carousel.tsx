@@ -74,11 +74,11 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     }, []);
 
     const scrollPrev = React.useCallback(() => {
-      api?.scrollTo(api.selectedScrollSnap() - 3);
+      api?.scrollTo(api.selectedScrollSnap() - 1);
     }, [api]);
 
     const scrollNext = React.useCallback(() => {
-      api?.scrollTo(api.selectedScrollSnap() + 3);
+      api?.scrollTo(api.selectedScrollSnap() + 1);
     }, [api]);
 
     const handleKeyDown = React.useCallback(
