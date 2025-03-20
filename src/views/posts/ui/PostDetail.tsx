@@ -154,7 +154,11 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button variant="outlinePrimary" size="sm">
+              <Button
+                variant="outlinePrimary"
+                size="sm"
+                onClick={() => router.push(`/posts/write?mode=edit&postId=${postId}`)}
+              >
                 글 수정하기
               </Button>
             </div>

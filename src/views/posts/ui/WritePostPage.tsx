@@ -1,5 +1,6 @@
 'use client';
 
+import { UseQueryOptions } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -7,6 +8,7 @@ import { useEffect, useState } from 'react';
 // 여기서 import 하는게 맞는 것인가..?
 import type { CategoryItem } from '@/app/(app)/@sidebar/api/category';
 import { useCategories } from '@/app/(app)/@sidebar/hooks/useCategories';
+import { ApiResponse } from '@/shared/api/types';
 import { useToast } from '@/shared/hooks';
 import {
   Button,
@@ -21,6 +23,8 @@ import {
   Textarea,
 } from '@/shared/ui';
 
+import { useGetPostDetail } from '../api/queries';
+import type { PostDetailResponse } from '../api/types';
 import { SavePostRequest, useWrite } from '../hooks/useWrite';
 import { CategorySelect } from './CategorySelect';
 
@@ -53,6 +57,18 @@ export function WritePostPage() {
   const router = useRouter();
   const { toast } = useToast();
   const searchParams = useSearchParams();
+
+  // 수정 모드 관련 파라미터 추가
+  const mode = searchParams.get('mode');
+  const postId = searchParams.get('postId');
+  const isEditMode = mode === 'edit' && Boolean(postId);
+
+  // 기존 데이터 불러오기
+  const { data: postData } = useGetPostDetail({ postSeq: postId || '' }, {
+    enabled: isEditMode,
+    staleTime: Infinity, // 수정 중에는 데이터가 stale되지 않도록 설정
+  } as UseQueryOptions<ApiResponse<PostDetailResponse>>);
+
   const category = searchParams.get('category') || '';
 
   // 클라이언트에서 이중으로 토큰 체크
@@ -92,32 +108,48 @@ export function WritePostPage() {
       return [...acc, ...group.categoryList];
     }, []) || [];
 
-  // 페이지 진입시 최초 게시글 생성
+  // 초기 상태 설정을 위한 useEffect
   useEffect(() => {
-    const createInitialPost = async () => {
-      if (!postSeq) {
-        // postSeq가 없을 때만 실행
-        try {
-          const result = await createPostMutation.mutateAsync({ categoryCd: '003001' });
-          if (result.status === 'SUCCESS') {
-            setPostSeq(result.data.postSeq);
-          }
-        } catch (error) {
-          console.error('게시글 생성 실패:', error);
-          toast({
-            variant: 'destructive',
-            title: '게시글 생성 실패',
-            description: '게시글을 생성하는데 실패했습니다. 다시 시도해주세요.',
-            duration: 2000,
-          });
-        }
+    if (isEditMode && postData?.data) {
+      const { voteInfo, fileList, ...post } = postData.data;
+
+      // 기존 데이터로 상태 초기화
+      setSelectedCategory(post.categoryCd);
+      setTitle(post.postTitle);
+      setContent(post.content);
+      setPostSeq(post.postSeq);
+
+      // 태그 설정 (# 제거하고 배열로 변환)
+      if (post.postTag) {
+        const tags = post.postTag.split('#').filter(Boolean);
+        setTags(tags);
       }
-    };
 
-    createInitialPost();
-  }, []);
+      // 이미지 설정
+      if (fileList?.length > 0) {
+        const images = fileList.map(file => ({
+          url: `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${file.fileUrl}`,
+          fileSeq: file.fileSeq,
+          file: new File([], file.fileName), // 파일 객체는 새로 생성
+        }));
+        setUploadedImages(images);
+      }
 
-  // 카테고리 선택시 최초 게시글 생성
+      // 투표 정보 설정
+      if (voteInfo && post.isVote) {
+        setShowVoteForm(true);
+        setVoteForm({
+          title: voteInfo.voteTitle,
+          options: voteInfo.voteItems.map((item, index) => ({
+            id: index + 1,
+            content: item.itemTitle,
+          })),
+        });
+      }
+    }
+  }, [isEditMode, postData]);
+
+  // 페이지 진입시 최초 게시글 생성
   const handleCategorySelect = async (value: string) => {
     setSelectedCategory(value);
 
@@ -366,9 +398,9 @@ export function WritePostPage() {
     }
 
     try {
-      // 게시글이 없는 경우 먼저 생성
+      // 게시글이 없고 수정 모드가 아닌 경우에만 새 게시글 생성
       let currentPostSeq = postSeq;
-      if (!currentPostSeq) {
+      if (!currentPostSeq && !isEditMode) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
         if (postResult.status === 'SUCCESS') {
           currentPostSeq = postResult.data.postSeq;
@@ -444,7 +476,7 @@ export function WritePostPage() {
 
       setTimeout(() => {
         // 상세 페이지로 이동 (카테고리 코드와 게시글 번호 사용)
-        router.push(`/posts/${selectedCategory}/${postSeq}`);
+        router.push(`/posts/${selectedCategory}/${currentPostSeq}`);
       }, 500);
     } catch (error) {
       console.error('게시글 등록 실패:', error);
@@ -471,7 +503,7 @@ export function WritePostPage() {
   return (
     <div className="mx-auto w-[960px] p-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">글쓰기</h1>
+        <h1 className="text-2xl font-bold">{isEditMode ? '글 수정하기' : '글쓰기'}</h1>
         <div className="flex gap-2">
           <Label
             className="text-md flex cursor-pointer items-center justify-center rounded-md border border-[#636571] bg-white px-3 py-2 font-medium text-black hover:bg-gray-600 hover:text-primary-foreground"
