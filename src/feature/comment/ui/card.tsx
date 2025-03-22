@@ -117,21 +117,24 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
             <div className="flex gap-3">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="link" className="text-primary-700 h-fit p-0 underline underline-offset-2">
+                  <Button variant="link" className="h-fit p-0 text-primary-700 underline underline-offset-2">
                     댓글 삭제하기
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="w-[671px]">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>댓글 삭제</AlertDialogTitle>
-                    <AlertDialogDescription>(디자인 시안 필요)</AlertDialogDescription>
+                <AlertDialogContent className="max-w-[670px] gap-12 px-28 py-20">
+                  <AlertDialogHeader className="flex flex-col items-center justify-center gap-3">
+                    <Icons.trash className="size-12 text-gray-700" />
+                    <AlertDialogTitle className="text-[32px] font-bold text-gray-900">해당 댓글 삭제</AlertDialogTitle>
+                    <AlertDialogDescription className="mt-0 text-lg text-gray-900">
+                      해당 댓글을 삭제하시겠습니까?
+                    </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="m-auto h-[70px] w-[196px] rounded-[35px] text-lg font-bold">
+                  <AlertDialogFooter className="flex w-full flex-row items-center justify-center gap-3 sm:justify-center">
+                    <AlertDialogCancel className="m-0 h-[70px] w-[196px] rounded-[6px] border-primary text-lg font-bold text-primary hover:bg-primary-100 hover:text-primary">
                       취소
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      className="m-auto h-[70px] w-[196px] rounded-[35px] text-lg font-bold"
+                      className="m-0 h-[70px] w-[196px] rounded-[6px] text-lg font-bold"
                       onClick={handleDeleteComment}
                     >
                       확인
@@ -139,7 +142,8 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button variant="link" className="text-primary-700 h-fit p-0 underline underline-offset-2">
+
+              <Button variant="link" className="h-fit p-0 text-primary-700 underline underline-offset-2">
                 댓글 수정하기
               </Button>
             </div>
