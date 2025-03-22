@@ -42,6 +42,7 @@ interface Props {
 }
 
 const DEFAULT_PAGE_SIZE = 10;
+const POSTS_SORT_TYPE_IN_DETAIL_PAGE = 'D';
 
 export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
   const router = useRouter();
@@ -52,7 +53,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
     postSeq: postId,
     currPage: currentPage,
     pageSize: DEFAULT_PAGE_SIZE,
-    sortType: 'A',
+    sortType: 'A', // 등록순 (먼저 작성한 댓글이 위로)
   });
 
   const { data: bestWorstPostsData } = useGetBestWorstPostInfo({ categoryCd: category });
@@ -60,6 +61,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
     categoryCd: category,
     currPage: page,
     pageSize: DEFAULT_PAGE_SIZE,
+    sortType: POSTS_SORT_TYPE_IN_DETAIL_PAGE,
   });
 
   const { mutate: deletePost } = useDeletePost();
@@ -86,7 +88,12 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
       {
         onSuccess: () => {
           router.push(`/posts/${category}`);
-          postInvalidateQueries.list({ categoryCd: category, currPage: 1, pageSize: DEFAULT_PAGE_SIZE });
+          postInvalidateQueries.list({
+            categoryCd: category,
+            currPage: 1,
+            pageSize: DEFAULT_PAGE_SIZE,
+            sortType: POSTS_SORT_TYPE_IN_DETAIL_PAGE,
+          });
           postInvalidateQueries.detail({ postSeq: postId });
         },
         onError: () => {
@@ -136,17 +143,20 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
                     글 삭제하기
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="w-[671px]">
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>게시글 삭제</AlertDialogTitle>
-                    <AlertDialogDescription>(디자인 시안 필요)</AlertDialogDescription>
+                <AlertDialogContent className="max-w-[670px] gap-12 px-28 py-20">
+                  <AlertDialogHeader className="flex flex-col items-center justify-center gap-3">
+                    <Icons.trash className="size-12 text-primary" />
+                    <AlertDialogTitle className="text-[32px] font-bold text-gray-900">게시글 삭제</AlertDialogTitle>
+                    <AlertDialogDescription className="mt-0 text-lg text-gray-900">
+                      해당 게시물을 삭제하시겠습니까?
+                    </AlertDialogDescription>
                   </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel className="m-auto h-[70px] w-[196px] rounded-[35px] text-lg font-bold">
+                  <AlertDialogFooter className="flex w-full flex-row items-center justify-center gap-3 sm:justify-center">
+                    <AlertDialogCancel className="m-0 h-[70px] w-[196px] rounded-[6px] border-primary text-lg font-bold text-primary hover:bg-primary-100 hover:text-primary">
                       취소
                     </AlertDialogCancel>
                     <AlertDialogAction
-                      className="m-auto h-[70px] w-[196px] rounded-[35px] text-lg font-bold"
+                      className="m-0 h-[70px] w-[196px] rounded-[6px] text-lg font-bold"
                       onClick={handleDeletePost}
                     >
                       확인

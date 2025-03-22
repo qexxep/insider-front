@@ -581,6 +581,17 @@ const Icons = {
       />
     </svg>
   ),
+  trash: (props: IconProps) => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none" {...props}>
+      <path
+        d="M22.5 7.5H37.5M7.5 15H52.5M47.5 15L45.7468 41.2982C45.4837 45.2438 45.3522 47.2167 44.5 48.7125C43.7498 50.0295 42.6181 51.0882 41.2542 51.7492C39.7049 52.5 37.7277 52.5 33.7734 52.5H26.2266C22.2723 52.5 20.2951 52.5 18.7458 51.7492C17.3819 51.0882 16.2502 50.0295 15.5 48.7125C14.6478 47.2167 14.5163 45.2438 14.2532 41.2982L12.5 15M25 26.25V38.75M35 26.25V38.75"
+        stroke="currentColor"
+        strokeWidth="5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  ),
   trashChecked: (props: IconProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" {...props}>
       <path
