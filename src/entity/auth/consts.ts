@@ -1,0 +1,1 @@
+export const LOGIN_REQUIRED_EVENT = 'LOGIN_REQUIRED';
