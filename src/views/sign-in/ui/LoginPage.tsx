@@ -120,18 +120,28 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
               아이디 저장
             </label>
           </div>
-          <div className="mb-6 h-[60px]">{errorInfo && <Alert variant="error">{errorInfo}</Alert>}</div>
+          <div className="mb-6 min-h-[60px]">
+            {errorInfo && (
+              <Alert variant="error" className="break-all">
+                {errorInfo}
+              </Alert>
+            )}
+          </div>
           <Button size="lg" className={'mb-[28px] h-[70px] rounded-[36px] text-[18px] font-bold'} isLoading={isPending}>
             로그인
           </Button>
         </form>
         <div>
           <ul className="flex space-x-[48px]">
-            <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">아이디 찾기</li>
-            <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">비밀번호 찾기</li>
-            <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">
-              <Link href={'/signup'}>회원가입</Link>
-            </li>
+            <Link href={'/find?type=id'}>
+              <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">아이디 찾기</li>
+            </Link>
+            <Link href={'/find?type=password'}>
+              <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">비밀번호 찾기</li>
+            </Link>
+            <Link href={'/signup'}>
+              <li className="text-[18px] text-gray-600 underline underline-offset-[3px]">회원가입</li>
+            </Link>
           </ul>
         </div>
       </Form>
