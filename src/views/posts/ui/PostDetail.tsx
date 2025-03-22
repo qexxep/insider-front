@@ -309,7 +309,9 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
               className="flex items-center justify-between gap-4 px-5 py-4"
             >
               <div className="flex items-center gap-12">
-                <span className="font-bold leading-7 text-[#ff5c00]">{relativePost.postSeq}</span>
+                <div className="flex w-9 items-center justify-center font-bold leading-7 text-[#ff5c00]">
+                  {relativePost.postSeq}
+                </div>
                 <p className="line-clamp-1 text-lg text-gray-900">
                   {relativePost.postTitle}
                   <span className="ml-2 font-medium text-[#969696]">[{relativePost.commentCnt}]</span>
