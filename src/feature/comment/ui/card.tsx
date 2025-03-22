@@ -77,6 +77,11 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
     );
   };
 
+  const formatTimeAgo = (date: string) => {
+    const distance = formatDistanceToNow(date, { addSuffix: true, locale: ko });
+    return distance === '1분 미만 전' ? '방금 전' : distance;
+  };
+
   return (
     <div className={cn('flex gap-2 px-5 py-4', parent && 'pl-0', comment.owner && 'bg-primary-100')}>
       {parent && (
@@ -93,9 +98,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
           </div>
           <div className="h-[2px] w-[2px] rounded-full bg-gray-500" />
           <div className="flex items-center gap-2">
-            <span className="text-gray-500">
-              {formatDistanceToNow(comment.regDate, { addSuffix: true, locale: ko })}
-            </span>
+            <span className="text-gray-500">{formatTimeAgo(comment.regDate + ' ' + comment.regTime)}</span>
           </div>
         </div>
         <div>{comment.comment}</div>
@@ -142,7 +145,6 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-
               <Button variant="link" className="h-fit p-0 text-primary-700 underline underline-offset-2">
                 댓글 수정하기
               </Button>
