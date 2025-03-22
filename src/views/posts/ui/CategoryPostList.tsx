@@ -5,9 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { LoginRequiredModal, useAuth } from '@/entity/auth';
 import { Badge, Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
 import { CardFooter } from '@/shared/ui/card';
-import { useGetBestWorstPostInfo, useGetCategoryPostList } from '@/views/posts';
+import { postInvalidateQueries, useGetBestWorstPostInfo, useGetCategoryPostList, usePostReaction } from '@/views/posts';
 import { Paginator } from '@/widgets/paginator';
 
 const DEFAULT_CURRENT_PAGE = 1;
@@ -19,16 +20,21 @@ interface Props {
 
 export const CategoryPostList = ({ category }: Props) => {
   const router = useRouter();
+  const { checkLogin } = useAuth();
   const [currentPage, setCurrentPage] = useState(DEFAULT_CURRENT_PAGE);
+  const [sortType, setSortType] = useState<'A' | 'D' | 'R'>('D');
+  const sortTypeText = sortType === 'A' ? '등록순' : sortType === 'D' ? '최신순' : '추천순';
 
   const { data: relativePostListData, isLoading: isPostsLoading } = useGetCategoryPostList({
     categoryCd: category,
     currPage: currentPage,
     pageSize: DEFAULT_PAGE_SIZE,
+    sortType,
   });
   const { data: bestWorstPostsData, isLoading: isBestWorstLoading } = useGetBestWorstPostInfo({
     categoryCd: category,
   });
+  const { mutate: postReaction } = usePostReaction();
 
   if (isPostsLoading || isBestWorstLoading) {
     return null;
@@ -38,7 +44,7 @@ export const CategoryPostList = ({ category }: Props) => {
     throw new Error('Post not found');
   }
 
-  const { posts, totalPostCnt, categoryName } = relativePostListData.data;
+  const { posts, commonPosts, totalPostCnt, categoryName } = relativePostListData.data;
   const bestWorstPosts = bestWorstPostsData.data;
 
   const totalPages = Math.ceil(totalPostCnt / DEFAULT_PAGE_SIZE);
@@ -58,6 +64,38 @@ export const CategoryPostList = ({ category }: Props) => {
     return tagString.split('#').filter(Boolean);
   };
 
+  const handlePostReaction = (
+    reactionType: 'like' | 'unlike',
+    actionType: 'add' | 'remove' | 'toggle',
+    postId: string
+  ) => {
+    checkLogin();
+    postReaction(
+      { postSeq: postId, reactionType, actionType },
+      {
+        onSuccess: () => {
+          postInvalidateQueries.list({
+            categoryCd: category,
+            currPage: currentPage,
+            pageSize: DEFAULT_PAGE_SIZE,
+            sortType,
+          });
+        },
+        onError: error => {
+          console.log(error);
+        },
+      }
+    );
+  };
+
+  const changeSortType = () => {
+    setSortType(prev => {
+      if (prev === 'A') return 'D';
+      if (prev === 'D') return 'R';
+      return 'A';
+    });
+  };
+
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       <div className="mb-[21px] flex items-center justify-between">
@@ -70,21 +108,45 @@ export const CategoryPostList = ({ category }: Props) => {
         </Link>
       </div>
       {/* 필독 게시물 */}
-      <div className="mb-6 flex items-center justify-between bg-primary-200 px-6 py-3">
-        <div className="flex items-center gap-3">
-          <span className="rounded-full bg-primary px-4 text-white">필독</span>
-          <p className="text-lg">윤대통령, 기시다 후미오 일본 총리 12번째 회담</p>
+      <div className="flex flex-col gap-4">
+        <h2 className="text-xl font-bold">공지사항</h2>
+        <div className="mb-6 flex flex-col gap-0 border-t-[1px] border-primary">
+          {commonPosts.map(post => (
+            <Link key={post.postSeq} href={`/posts/${category}/${post.postSeq}`}>
+              <div className="flex items-center justify-between border-b-[1px] border-gray-300 bg-primary-200 px-6 py-3">
+                <div className="flex items-center gap-3">
+                  <span className="rounded-full bg-primary px-4 text-white">필독</span>
+                  <p className="text-lg">{post.postTitle}</p>
+                </div>
+              </div>
+            </Link>
+          ))}
         </div>
       </div>
       {/* 베스트 워스트 게시물 */}
       {bestWorstPosts && (
         <div className="mb-10 flex gap-7">
-          <Card className="bg-primary-600 flex w-full flex-col justify-between text-white">
-            <CardHeader className="pb-3 pt-7">
-              <span className="flex w-fit items-center justify-center gap-1 rounded-[4px] bg-[#FF885F] p-2">
+          <Card className="flex w-full flex-col justify-between bg-primary-600 text-white">
+            <CardHeader className="flex flex-row items-center justify-between pb-3 pt-7">
+              <span className="flex h-[30px] w-fit items-center justify-center gap-1 rounded-[4px] bg-[#FF885F] px-2">
                 <Icons.thumbsUp className="h-4 w-4" />
                 <span>BEST</span>
               </span>
+              <div className="mr-2 flex items-center gap-3">
+                <div className="flex h-[31px] items-center justify-center gap-2 rounded-full bg-[#FF885F]/50 px-3 py-[7px]">
+                  <button>
+                    <Icons.thumbsUp className="h-4 w-4 text-white" />
+                  </button>
+                  <span className="leading-[1] text-white">{bestWorstPosts.bestPostInfo.likeCnt}</span>
+                  <button>
+                    <Icons.thumbsDown className="h-4 w-4 text-white" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-center gap-2 rounded-full bg-[#FF885F]/50 px-3 py-[7px]">
+                  <Icons.comment className="h-4 w-4 text-white" />
+                  <span className="leading-[1] text-white">{bestWorstPosts.bestPostInfo.commentCnt}</span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <h3 className="text-lg font-bold">{bestWorstPosts.bestPostInfo.postTitle}</h3>
@@ -100,11 +162,26 @@ export const CategoryPostList = ({ category }: Props) => {
             </CardFooter>
           </Card>
           <Card className="white flex w-full flex-col justify-between bg-gray-600 text-white">
-            <CardHeader className="pb-3 pt-7">
-              <span className="flex w-fit items-center justify-center gap-1 rounded-[4px] bg-gray-500 p-2">
+            <CardHeader className="flex flex-row items-center justify-between pb-3 pt-7">
+              <span className="flex h-[30px] w-fit items-center justify-center gap-1 rounded-[4px] bg-gray-500 px-2">
                 <Icons.thumbsDown className="h-4 w-4" />
                 <span>WORST</span>
               </span>
+              <div className="mr-2 flex items-center gap-3">
+                <div className="flex h-[31px] items-center justify-center gap-2 rounded-full bg-[#8F8F8F]/50 px-3 py-[7px]">
+                  <button>
+                    <Icons.thumbsUp className="h-4 w-4 text-white" />
+                  </button>
+                  <span className="leading-[1] text-white">{bestWorstPosts.worstPostInfo.likeCnt}</span>
+                  <button>
+                    <Icons.thumbsDown className="h-4 w-4 text-white" />
+                  </button>
+                </div>
+                <div className="flex items-center justify-center gap-2 rounded-full bg-[#8F8F8F]/50 px-3 py-[7px]">
+                  <Icons.comment className="h-4 w-4 text-white" />
+                  <span className="leading-[1] text-white">{bestWorstPosts.worstPostInfo.commentCnt}</span>
+                </div>
+              </div>
             </CardHeader>
             <CardContent>
               <h3 className="text-lg font-bold">{bestWorstPosts.worstPostInfo.postTitle}</h3>
@@ -122,31 +199,38 @@ export const CategoryPostList = ({ category }: Props) => {
         </div>
       )}
       {/* 전체 게시물 */}
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">전체 게시물</h2>
-          <Button variant="ghost" className="px-3">
-            최신순
+          <h2 className="text-xl font-bold">전체 게시물</h2>
+          <Button variant="ghost" className="h-fit px-3 py-2" onClick={changeSortType}>
+            {sortTypeText}
             <Icons.arrowUpDown />
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {posts.map(post => (
-            <Card key={post.postSeq} className="cursor-pointer p-6" onClick={() => handlePostClick(post.postSeq)}>
+            <Card
+              key={post.postSeq}
+              className="relative flex cursor-pointer flex-col justify-between bg-white p-6 pt-8 hover:bg-gray-100"
+              onClick={() => handlePostClick(post.postSeq)}
+            >
               <CardContent className="flex justify-between gap-4 p-0 pb-4">
-                <div className="flex flex-col items-start gap-3">
-                  <div className="flex items-center gap-1">
-                    <Icons.inssiderType />
-                    <span className="text-gray-900">{post.nickname}</span>
-                  </div>
+                <div className="flex flex-col items-start gap-5">
                   <h4 className="font-bold text-gray-900">{post.postTitle}</h4>
-                  <div className="flex items-center gap-1 text-sm text-[#989898]">
-                    <span>{post.regDate}</span>
-                    <div className="h-[2px] w-[2px] rounded-full bg-[#D9D9D9] p-0" />
-                    <span className="flex items-center gap-1">
-                      <Icons.eye className="h-[18px] w-[18px]" />
-                      {post.viewCnt}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <Icons.inssiderType />
+                      <span className="text-gray-900">{post.nickname}</span>
+                    </div>
+                    <div className="h-[11px] w-[1px] bg-[#D9D9D9] p-0" />
+                    <div className="flex items-center gap-1 text-sm text-[#989898]">
+                      <span>{post.regDate}</span>
+                      <div className="h-[2px] w-[2px] rounded-full bg-[#D9D9D9] p-0" />
+                      <span className="flex items-center gap-1">
+                        <Icons.eye className="h-[18px] w-[18px]" />
+                        {post.viewCnt}
+                      </span>
+                    </div>
                   </div>
                 </div>
                 {post.thumbnailPath && (
@@ -163,12 +247,15 @@ export const CategoryPostList = ({ category }: Props) => {
               </CardContent>
               <CardFooter className="flex flex-wrap gap-[6px] gap-y-2 p-0">
                 <div className="mr-2 flex items-center gap-3">
-                  <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">
-                    <button>
+                  <div
+                    className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    <button onClick={() => handlePostReaction('like', 'add', post.postSeq)}>
                       <Icons.thumbsUp className="h-4 w-4 text-gray-900" />
                     </button>
                     <span className="leading-[1] text-gray-900">{post.likeCnt}</span>
-                    <button>
+                    <button onClick={() => handlePostReaction('unlike', 'remove', post.postSeq)}>
                       <Icons.thumbsDown className="h-4 w-4 text-gray-900" />
                     </button>
                   </div>
@@ -183,6 +270,21 @@ export const CategoryPostList = ({ category }: Props) => {
                   </Badge>
                 ))}
               </CardFooter>
+              {/* TODO) 투표 중 상태 응답값 필요 */}
+              <div className="absolute -left-1 -top-[1px] flex items-center justify-center gap-[2px] overflow-y-visible rounded-[2px] rounded-bl-none bg-primary px-[6px] py-1 text-xs text-white">
+                <Icons.trashChecked />
+                투표 중
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="3"
+                  height="4"
+                  viewBox="0 0 3 4"
+                  fill="none"
+                  className="absolute -bottom-[3.5px] left-0 h-[3.5px] w-[3px]"
+                >
+                  <path d="M3 3.5V0H0L3 3.5Z" fill="#942600" />
+                </svg>
+              </div>
             </Card>
           ))}
         </div>
@@ -193,6 +295,7 @@ export const CategoryPostList = ({ category }: Props) => {
           showPreviousNext={true}
         />
       </div>
+      <LoginRequiredModal />
     </div>
   );
 };
