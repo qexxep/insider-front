@@ -5,12 +5,15 @@ export interface PostListByCategoryRequest {
   categoryCd: string;
   currPage: number;
   pageSize: number;
+  sortType: 'A' | 'D' | 'R'; // A: 등록순/ D:최신순 / R:추천순
 }
 
 export interface PostListResponse {
   totalPostCnt: number;
+  totalCommonPostCnt: number;
   categoryCd: string | null;
   categoryName: string | null;
+  commonPosts: PostPreviewType[];
   posts: PostPreviewType[];
 }
 
