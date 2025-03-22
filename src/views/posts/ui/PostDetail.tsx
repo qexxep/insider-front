@@ -145,7 +145,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
                 </AlertDialogTrigger>
                 <AlertDialogContent className="max-w-[670px] gap-12 px-28 py-20">
                   <AlertDialogHeader className="flex flex-col items-center justify-center gap-3">
-                    <Icons.trash className="size-12 text-primary" />
+                    <Icons.trash className="size-12 text-gray-700" />
                     <AlertDialogTitle className="text-[32px] font-bold text-gray-900">게시글 삭제</AlertDialogTitle>
                     <AlertDialogDescription className="mt-0 text-lg text-gray-900">
                       해당 게시물을 삭제하시겠습니까?
