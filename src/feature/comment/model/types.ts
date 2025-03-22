@@ -8,7 +8,7 @@ export interface CommentType {
   commentSeq: string;
   upCommentSeq: string;
   comment: string;
-  commentStatus: string;
+  commentStatus: 'D' | 'N';
   mentiUserId: string;
   likeCnt: number;
   unlikeCnt: number;
