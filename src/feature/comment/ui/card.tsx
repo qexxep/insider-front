@@ -25,7 +25,7 @@ import {
 } from '@/shared/ui';
 
 import { commentInvalidateQueries } from '..';
-import { useDeleteComment } from '../api/queries';
+import { useCommentReaction, useDeleteComment } from '../api/queries';
 import { CommentType } from '../model/types';
 import { Composer } from './composer';
 
@@ -47,6 +47,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
   const [target, setTarget] = useState<MentiUser>();
 
   const { mutate: deleteComment } = useDeleteComment();
+  const { mutate: reactionComment } = useCommentReaction();
 
   const onClickReply = () => {
     setOpenCommentId(comment.commentSeq);
@@ -66,12 +67,32 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
     setTarget(undefined);
   };
 
+  const handleCommentReaction = (
+    comment: CommentType,
+    actionType: 'add' | 'remove' | 'toggle',
+    reactionType: 'like' | 'unlike'
+  ) => {
+    if (comment.commentStatus === 'D') return;
+    reactionComment(
+      {
+        commentSeq: comment.commentSeq,
+        actionType,
+        reactionType,
+      },
+      {
+        onSuccess: () => {
+          commentInvalidateQueries.lists();
+        },
+      }
+    );
+  };
+
   const handleDeleteComment = () => {
     deleteComment(
       { commentSeq: comment.commentSeq },
       {
         onSuccess: () => {
-          commentInvalidateQueries.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'A' });
+          commentInvalidateQueries.lists();
         },
       }
     );
@@ -104,19 +125,29 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
         <div>{comment.comment}</div>
         <div className="flex gap-4">
           <div className="flex items-center justify-center gap-1">
-            <button>
+            <button
+              disabled={comment.commentStatus === 'D'}
+              onClick={() => handleCommentReaction(comment, 'add', 'like')}
+            >
               <Icons.thumbsUp className="h-4 w-4 text-gray-600" />
             </button>
             <span className="leading-[1] text-gray-600">{comment.likeCnt}</span>
-            <button>
+            <button
+              disabled={comment.commentStatus === 'D'}
+              onClick={() => handleCommentReaction(comment, 'remove', 'like')}
+            >
               <Icons.thumbsDown className="h-4 w-4 text-gray-600" />
             </button>
           </div>
-          <button className="flex items-center gap-[3px] text-gray-600" onClick={onClickReply}>
+          <button
+            className="flex items-center gap-[3px] text-gray-600"
+            onClick={onClickReply}
+            disabled={comment.commentStatus === 'D'}
+          >
             <Icons.comment className="h-4 w-4 text-gray-600" />
             답글쓰기
           </button>
-          {comment.owner && (
+          {comment.owner && comment.commentStatus === 'N' && (
             <div className="flex gap-3">
               <AlertDialog>
                 <AlertDialogTrigger asChild>

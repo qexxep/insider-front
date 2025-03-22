@@ -256,7 +256,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
       <div>
         <div className="flex items-center justify-between px-5">
           <h2 className="text-xl text-gray-600">
-            댓글 <span className="text-primary">{post.commentCnt}</span>
+            댓글 <span className="text-primary">{comments.length}</span>
           </h2>
           <Button variant="ghost" className="flex gap-1 px-3">
             등록순

@@ -31,6 +31,7 @@ export const queryKeys = {
 } as const;
 
 export const invalidateQueries = {
+  lists: () => queryClient.invalidateQueries({ queryKey: queryKeys.comments.all }),
   list: (data: CommentListRequest) => queryClient.invalidateQueries({ queryKey: queryKeys.comments.list(data) }),
 };
 
