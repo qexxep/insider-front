@@ -44,8 +44,8 @@ export function MenuSection({ title, categoryList, className }: MenuSectionProps
                   href={item.href}
                   prefetch={false}
                   className={cn(
-                    'flex items-center gap-2 rounded-lg px-1 py-2 text-sm hover:bg-accent',
-                    isActive ? 'text-primary-700 bg-accent/50 font-semibold' : ''
+                    'flex items-center gap-2 rounded-lg px-3 py-2 text-sm hover:bg-primary-100',
+                    isActive ? 'bg-primary-200 font-semibold text-primary-700' : ''
                   )}
                 >
                   <CategoryIcon
@@ -60,7 +60,7 @@ export function MenuSection({ title, categoryList, className }: MenuSectionProps
           {categoryList.length > INITIAL_DISPLAY_COUNT && (
             <Button
               variant="outline"
-              className="text-primary-700 hover:text-primary-700 w-full justify-start rounded-lg border-none px-1 py-2 text-sm font-semibold"
+              className="w-full justify-start rounded-lg border-none px-1 py-2 text-sm font-semibold text-primary-700 hover:text-primary-700"
               onClick={() => setShowAll(!showAll)}
             >
               <span>{showAll ? '접기' : '더보기'}</span>
