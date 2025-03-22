@@ -540,7 +540,13 @@ export function WritePostPage() {
         />
 
         {/* 제목 입력 */}
-        <Input type="text" placeholder="제목을 입력해주세요" value={title} onChange={e => setTitle(e.target.value)} />
+        <Input
+          type="text"
+          placeholder="제목을 입력해주세요"
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          className="border-gray-300 focus-visible:border-gray-300"
+        />
 
         {/* 내용과 태그 입력 */}
         <Card className="relative">
