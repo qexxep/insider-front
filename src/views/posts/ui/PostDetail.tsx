@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { CommentCard, CommentComposer, useCommentList } from '@/feature/comment';
@@ -48,7 +48,22 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
   const router = useRouter();
   const [page, setPage] = useState(currentPage);
 
-  const { data: postData } = useGetPostDetail({ postSeq: postId });
+  const { data: postData, isError: hasPostError } = useGetPostDetail(
+    { postSeq: postId },
+    {
+      select: response => {
+        if (response.status === 'FAILURE') {
+          throw new Error('POST_NOT_FOUND');
+        }
+        return response;
+      },
+    }
+  );
+
+  if (hasPostError) {
+    redirect('/error');
+  }
+
   const { data: commentsData } = useCommentList({
     postSeq: postId,
     currPage: currentPage,

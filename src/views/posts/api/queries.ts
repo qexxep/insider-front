@@ -95,7 +95,7 @@ export const useGetBestWorstPostInfo = (
 
 export const useGetPostDetail = (
   payload: PostDetailRequest,
-  config?: UseQueryOptions<ApiResponse<PostDetailResponse>>
+  config?: Partial<UseQueryOptions<ApiResponse<PostDetailResponse>>>
 ) => {
   return useQuery({
     queryKey: queryKeys.posts.detail(payload),
