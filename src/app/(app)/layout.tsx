@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { Suspense } from 'react';
 
+import { LoginRequiredModal } from '@/entity/auth';
 import { Toaster } from '@/shared/ui';
 
 import AppProvider from './_provider';
@@ -34,6 +35,7 @@ export default function Layout({
         {footer}
       </div>
       <Toaster />
+      <LoginRequiredModal />
     </AppProvider>
   );
 }

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { LoginRequiredModal, useAuth } from '@/entity/auth';
+import { useAuth } from '@/entity/auth';
 import { Badge, Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
 import { CardFooter } from '@/shared/ui/card';
 import { postInvalidateQueries, useGetBestWorstPostInfo, useGetCategoryPostList, usePostReaction } from '@/views/posts';
@@ -295,7 +295,6 @@ export const CategoryPostList = ({ category }: Props) => {
           showPreviousNext={true}
         />
       </div>
-      <LoginRequiredModal />
     </div>
   );
 };

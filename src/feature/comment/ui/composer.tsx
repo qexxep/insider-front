@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { useAuth } from '@/entity/auth';
 import { cn } from '@/shared/lib/tw-utils';
 import { Button, Textarea } from '@/shared/ui';
 
@@ -21,6 +22,7 @@ interface Props {
 }
 
 export const Composer = ({ className, postSeq, upCommentSeq, mentiUser, onCancel }: Props) => {
+  const { checkLogin } = useAuth();
   const [comment, setComment] = useState('');
 
   const { mutate: createComment } = useCreateComment();
@@ -30,6 +32,9 @@ export const Composer = ({ className, postSeq, upCommentSeq, mentiUser, onCancel
   };
 
   const handleSubmit = () => {
+    const isLoggedIn = checkLogin();
+    if (!isLoggedIn) return;
+
     createComment(
       {
         postSeq,

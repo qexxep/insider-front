@@ -4,6 +4,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 
+import { useAuth } from '@/entity/auth';
 import { PersonalityIcon } from '@/feature/personality';
 import { cn } from '@/shared/lib/tw-utils';
 import {
@@ -42,6 +43,8 @@ interface Props {
 }
 
 export const Card = ({ postSeq, comment, parent }: Props) => {
+  const { checkLogin } = useAuth();
+
   const [openCommentId, setOpenCommentId] = useState<string>();
   const [isReply, setIsReply] = useState(false);
   const [target, setTarget] = useState<MentiUser>();
@@ -73,6 +76,10 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
     reactionType: 'like' | 'unlike'
   ) => {
     if (comment.commentStatus === 'D') return;
+
+    const isLoggedIn = checkLogin();
+    if (!isLoggedIn) return;
+
     reactionComment(
       {
         commentSeq: comment.commentSeq,
@@ -88,6 +95,8 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
   };
 
   const handleDeleteComment = () => {
+    const isLoggedIn = checkLogin();
+    if (!isLoggedIn) return;
     deleteComment(
       { commentSeq: comment.commentSeq },
       {
