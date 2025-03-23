@@ -45,14 +45,17 @@ interface Props {
   postId: string;
   category: string;
   currentPage?: number;
+  commentCurrentPage?: number;
 }
 
 const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_COMMENT_PAGE_SIZE = 10;
 const POSTS_SORT_TYPE_IN_DETAIL_PAGE = 'D';
 
-export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
+export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPage = 1 }: Props) => {
   const router = useRouter();
   const [page, setPage] = useState(currentPage);
+  const [commentPage, setCommentPage] = useState(commentCurrentPage);
 
   const { data: postData, isError: hasPostError } = useGetPostDetail(
     { postSeq: postId },
@@ -72,8 +75,8 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
 
   const { data: commentsData } = useCommentList({
     postSeq: postId,
-    currPage: currentPage,
-    pageSize: DEFAULT_PAGE_SIZE,
+    currPage: commentPage,
+    pageSize: DEFAULT_COMMENT_PAGE_SIZE,
     sortType: 'A', // 등록순 (먼저 작성한 댓글이 위로)
   });
 
@@ -100,9 +103,14 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
   const bestWorstPosts = bestWorstPostsData.data;
 
   const totalPages = Math.ceil(totalPostCnt / DEFAULT_PAGE_SIZE);
+  const totalCommentPages = Math.ceil(totalCommentCnt / DEFAULT_COMMENT_PAGE_SIZE);
 
   const onPageChange = (page: number) => {
     setPage(page);
+  };
+
+  const onCommentPageChange = (page: number) => {
+    setCommentPage(page);
   };
 
   const handleDeletePost = () => {
@@ -323,7 +331,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
           </Button>
         </div>
         <CommentComposer onSubmit={onSubmitCreateComment} onCancel={() => {}} />
-        <div className="divide-y divide-gray-400">
+        <div className="mb-6 divide-y divide-gray-400">
           {comments?.map(comment => (
             <CommentCard
               key={comment.commentSeq}
@@ -333,6 +341,14 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
             />
           ))}
         </div>
+        {totalCommentCnt > 10 && (
+          <Paginator
+            currentPage={commentPage}
+            totalPages={totalCommentPages}
+            onPageChange={onCommentPageChange}
+            showPreviousNext
+          />
+        )}
       </div>
       {/* 인싸이더 다른 게시물 */}
       <div className="pt-20">
