@@ -488,7 +488,7 @@ export function RegisterPage() {
               </div>
             )}
           </div>
-          <div className="flex w-full items-center justify-between">
+          <div className="flex w-full items-start justify-between">
             <div className="w-1/2">
               <FormField
                 control={form.control}
