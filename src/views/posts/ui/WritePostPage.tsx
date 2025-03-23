@@ -212,7 +212,6 @@ export function WritePostPage() {
     if (!validateFile(file)) return;
 
     try {
-      console.log('postSeq', postSeq);
       // 게시글이 없는 경우 먼저 생성
       if (!postSeq) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
