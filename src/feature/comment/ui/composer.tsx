@@ -6,26 +6,25 @@ import { useAuth } from '@/entity/auth';
 import { cn } from '@/shared/lib/tw-utils';
 import { Button, Textarea } from '@/shared/ui';
 
-import { commentInvalidateQueries } from '..';
-import { useCreateComment } from '../api/queries';
-
 interface Props {
   className?: string;
-  postSeq: string;
-  upCommentSeq?: string;
-  mentiUser?: {
-    regId: string;
-    commentSeq: string;
-    nickname: string;
-  };
+  mentiUserNickname?: string;
+  submitText?: string;
+  onSubmit: (content: string) => void;
   onCancel: () => void;
+  initialComment?: string;
 }
 
-export const Composer = ({ className, postSeq, upCommentSeq, mentiUser, onCancel }: Props) => {
+export const Composer = ({
+  className,
+  mentiUserNickname,
+  submitText = '댓글 등록',
+  onSubmit,
+  onCancel,
+  initialComment = '',
+}: Props) => {
   const { checkLogin } = useAuth();
-  const [comment, setComment] = useState('');
-
-  const { mutate: createComment } = useCreateComment();
+  const [comment, setComment] = useState(initialComment);
 
   const handleComment = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -35,28 +34,17 @@ export const Composer = ({ className, postSeq, upCommentSeq, mentiUser, onCancel
     const isLoggedIn = checkLogin();
     if (!isLoggedIn) return;
 
-    createComment(
-      {
-        postSeq,
-        comment,
-        upCommentSeq: upCommentSeq || '',
-        mentiUserId: mentiUser?.regId || '',
-      },
-      {
-        onSuccess: () => {
-          commentInvalidateQueries.list({ postSeq, currPage: 1, pageSize: 10, sortType: 'A' });
-          setComment('');
-          onCancel();
-        },
-      }
-    );
+    onSubmit(comment);
+    setComment('');
   };
 
   return (
     <div
       className={cn('mb-8 flex flex-col rounded-lg border-[2px] border-gray-300 bg-background px-5 py-4', className)}
     >
-      {mentiUser && <span className="ml-[13px] mt-[9px] whitespace-nowrap text-[#1888FF]">@{mentiUser.nickname}</span>}
+      {mentiUserNickname && (
+        <span className="ml-[13px] mt-[9px] whitespace-nowrap text-[#1888FF]">@{mentiUserNickname}</span>
+      )}
       <div className="flex">
         <Textarea
           value={comment}
@@ -75,7 +63,7 @@ export const Composer = ({ className, postSeq, upCommentSeq, mentiUser, onCancel
           disabled={comment.length === 0}
           className="disabled:bg-gray-300 disabled:text-gray-500"
         >
-          댓글 등록
+          {submitText}
         </Button>
       </div>
     </div>

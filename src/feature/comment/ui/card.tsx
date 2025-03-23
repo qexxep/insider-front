@@ -26,7 +26,7 @@ import {
 } from '@/shared/ui';
 
 import { commentInvalidateQueries } from '..';
-import { useCommentReaction, useDeleteComment } from '../api/queries';
+import { useCommentReaction, useCreateComment, useDeleteComment, useUpdateComment } from '../api/queries';
 import { CommentType } from '../model/types';
 import { Composer } from './composer';
 
@@ -43,14 +43,17 @@ interface Props {
 }
 
 export const Card = ({ postSeq, comment, parent }: Props) => {
-  const { checkLogin } = useAuth();
+  const { checkLogin, isLoggedIn } = useAuth();
 
   const [openCommentId, setOpenCommentId] = useState<string>();
   const [isReply, setIsReply] = useState(false);
   const [target, setTarget] = useState<MentiUser>();
+  const [isEditing, setIsEditing] = useState(false);
 
   const { mutate: deleteComment } = useDeleteComment();
   const { mutate: reactionComment } = useCommentReaction();
+  const { mutate: createComment } = useCreateComment();
+  const { mutate: updateComment } = useUpdateComment();
 
   const onClickReply = () => {
     setOpenCommentId(comment.commentSeq);
@@ -94,6 +97,24 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
     );
   };
 
+  const onSubmitCreateComment = (content: string) => {
+    createComment(
+      {
+        postSeq,
+        comment: content,
+        upCommentSeq: parent ? parent.commentSeq : comment.commentSeq,
+        mentiUserId: target?.regId || '',
+      },
+      {
+        onSuccess: () => {
+          commentInvalidateQueries.lists();
+          setIsReply(false);
+          setTarget(undefined);
+        },
+      }
+    );
+  };
+
   const handleDeleteComment = () => {
     const isLoggedIn = checkLogin();
     if (!isLoggedIn) return;
@@ -107,13 +128,36 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
     );
   };
 
+  const handleEditComment = () => {
+    setIsEditing(true);
+  };
+
+  const onSubmitUpdateComment = (content: string) => {
+    console.log(content);
+    updateComment(
+      {
+        commentSeq: comment.commentSeq,
+        comment: content,
+        mentiUserId: comment.mentiUserId ?? '',
+      },
+      {
+        onSuccess: () => {
+          commentInvalidateQueries.lists();
+        },
+        onSettled: () => {
+          setIsEditing(false);
+        },
+      }
+    );
+  };
+
   const formatTimeAgo = (date: string) => {
     const distance = formatDistanceToNow(date, { addSuffix: true, locale: ko });
     return distance === '1분 미만 전' ? '방금 전' : distance;
   };
 
   return (
-    <div className={cn('flex gap-2 px-5 py-4', parent && 'pl-0', comment.owner && 'bg-primary-100')}>
+    <div className={cn('flex gap-2 px-5 py-4', parent && 'pl-0', comment.owner && isLoggedIn && 'bg-primary-100')}>
       {parent && (
         <div className="">
           <Icons.cornerDownRight className="h-5 w-5 text-primary" />
@@ -131,7 +175,19 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
             <span className="text-gray-500">{formatTimeAgo(comment.regDate + ' ' + comment.regTime)}</span>
           </div>
         </div>
-        <div>{comment.comment}</div>
+        {!isEditing ? (
+          <div>{comment.comment}</div>
+        ) : (
+          <div>
+            <Composer
+              className="mb-0"
+              initialComment={comment.comment}
+              onSubmit={onSubmitUpdateComment}
+              onCancel={() => setIsEditing(false)}
+              submitText="수정하기"
+            />
+          </div>
+        )}
         <div className="flex gap-4">
           <div className="flex items-center justify-center gap-1">
             <button
@@ -156,7 +212,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
             <Icons.comment className="h-4 w-4 text-gray-600" />
             답글쓰기
           </button>
-          {comment.owner && comment.commentStatus === 'N' && (
+          {comment.owner && comment.commentStatus === 'N' && isLoggedIn && (
             <div className="flex gap-3">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -185,7 +241,11 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button variant="link" className="h-fit p-0 text-primary-700 underline underline-offset-2">
+              <Button
+                variant="link"
+                className="h-fit p-0 text-primary-700 underline underline-offset-2"
+                onClick={handleEditComment}
+              >
                 댓글 수정하기
               </Button>
             </div>
@@ -213,9 +273,8 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
         {isReply && (
           <Composer
             className="mb-0"
-            postSeq={postSeq}
-            upCommentSeq={parent ? parent.commentSeq : comment.commentSeq}
-            mentiUser={target}
+            mentiUserNickname={target?.nickname}
+            onSubmit={onSubmitCreateComment}
             onCancel={() => {
               setIsReply(false);
               setTarget(undefined);

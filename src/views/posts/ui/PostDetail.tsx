@@ -5,7 +5,13 @@ import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { CommentCard, CommentComposer, useCommentList } from '@/feature/comment';
+import {
+  CommentCard,
+  CommentComposer,
+  commentInvalidateQueries,
+  useCommentList,
+  useCreateComment,
+} from '@/feature/comment';
 import { toast } from '@/shared/hooks';
 import {
   AlertDialog,
@@ -81,6 +87,8 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
 
   const { mutate: deletePost } = useDeletePost();
   const { mutate: postReaction } = usePostReaction();
+  const { mutate: createComment } = useCreateComment();
+
   if (!postData || !relativePostListData || !bestWorstPostsData || !commentsData) {
     return null;
   }
@@ -133,6 +141,22 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
             title: '게시물 좋아요 실패',
             description: '게시물 좋아요에 실패했습니다. 다시 시도해주세요.',
           });
+        },
+      }
+    );
+  };
+
+  const onSubmitCreateComment = (comment: string) => {
+    createComment(
+      {
+        postSeq: postId,
+        comment,
+        upCommentSeq: '',
+        mentiUserId: '',
+      },
+      {
+        onSuccess: () => {
+          commentInvalidateQueries.list({ postSeq: postId, currPage: 1, pageSize: 10, sortType: 'A' });
         },
       }
     );
@@ -282,7 +306,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
             <Icons.chevronDown className="h-5 w-5 text-primary" />
           </Button>
         </div>
-        <CommentComposer postSeq={post.postSeq} onCancel={() => {}} />
+        <CommentComposer onSubmit={onSubmitCreateComment} onCancel={() => {}} />
         <div className="divide-y divide-gray-400">
           {comments?.map(comment => <CommentCard key={comment.commentSeq} postSeq={post.postSeq} comment={comment} />)}
         </div>

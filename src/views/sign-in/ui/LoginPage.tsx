@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -24,7 +24,6 @@ import { useSignIn } from '../api/queries';
 import { LoginFormSchema, LoginFormType } from '../model';
 
 export function LoginPage({ initialRememberId }: { initialRememberId: string | null }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
 
@@ -58,8 +57,7 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
           removeClientCookie('remember_id');
         }
 
-        router.push(returnUrl ?? '/');
-        router.refresh();
+        window.location.href = returnUrl ?? '/';
       },
       onError: error => {
         handleErrorInfo(error.message);
