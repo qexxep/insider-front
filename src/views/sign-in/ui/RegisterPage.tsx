@@ -488,63 +488,70 @@ export function RegisterPage() {
               </div>
             )}
           </div>
-          <FormField
-            control={form.control}
-            name="birthDate"
-            render={({ field }) => (
-              <FormItem className="h-[120px]">
-                <FormLabel className="text-lg font-medium">
-                  생년월일<span className="text-destructive">*</span>
-                </FormLabel>
-                <FormControl className="mt-3 flex space-x-2">
-                  <Input
-                    type="year"
-                    placeholder="ex) 19990101"
-                    {...field}
-                    onChange={e => {
-                      const value = e.target.value;
-                      if (value.length > 8) {
-                        return;
-                      }
-                      field.onChange(value);
-                    }}
-                  />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="gender"
-            render={({ field }) => (
-              <FormItem className="h-[100px] space-y-3">
-                <FormLabel className="text-lg font-medium">
-                  성별 <span className="text-destructive">*</span>
-                </FormLabel>
-                <FormControl className="mt-3">
-                  <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-1">
-                    <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormLabel htmlFor="male" className="flex cursor-pointer items-center space-x-2">
-                        <FormControl>
-                          <RadioGroupItem id="male" value="M" />
-                        </FormControl>
-                        <span className="font-normal">남자</span>
-                      </FormLabel>
-                    </FormItem>
-                    <FormItem className="flex items-center space-x-3 space-y-0">
-                      <FormLabel htmlFor="female" className="flex cursor-pointer items-center space-x-2">
-                        <FormControl>
-                          <RadioGroupItem id="female" value="F" />
-                        </FormControl>
-                        <span className="font-normal">여자</span>
-                      </FormLabel>
-                    </FormItem>
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="flex w-full items-center justify-between">
+            <div className="w-1/2">
+              <FormField
+                control={form.control}
+                name="birthDate"
+                render={({ field }) => (
+                  <FormItem className="h-[120px] w-[120px]">
+                    <FormLabel className="text-lg font-medium">
+                      생년월일<span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl className="mt-3 flex space-x-2">
+                      <Input
+                        type="year"
+                        placeholder="생년월일 입력"
+                        {...field}
+                        onChange={e => {
+                          const value = e.target.value;
+                          if (value.length > 8) {
+                            return;
+                          }
+                          field.onChange(value);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-gray-500">{`ex) 19990101`}</FormMessage>
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="w-1/2">
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem className="h-[100px] space-y-3">
+                    <FormLabel className="text-lg font-medium">
+                      성별 <span className="text-destructive">*</span>
+                    </FormLabel>
+                    <FormControl className="mt-3">
+                      <RadioGroup onValueChange={field.onChange} defaultValue={field.value} className="flex space-x-1">
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormLabel htmlFor="male" className="flex cursor-pointer items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem id="male" value="M" />
+                            </FormControl>
+                            <span className="font-normal">남자</span>
+                          </FormLabel>
+                        </FormItem>
+                        <FormItem className="flex items-center space-x-3 space-y-0">
+                          <FormLabel htmlFor="female" className="flex cursor-pointer items-center space-x-2">
+                            <FormControl>
+                              <RadioGroupItem id="female" value="F" />
+                            </FormControl>
+                            <span className="font-normal">여자</span>
+                          </FormLabel>
+                        </FormItem>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          </div>
           <div className="flex flex-col border-t border-[#E1E1E1] py-10">
             <TermsAgreement onAgreementComplete={handleAgreementComplete} />
           </div>
