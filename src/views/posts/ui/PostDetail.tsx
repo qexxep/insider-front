@@ -157,7 +157,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
               <Button
                 variant="outlinePrimary"
                 size="sm"
-                onClick={() => router.push(`/posts/write?mode=edit&postId=${postId}`)}
+                onClick={() => router.push(`/posts/${category}/${postId}/edit`)}
               >
                 글 수정하기
               </Button>
