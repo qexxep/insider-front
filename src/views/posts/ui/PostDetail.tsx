@@ -175,11 +175,6 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
     postInvalidateQueries.detail({ postSeq: postId });
   };
 
-  const parsePostTags = (tagString?: string): string[] => {
-    if (!tagString) return [];
-    return JSON.parse(tagString.replace(/'/g, '"'));
-  };
-
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       {/* 헤더 */}
@@ -267,17 +262,11 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
         <div>{post.content}</div>
         <div className="flex flex-col gap-6">
           <div className="flex gap-[6px]">
-            {typeof post.postTag === 'string'
-              ? parsePostTags(post.postTag).map((tag, index) => (
-                  <Badge key={`tag-${index}`} variant="tag">
-                    #{tag}
-                  </Badge>
-                ))
-              : (post.postTag as string[]).map((tag: string, index: number) => (
-                  <Badge key={`tag-${index}`} variant="tag">
-                    #{tag}
-                  </Badge>
-                ))}
+            {post.postTagList.map((tag: string, index: number) => (
+              <Badge key={`tag-${index}`} variant="tag">
+                #{tag}
+              </Badge>
+            ))}
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">

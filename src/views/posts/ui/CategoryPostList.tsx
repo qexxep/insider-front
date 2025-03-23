@@ -89,11 +89,6 @@ export const CategoryPostList = ({ category }: Props) => {
     });
   };
 
-  const parsePostTags = (tagString?: string): string[] => {
-    if (!tagString) return [];
-    return JSON.parse(tagString.replace(/'/g, '"'));
-  };
-
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       <div className="mb-[21px] flex items-center justify-between">
@@ -262,17 +257,11 @@ export const CategoryPostList = ({ category }: Props) => {
                     <span className="leading-[1] text-gray-900">{post.commentCnt}</span>
                   </div>
                 </div>
-                {typeof post.postTag === 'string'
-                  ? parsePostTags(post.postTag).map((tag, index) => (
-                      <Badge key={`tag-${index}`} variant="tag">
-                        #{tag}
-                      </Badge>
-                    ))
-                  : (post.postTag as string[]).map((tag: string, index: number) => (
-                      <Badge key={`tag-${index}`} variant="tag">
-                        #{tag}
-                      </Badge>
-                    ))}
+                {post.postTagList.map((tag: string, index: number) => (
+                  <Badge key={`tag-${index}`} variant="tag">
+                    #{tag}
+                  </Badge>
+                ))}
               </CardFooter>
               {/* TODO) 투표 중 상태 응답값 필요 */}
               <div className="absolute -left-1 -top-[1px] flex items-center justify-center gap-[2px] overflow-y-visible rounded-[2px] rounded-bl-none bg-primary px-[6px] py-1 text-xs text-white">

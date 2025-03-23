@@ -25,7 +25,7 @@ export interface PostDetailType {
   isVote: number;
   voteTitle: string;
   voteInfo: VoteInfoType; // TODO) string인 경우 처리 필요
-  postTag: string;
+  postTagList: string[];
   commentInfo: CommentInfoType;
   fileList: FileType[];
   nickname: string;
@@ -54,7 +54,7 @@ export interface PostPreviewType {
   likeCnt: number;
   unlikeCnt: number;
   commentCnt: number;
-  postTag: string[] | string; // "["테스트","123"]" 형식으로 저장되어 있음 -> 수정 요청 필요
+  postTagList: string[];
   thumbnailPath?: string;
   nickname: string;
   personaImage: string;
