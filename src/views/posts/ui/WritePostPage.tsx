@@ -198,13 +198,31 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       if (!postSeq) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
         if (postResult.status === 'SUCCESS') {
-          setPostSeq(postResult.data.postSeq);
-        } else {
-          throw new Error('게시글 생성 실패');
+          const newPostSeq = postResult.data.postSeq; // 임시 변수에 저장
+          setPostSeq(newPostSeq);
+
+          // 파일 업로드는 새로운 postSeq로 실행
+          const result = await uploadFileMutation.mutateAsync({
+            postSeq: newPostSeq, // 상태 대신 임시 변수 사용
+            file,
+          });
+
+          if (result.status === 'SUCCESS') {
+            const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.fileUrl}`;
+            setUploadedImages(prev => [
+              ...prev,
+              {
+                url: fullFileUrl,
+                file,
+                fileSeq: result.data.fileSeq,
+              },
+            ]);
+          }
+          return; // 파일 업로드 완료 후 종료
         }
       }
 
-      // 파일 업로드
+      // postSeq가 이미 있는 경우에만 실행
       const result = await uploadFileMutation.mutateAsync({
         postSeq,
         file,
