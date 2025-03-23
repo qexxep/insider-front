@@ -1,3 +1,4 @@
+import { useCategories } from '@/app/(app)/@sidebar/hooks/useCategories';
 import { useCommonMutation } from '@/shared/api';
 import { toast } from '@/shared/hooks';
 
@@ -86,3 +87,5 @@ export function useWrite() {
     savePostMutation,
   };
 }
+
+export { useCategories };

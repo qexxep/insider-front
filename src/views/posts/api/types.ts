@@ -1,5 +1,6 @@
-import { PostDetailType, PostPreviewType } from '../model/types';
+import type { CategoryItem } from '@/app/(app)/@sidebar/api/category';
 
+import { PostDetailType, PostPreviewType } from '../model/types';
 export interface PostListByCategoryRequest {
   categoryCd: string;
   currPage: number;
@@ -41,3 +42,5 @@ export interface PostDeleteRequest {
 }
 
 export type PostDeleteResponse = void;
+
+export type { CategoryItem };

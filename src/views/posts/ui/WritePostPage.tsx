@@ -2,12 +2,9 @@
 
 import { UseQueryOptions } from '@tanstack/react-query';
 import Image from 'next/image';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
-// 여기서 import 하는게 맞는 것인가..?
-import type { CategoryItem } from '@/app/(app)/@sidebar/api/category';
-import { useCategories } from '@/app/(app)/@sidebar/hooks/useCategories';
 import { ApiResponse } from '@/shared/api/types';
 import { useToast } from '@/shared/hooks';
 import {
@@ -24,8 +21,9 @@ import {
 } from '@/shared/ui';
 
 import { useGetPostDetail } from '../api/queries';
-import type { PostDetailResponse } from '../api/types';
-import { SavePostRequest, useWrite } from '../hooks/useWrite';
+import type { CategoryItem, PostDetailResponse } from '../api/types';
+import { useCategories, useWrite } from '../hooks/useWrite';
+import { SavePostRequest } from '../hooks/useWrite';
 import { CategorySelect } from './CategorySelect';
 
 interface UploadedImage {
@@ -53,44 +51,26 @@ const MAX_TAG_LENGTH = 10;
 const MAX_VOTE_COUNT = 5;
 const MIN_VOTE_COUNT = 2;
 
-export function WritePostPage() {
+interface WritePostPageProps {
+  mode?: 'edit' | 'create';
+  initialPostId?: string;
+  initialCategory?: string;
+}
+
+export function WritePostPage({ mode = 'create', initialPostId, initialCategory }: WritePostPageProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const searchParams = useSearchParams();
 
-  // 수정 모드 관련 파라미터 추가
-  const mode = searchParams.get('mode');
-  const postId = searchParams.get('postId');
-  const isEditMode = mode === 'edit' && Boolean(postId);
+  // searchParams 대신 props 사용
+  const isEditMode = mode === 'edit' && Boolean(initialPostId);
 
   // 기존 데이터 불러오기
-  const { data: postData } = useGetPostDetail({ postSeq: postId || '' }, {
+  const { data: postData } = useGetPostDetail({ postSeq: initialPostId || '' }, {
     enabled: isEditMode,
-    staleTime: Infinity, // 수정 중에는 데이터가 stale되지 않도록 설정
+    staleTime: Infinity,
   } as UseQueryOptions<ApiResponse<PostDetailResponse>>);
 
-  const category = searchParams.get('category') || '';
-
-  // 클라이언트에서 이중으로 토큰 체크
-  useEffect(() => {
-    const token = document.cookie.match(/access_token=([^;]+)/);
-    const showLoginRequired = searchParams.get('showLoginRequired') === 'true';
-
-    if (!token || showLoginRequired) {
-      toast({
-        variant: 'destructive',
-        title: '접근 제한',
-        description: '로그인이 필요한 작업입니다.',
-        duration: 2000,
-      });
-
-      if (!token) {
-        router.push('/');
-      }
-    }
-  }, [router, toast, searchParams]);
-
-  const [selectedCategory, setSelectedCategory] = useState<string>(category);
+  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory || '');
   const [postSeq, setPostSeq] = useState<string>('');
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [tags, setTags] = useState<string[]>([]);
@@ -153,27 +133,28 @@ export function WritePostPage() {
   const handleCategorySelect = async (value: string) => {
     setSelectedCategory(value);
 
-    if (!postSeq) {
-      try {
-        const result = await createPostMutation.mutateAsync({ categoryCd: value });
-        if (result.status === 'SUCCESS') {
-          setPostSeq(result.data.postSeq);
-        }
-      } catch (error) {
-        console.error('게시글 생성 실패:', error);
-        toast({
-          variant: 'destructive',
-          title: '게시글 생성 실패',
-          description: '게시글을 생성하는데 실패했습니다. 다시 시도해주세요.',
-          duration: 2000,
-        });
+    if (postSeq) return;
+
+    try {
+      // 최초 게시글 생성
+      const result = await createPostMutation.mutateAsync({ categoryCd: value });
+      if (result.status === 'SUCCESS') {
+        setPostSeq(result.data.postSeq);
       }
+    } catch (error) {
+      console.error('게시글 생성 실패:', error);
+      toast({
+        variant: 'destructive',
+        title: '게시글 생성 실패',
+        description: '게시글을 생성하는데 실패했습니다. 다시 시도해주세요.',
+        duration: 2000,
+      });
     }
   };
 
   useEffect(() => {
-    if (category && !postSeq) {
-      handleCategorySelect(category);
+    if (initialCategory && !postSeq) {
+      handleCategorySelect(initialCategory);
     }
   }, []);
 
