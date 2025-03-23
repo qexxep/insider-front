@@ -94,7 +94,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
   }
 
   const { voteInfo, fileList, ...post } = postData.data;
-  const { comments } = commentsData.data;
+  const { comments, totalCommentCnt } = commentsData.data;
 
   const { posts, totalPostCnt } = relativePostListData.data;
   const bestWorstPosts = bestWorstPostsData.data;
@@ -156,10 +156,15 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
       },
       {
         onSuccess: () => {
+          postInvalidateQueries.detail({ postSeq: postId });
           commentInvalidateQueries.list({ postSeq: postId, currPage: 1, pageSize: 10, sortType: 'A' });
         },
       }
     );
+  };
+
+  const handleRefetchPost = () => {
+    postInvalidateQueries.detail({ postSeq: postId });
   };
 
   return (
@@ -299,7 +304,7 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
       <div>
         <div className="flex items-center justify-between px-5">
           <h2 className="text-xl text-gray-600">
-            댓글 <span className="text-primary">{comments.length}</span>
+            댓글 <span className="text-primary">{totalCommentCnt}</span>
           </h2>
           <Button variant="ghost" className="flex gap-1 px-3">
             등록순
@@ -308,7 +313,14 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
         </div>
         <CommentComposer onSubmit={onSubmitCreateComment} onCancel={() => {}} />
         <div className="divide-y divide-gray-400">
-          {comments?.map(comment => <CommentCard key={comment.commentSeq} postSeq={post.postSeq} comment={comment} />)}
+          {comments?.map(comment => (
+            <CommentCard
+              key={comment.commentSeq}
+              postSeq={post.postSeq}
+              comment={comment}
+              callback={handleRefetchPost}
+            />
+          ))}
         </div>
       </div>
       {/* 인싸이더 다른 게시물 */}

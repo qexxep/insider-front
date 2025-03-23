@@ -40,9 +40,10 @@ interface Props {
   postSeq: string;
   comment: CommentType;
   parent?: CommentType;
+  callback?: () => void;
 }
 
-export const Card = ({ postSeq, comment, parent }: Props) => {
+export const Card = ({ postSeq, comment, parent, callback }: Props) => {
   const { checkLogin, isLoggedIn } = useAuth();
 
   const [openCommentId, setOpenCommentId] = useState<string>();
@@ -110,6 +111,7 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
           commentInvalidateQueries.lists();
           setIsReply(false);
           setTarget(undefined);
+          callback?.();
         },
       }
     );
@@ -133,7 +135,6 @@ export const Card = ({ postSeq, comment, parent }: Props) => {
   };
 
   const onSubmitUpdateComment = (content: string) => {
-    console.log(content);
     updateComment(
       {
         commentSeq: comment.commentSeq,

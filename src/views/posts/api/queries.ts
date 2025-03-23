@@ -76,7 +76,7 @@ export const useGetCategoryPostList = (
   return useQuery({
     queryKey: queryKeys.posts.list(payload),
     queryFn: () => getPostListByCategory(payload),
-    ...QUERY_CONFIG.REGULAR,
+    ...QUERY_CONFIG.REAL_TIME,
     ...config,
   });
 };
