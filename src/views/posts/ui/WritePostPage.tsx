@@ -500,11 +500,11 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
             투표 추가
           </Button>
           <Button
-            className="hover:bg-primary-700 bg-primary px-6 text-white transition-colors disabled:bg-gray-400 disabled:text-primary-foreground"
+            className="bg-primary px-6 text-white transition-colors hover:bg-primary-700 disabled:bg-gray-400 disabled:text-primary-foreground"
             onClick={handleSubmitPost}
             disabled={savePostMutation.isPending || !postSeq || !title.trim() || !content.trim()}
           >
-            {savePostMutation.isPending ? '등록 중...' : '게시물 등록'}
+            {savePostMutation.isPending ? '등록 중...' : isEditMode ? '수정하기' : '게시물 등록'}
           </Button>
         </div>
       </div>
@@ -732,7 +732,7 @@ const PostVoteForm = ({
           <Button
             onClick={handleAddVoteOption}
             variant="outline"
-            className="hover:bg-primary-700 mt-3 w-full border border-[#FF5C00] bg-[#FFF1EA] text-primary hover:text-primary-foreground disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-400 disabled:text-primary-foreground"
+            className="mt-3 w-full border border-[#FF5C00] bg-[#FFF1EA] text-primary hover:bg-primary-700 hover:text-primary-foreground disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-400 disabled:text-primary-foreground"
             disabled={voteCount >= MAX_VOTE_COUNT}
           >
             <Icons.plus width={24} height={24} />
