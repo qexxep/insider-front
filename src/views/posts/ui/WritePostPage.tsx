@@ -100,11 +100,10 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       setPostSeq(post.postSeq);
 
       // TODO) 태그 설정 수정 요청 필요
-      // 태그 설정 (# 제거하고 배열로 변환)
-      // if (post.postTag) {
-      //   const tags = post.postTag.split('#').filter(Boolean);
-      //   setTags(tags);
-      // }
+      if (post.postTagList?.length > 0) {
+        const processedTags = post.postTagList.map(tag => tag.replace('#', ''));
+        setTags(processedTags);
+      }
 
       // 이미지 설정
       if (fileList?.length > 0) {
