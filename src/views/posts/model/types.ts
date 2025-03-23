@@ -54,7 +54,7 @@ export interface PostPreviewType {
   likeCnt: number;
   unlikeCnt: number;
   commentCnt: number;
-  postTag: string;
+  postTag: string[] | string; // "["테스트","123"]" 형식으로 저장되어 있음 -> 수정 요청 필요
   thumbnailPath?: string;
   nickname: string;
   personaImage: string;

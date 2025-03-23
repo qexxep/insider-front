@@ -57,13 +57,6 @@ export const CategoryPostList = ({ category }: Props) => {
     setCurrentPage(page);
   };
 
-  // 태그 파싱 헬퍼 함수 추가
-  const parsePostTags = (tagString?: string): string[] => {
-    if (!tagString) return [];
-    // '#' 으로 시작하는 태그들을 분리하고, 빈 문자열 제거
-    return tagString.split('#').filter(Boolean);
-  };
-
   const handlePostReaction = (
     reactionType: 'like' | 'unlike',
     actionType: 'add' | 'remove' | 'toggle',
@@ -94,6 +87,11 @@ export const CategoryPostList = ({ category }: Props) => {
       if (prev === 'D') return 'R';
       return 'A';
     });
+  };
+
+  const parsePostTags = (tagString?: string): string[] => {
+    if (!tagString) return [];
+    return JSON.parse(tagString.replace(/'/g, '"'));
   };
 
   return (
@@ -264,11 +262,17 @@ export const CategoryPostList = ({ category }: Props) => {
                     <span className="leading-[1] text-gray-900">{post.commentCnt}</span>
                   </div>
                 </div>
-                {parsePostTags(post.postTag).map(tag => (
-                  <Badge key={tag} variant="tag" className="truncate">
-                    #{tag}
-                  </Badge>
-                ))}
+                {typeof post.postTag === 'string'
+                  ? parsePostTags(post.postTag).map((tag, index) => (
+                      <Badge key={`tag-${index}`} variant="tag">
+                        #{tag}
+                      </Badge>
+                    ))
+                  : (post.postTag as string[]).map((tag: string, index: number) => (
+                      <Badge key={`tag-${index}`} variant="tag">
+                        #{tag}
+                      </Badge>
+                    ))}
               </CardFooter>
               {/* TODO) 투표 중 상태 응답값 필요 */}
               <div className="absolute -left-1 -top-[1px] flex items-center justify-center gap-[2px] overflow-y-visible rounded-[2px] rounded-bl-none bg-primary px-[6px] py-1 text-xs text-white">

@@ -167,6 +167,11 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
     postInvalidateQueries.detail({ postSeq: postId });
   };
 
+  const parsePostTags = (tagString?: string): string[] => {
+    if (!tagString) return [];
+    return JSON.parse(tagString.replace(/'/g, '"'));
+  };
+
   return (
     <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
       {/* 헤더 */}
@@ -254,11 +259,17 @@ export const PostDetail = ({ postId, category, currentPage = 1 }: Props) => {
         <div>{post.content}</div>
         <div className="flex flex-col gap-6">
           <div className="flex gap-[6px]">
-            {['문학', '시집', '소설', '글귀'].map((tag, index) => (
-              <Badge key={`tag-${index}`} variant="tag">
-                #{tag}
-              </Badge>
-            ))}
+            {typeof post.postTag === 'string'
+              ? parsePostTags(post.postTag).map((tag, index) => (
+                  <Badge key={`tag-${index}`} variant="tag">
+                    #{tag}
+                  </Badge>
+                ))
+              : (post.postTag as string[]).map((tag: string, index: number) => (
+                  <Badge key={`tag-${index}`} variant="tag">
+                    #{tag}
+                  </Badge>
+                ))}
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">
