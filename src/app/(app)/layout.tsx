@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { CookiesProvider } from 'next-client-cookies/server';
 import { Suspense } from 'react';
 
 import { LoginRequiredModal } from '@/entity/auth';
@@ -19,23 +20,25 @@ export default function Layout({
 }) {
   return (
     <AppProvider>
-      {/* 헤더 */}
-      {header}
+      <CookiesProvider>
+        {/* 헤더 */}
+        {header}
 
-      {/* 사이드바 */}
-      {sidebar}
+        {/* 사이드바 */}
+        {sidebar}
 
-      {/* 메인 */}
-      <div className="min-h-[calc(100vh - 48px)] ml-[260px] flex flex-col items-center">
-        <Suspense fallback={<LoadingSpinner />}>
-          <main className="relative w-full max-w-[1200px] flex-1 flex-col p-5">{children}</main>
-        </Suspense>
+        {/* 메인 */}
+        <div className="min-h-[calc(100vh - 48px)] ml-[260px] flex flex-col items-center">
+          <Suspense fallback={<LoadingSpinner />}>
+            <main className="relative w-full max-w-[1200px] flex-1 flex-col p-5">{children}</main>
+          </Suspense>
 
-        {/* 푸터 */}
-        {footer}
-      </div>
-      <Toaster />
-      <LoginRequiredModal />
+          {/* 푸터 */}
+          {footer}
+        </div>
+        <Toaster />
+        <LoginRequiredModal />
+      </CookiesProvider>
     </AppProvider>
   );
 }

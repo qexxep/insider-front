@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { useCookies } from 'next-client-cookies';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
@@ -18,12 +19,12 @@ import {
   Input,
   PasswordInput,
 } from '@/shared/ui';
-import { removeClientCookie, setClientCookie } from '@/shared/utils';
 
 import { useSignIn } from '../api/queries';
 import { LoginFormSchema, LoginFormType } from '../model';
 
 export function LoginPage({ initialRememberId }: { initialRememberId: string | null }) {
+  const cookies = useCookies();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
 
@@ -48,13 +49,13 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
     await signIn(data, {
       onSuccess: response => {
         const { accessToken, refreshToken } = response.data.jwt;
-        setClientCookie('access_token', accessToken);
-        setClientCookie('refresh_token', refreshToken);
+        cookies.set('access_token', accessToken);
+        cookies.set('refresh_token', refreshToken);
 
         if (rememberId) {
-          setClientCookie('remember_id', data.userId);
+          cookies.set('remember_id', data.userId);
         } else {
-          removeClientCookie('remember_id');
+          cookies.remove('remember_id');
         }
 
         window.location.href = returnUrl ?? '/';

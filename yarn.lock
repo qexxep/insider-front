@@ -5519,6 +5519,7 @@ __metadata:
     lint-staged: "npm:^15.4.3"
     lucide-react: "npm:^0.474.0"
     next: "npm:15.1.6"
+    next-client-cookies: "npm:^2.0.1"
     postcss: "npm:^8.5.1"
     prettier: "npm:^3.4.2"
     prettier-plugin-tailwindcss: "npm:^0.6.11"
@@ -5917,6 +5918,13 @@ __metadata:
   bin:
     jiti: lib/jiti-cli.mjs
   checksum: 10c0/4ceac133a08c8faff7eac84aabb917e85e8257f5ad659e843004ce76e981c457c390a220881748ac67ba1b940b9b729b30fb85cbaf6e7989f04b6002c94da331
+  languageName: node
+  linkType: hard
+
+"js-cookie@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "js-cookie@npm:3.0.5"
+  checksum: 10c0/04a0e560407b4489daac3a63e231d35f4e86f78bff9d792011391b49c59f721b513411cd75714c418049c8dc9750b20fcddad1ca5a2ca616c3aca4874cce5b3a
   languageName: node
   linkType: hard
 
@@ -6583,6 +6591,18 @@ __metadata:
   version: 2.6.2
   resolution: "neo-async@npm:2.6.2"
   checksum: 10c0/c2f5a604a54a8ec5438a342e1f356dff4bc33ccccdb6dc668d94fe8e5eccfc9d2c2eea6064b0967a767ba63b33763f51ccf2cd2441b461a7322656c1f06b3f5d
+  languageName: node
+  linkType: hard
+
+"next-client-cookies@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "next-client-cookies@npm:2.0.1"
+  dependencies:
+    js-cookie: "npm:^3.0.5"
+  peerDependencies:
+    next: ">= 15.0.0"
+    react: ">= 16.8.0"
+  checksum: 10c0/0e8ea48b46ebb618bc679c23de43ebfa40c02031d8278150025809855fa7c57b20d422133c4849eb8338dbfa7f7651c018256c6ecbb45e5e39d96eb6a47c2adc
   languageName: node
   linkType: hard
 
