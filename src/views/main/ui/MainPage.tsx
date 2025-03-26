@@ -62,7 +62,14 @@ const DISCUSSION_ITEMS = [
     rankNum: 6,
   },
 ] as const;
-
+const RANK_COLORS = {
+  1: 'bg-primary-600',
+  2: 'bg-primary-500',
+  3: 'bg-primary-400',
+  4: 'bg-primary-600',
+  5: 'bg-primary-500',
+  6: 'bg-primary-400',
+} as const;
 async function MainPage() {
   const { data: rankings } = await getRankings();
   const { data: recentPosts } = await getCategoryRecentPosts();
@@ -80,7 +87,12 @@ async function MainPage() {
           {DISCUSSION_ITEMS.map(item => (
             <CarouselItem key={item.rankNum}>
               <div className="h-full p-1">
-                <Card className="relative h-full rounded-lg bg-primary-600 transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-lg">
+                <Card
+                  className={cn(
+                    'relative h-full rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-lg',
+                    RANK_COLORS[item.rankNum]
+                  )}
+                >
                   <CardHeader className="relative pb-0">
                     {item.rankNum <= 3 && (
                       <Image
