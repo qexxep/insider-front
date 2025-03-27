@@ -1,11 +1,13 @@
-import Image from 'next/image';
+//import Image from 'next/image';
 import { CookiesProvider } from 'next-client-cookies/server';
 import { Suspense } from 'react';
 
+//import { Suspense } from 'react';
 import { LoginRequiredModal } from '@/entity/auth';
 import { Toaster } from '@/shared/ui';
 
 import AppProvider from './_provider';
+import Loading from './loading';
 
 export default function Layout({
   children,
@@ -28,9 +30,9 @@ export default function Layout({
         {sidebar}
 
         {/* 메인 */}
-        <div className="min-h-[calc(100vh - 48px)] ml-[260px] flex flex-col items-center">
-          <Suspense fallback={<LoadingSpinner />}>
-            <main className="relative w-full max-w-[1200px] flex-1 flex-col p-5">{children}</main>
+        <div className="min-h-[calc(100vh - 48px)] relative ml-[260px] flex flex-col items-center">
+          <Suspense fallback={<Loading />}>
+            <main className="relative w-full max-w-[1200px] flex-1 justify-center p-5">{children}</main>
           </Suspense>
 
           {/* 푸터 */}
@@ -40,13 +42,5 @@ export default function Layout({
         <LoginRequiredModal />
       </CookiesProvider>
     </AppProvider>
-  );
-}
-
-function LoadingSpinner() {
-  return (
-    <div className="-mt-12 flex min-h-screen flex-1 items-center justify-center">
-      <Image src="/icons/loading.svg" alt="loading" width={200} height={200} priority />
-    </div>
   );
 }

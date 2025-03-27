@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function Loading() {
   return (
-    <div className="-mt-12 flex min-h-screen flex-1 items-center justify-center">
+    <div className="flex h-full min-h-screen w-full flex-1 items-center justify-center pb-[25%] pr-[260px]">
       <Image src="/icons/loading.svg" alt="loading" width={200} height={200} priority />
     </div>
   );
