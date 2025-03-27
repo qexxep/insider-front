@@ -168,6 +168,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
         variant: 'destructive',
         title: '파일 형식 오류',
         description: 'JPG, JPEG, PNG, GIF 형식의 이미지만 업로드 가능합니다.',
+        duration: 2000,
       });
       return false;
     }
@@ -177,6 +178,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
         variant: 'destructive',
         title: '파일 크기 초과',
         description: '파일 크기는 10MB를 초과할 수 없습니다.',
+        duration: 2000,
       });
       return false;
     }
@@ -317,6 +319,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
           variant: 'destructive',
           title: '태그 길이 초과',
           description: '태그는 10자를 초과할 수 없습니다.',
+          duration: 2000,
         });
         return;
       }
@@ -328,6 +331,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
             variant: 'destructive',
             title: '중복된 태그',
             description: '이미 존재하는 태그입니다.',
+            duration: 2000,
           });
           return;
         }
@@ -382,6 +386,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
         variant: 'destructive',
         title: '제목 입력 필요',
         description: '제목을 입력해주세요.',
+        duration: 2000,
       });
       return;
     }
@@ -391,6 +396,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
         variant: 'destructive',
         title: '내용 입력 필요',
         description: '내용을 입력해주세요.',
+        duration: 2000,
       });
       return;
     }
@@ -469,7 +475,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       toast({
         title: '게시글 등록 성공',
         description: '게시글이 성공적으로 등록되었습니다.',
-        duration: 1500,
+        duration: 2000,
       });
 
       setTimeout(() => {
@@ -626,8 +632,8 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
             onClose={handleVoteFormClose}
             handleVoteTitleChange={handleVoteTitleChange}
             handleVoteOptionChange={handleVoteOptionChange}
-            handleAddVoteOption={handleAddVoteOption}
             handleRemoveVoteOption={handleRemoveVoteOption}
+            handleAddVoteOption={handleAddVoteOption}
           />
         )}
       </div>
@@ -692,6 +698,11 @@ const PostVoteForm = ({
   handleRemoveVoteOption,
   handleAddVoteOption,
 }: PostVoteFormProps) => {
+  // 옵션 내용만 삭제하는 함수 추가
+  const handleClearOptionContent = (id: number) => {
+    handleVoteOptionChange(id, '');
+  };
+
   return (
     <Card className="mt-4 bg-gray-100">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
@@ -723,24 +734,31 @@ const PostVoteForm = ({
             <div className="space-y-3">
               {voteForm.options.map((option, index) => (
                 <div key={option.id} className="flex items-center gap-2">
-                  <div className="flex-1">
+                  <div className="relative flex-1">
                     <Input
                       type="text"
                       value={option.content}
                       onChange={e => handleVoteOptionChange(option.id, e.target.value)}
                       placeholder={`항목 ${index + 1}`}
-                      className="w-full"
+                      className="w-full pr-8"
                     />
+                    {/* 기본 2개 옵션은 내용이 있을 때만, 3번째 이후 옵션은 항상 버튼 표시 */}
+                    {(index < 2 ? option.content : true) && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        onClick={
+                          () =>
+                            index < 2
+                              ? handleClearOptionContent(option.id) // 기본 2개 옵션은 내용만 삭제
+                              : handleRemoveVoteOption(option.id) // 3번째 이후는 옵션 자체를 삭제
+                        }
+                        className="absolute right-2 top-1/2 h-6 w-6 -translate-y-1/2 p-0 hover:bg-transparent"
+                      >
+                        <Icons.deleteOption className="h-4 w-4 text-gray-500" />
+                      </Button>
+                    )}
                   </div>
-                  {voteCount > MIN_VOTE_COUNT && (
-                    <Button
-                      onClick={() => handleRemoveVoteOption(option.id)}
-                      variant="ghost"
-                      className="h-8 w-8 rounded-full p-0 hover:bg-gray-100"
-                    >
-                      <Icons.cancel width={24} height={24} />
-                    </Button>
-                  )}
                 </div>
               ))}
             </div>

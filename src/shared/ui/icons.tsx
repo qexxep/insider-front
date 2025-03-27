@@ -610,6 +610,12 @@ const Icons = {
       />
     </svg>
   ),
+  deleteOption: (props: IconProps) => (
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <circle cx="14" cy="14" r="13.6111" fill="#EEEEEE" stroke="#D4D4D4" strokeWidth="0.777778" />
+      <path d="M8.75 14H19.25" stroke="#575757" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
   alertTriangle: AlertTriangle,
   arrowUpDown: ArrowUpDown,
   arrowBigUp: ArrowBigUp,
