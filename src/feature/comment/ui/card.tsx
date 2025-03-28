@@ -1,11 +1,10 @@
 'use client';
 
-import { formatDistanceToNow } from 'date-fns';
-import { ko } from 'date-fns/locale';
 import { useState } from 'react';
 
 import { useAuth } from '@/entity/auth';
 import { PersonalityIcon } from '@/feature/personality';
+import { formatTimeAgo } from '@/shared/lib';
 import { cn } from '@/shared/lib/tw-utils';
 import {
   Accordion,
@@ -150,11 +149,6 @@ export const Card = ({ postSeq, comment, parent, callback }: Props) => {
         },
       }
     );
-  };
-
-  const formatTimeAgo = (date: string) => {
-    const distance = formatDistanceToNow(date, { addSuffix: true, locale: ko });
-    return distance === '1분 미만 전' ? '방금 전' : distance;
   };
 
   return (

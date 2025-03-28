@@ -13,6 +13,7 @@ import {
   useCreateComment,
 } from '@/feature/comment';
 import { toast } from '@/shared/hooks';
+import { formatTimeAgo } from '@/shared/lib';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -176,7 +177,7 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
   };
 
   return (
-    <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
+    <div className="flex w-full max-w-[960px] flex-col justify-start py-[50px]">
       {/* 헤더 */}
       <div className="flex flex-col gap-[14px] pb-11">
         <div className="flex w-full justify-between">
@@ -228,11 +229,12 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
         </div>
         <div className="flex justify-between">
           <div className="flex items-center gap-2">
-            <div>인싸이더</div>
+            <div>{post.nickname}</div>
             <div className="h-[2px] w-[2px] bg-[#636571]" />
             <div className="flex items-center gap-1">
               <Icons.clock className="h-[18px] w-[18px] text-[#636571]" />
-              <span className="text-[#636571]">9시간</span>
+              {/* 게시물 업데이트 시간이 아닌 등록 시간으로 판단 */}
+              <span className="text-[#636571]">{formatTimeAgo(post.regDate + ' ' + post.regTime)}</span>
             </div>
             <div className="h-[2px] w-[2px] bg-[#636571]" />
             <div className="flex items-center gap-1">
