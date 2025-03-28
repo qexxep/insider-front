@@ -48,6 +48,7 @@ export {
   SelectValue,
 } from './select';
 export { Separator } from './separator';
+export { Skeleton } from './skeleton';
 export { Textarea } from './textarea';
 export {
   Toast,

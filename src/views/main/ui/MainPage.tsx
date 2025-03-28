@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import React from 'react';
+import { Fragment } from 'react';
 
 import { cn } from '@/shared/lib';
 import { Button, Card, CardContent, CardHeader, CardTitle } from '@/shared/ui';
@@ -70,6 +70,7 @@ const RANK_COLORS = {
   5: 'bg-primary-500',
   6: 'bg-primary-400',
 } as const;
+
 async function MainPage() {
   const { data: rankings } = await getRankings();
   const { data: recentPosts } = await getCategoryRecentPosts();
@@ -146,14 +147,14 @@ async function MainPage() {
         }
 
         return (
-          <React.Fragment key={data.commCategoryCode}>
+          <Fragment key={data.commCategoryCode}>
             <h2 className="mb-4 mt-10 text-xl font-bold">{data.majorCategoryName}</h2>
             <div className="grid grid-cols-2 gap-5">
               {data.categoryList.map(category => (
                 <CategoryPostCard key={category.categoryCode} data={category} />
               ))}
             </div>
-          </React.Fragment>
+          </Fragment>
         );
       })}
     </div>
