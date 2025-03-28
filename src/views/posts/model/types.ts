@@ -21,6 +21,7 @@ export interface PostDetailType {
   viewCnt: number;
   likeCnt: number;
   unlikeCnt: number;
+  reactionTotal: number;
   commentCnt: number;
   isVote: number;
   voteTitle: string;
@@ -29,14 +30,16 @@ export interface PostDetailType {
   commentInfo: CommentInfoType;
   fileList: FileType[];
   nickname: string;
-  personaImage: string;
+  propensityImage: string;
   regId: string;
   regDate: string;
   regTime: string;
   updId: string;
   updDate: string;
   updTime: string;
+  userReaction: string;
   owner: boolean;
+  scrapped: boolean;
 }
 
 export interface FileType {
