@@ -53,14 +53,16 @@ export interface PostPreviewType {
   postSeq: string;
   postTitle: string;
   previewContent: string;
+  postType: string;
   viewCnt: number;
   likeCnt: number;
   unlikeCnt: number;
+  reactionTotal: number;
   commentCnt: number;
   postTagList: string[];
   thumbnailPath?: string;
   nickname: string;
-  personaImage: string;
+  propensityImage: string;
   regId: number;
   regDate: number;
   regTime: number;
