@@ -32,7 +32,7 @@ export default function Layout({
         {/* 메인 */}
         <div className="min-h-[calc(100vh - 48px)] relative ml-[260px] flex flex-col items-center">
           <Suspense fallback={<Loading />}>
-            <main className="relative w-full max-w-[1200px] flex-1 justify-center p-5">{children}</main>
+            <main className="relative w-full max-w-[960px] flex-1 justify-center p-5">{children}</main>
           </Suspense>
 
           {/* 푸터 */}

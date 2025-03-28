@@ -90,7 +90,7 @@ export const CategoryPostList = ({ category }: Props) => {
   };
 
   return (
-    <div className="flex w-full max-w-[1200px] flex-col justify-start py-[50px]">
+    <div className="mx-auto flex w-full max-w-[960px] flex-col justify-start py-[50px]">
       <div className="mb-[21px] flex items-center justify-between">
         <h1 className="w-full text-[28px] font-bold text-gray-900">{categoryName}</h1>
         <Link href={`/posts/write?category=${category}`}>
