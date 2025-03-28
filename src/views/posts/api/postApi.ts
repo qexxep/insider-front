@@ -9,6 +9,8 @@ import {
   PostListResponse,
   PostReactionRequest,
   PostReactionResponse,
+  PostScrapRequest,
+  PostScrapResponse,
 } from './types';
 
 export const getPostListByCategory = (data: PostListByCategoryRequest) =>
@@ -19,4 +21,9 @@ export const getBestWorstPostInfo = (data: BestWorstPostInfoRequest) =>
 
 export const getPostDetail = (data: PostDetailRequest) => baseApi.post<PostDetailResponse>('posts/detail', data);
 
-export const postReaction = (data: PostReactionRequest) => baseApi.post<PostReactionResponse>('posts/reaction', data);
+export const postReaction = (data: PostReactionRequest) =>
+  baseApi.post<PostReactionResponse>('posts/reaction/save', data);
+
+export const saveScrap = (data: PostScrapRequest) => baseApi.post<PostScrapResponse>('posts/scrap/save', data);
+
+export const removeScrap = (data: PostScrapRequest) => baseApi.post<PostScrapResponse>('posts/scrap/remove', data);

@@ -9,7 +9,14 @@ import {
 import { ApiResponse } from '@/shared/api/types';
 import { QUERY_CONFIG, queryClient } from '@/shared/lib';
 
-import { getBestWorstPostInfo, getPostDetail, getPostListByCategory, postReaction } from './postApi';
+import {
+  getBestWorstPostInfo,
+  getPostDetail,
+  getPostListByCategory,
+  postReaction,
+  removeScrap,
+  saveScrap,
+} from './postApi';
 import {
   BestWorstPostInfoRequest,
   BestWorstPostInfoResponse,
@@ -21,6 +28,8 @@ import {
   PostListResponse,
   PostReactionRequest,
   PostReactionResponse,
+  PostScrapRequest,
+  PostScrapResponse,
 } from './types';
 import { deletePost } from './writeApi';
 
@@ -31,6 +40,8 @@ export const queryKeys = {
     detail: (params: PostDetailRequest) => [...queryKeys.posts.all, 'detail', params] as const,
     bestWorst: (params: BestWorstPostInfoRequest) => [...queryKeys.posts.all, 'bestWorst', params] as const,
     reaction: (params: PostReactionRequest) => [...queryKeys.posts.all, 'reaction', params] as const,
+    saveScrap: (params: PostScrapRequest) => [...queryKeys.posts.all, 'save', params] as const,
+    removeScrap: (params: PostScrapRequest) => [...queryKeys.posts.all, 'remove', params] as const,
   },
   writes: {
     all: ['writes'] as const,
@@ -45,6 +56,10 @@ export const invalidateQueries = {
   detail: (payload: PostDetailRequest) => queryClient.invalidateQueries({ queryKey: queryKeys.posts.detail(payload) }),
   bestWorst: (payload: BestWorstPostInfoRequest) =>
     queryClient.invalidateQueries({ queryKey: queryKeys.posts.bestWorst(payload) }),
+  saveScrap: (payload: PostScrapRequest) =>
+    queryClient.invalidateQueries({ queryKey: queryKeys.posts.saveScrap(payload) }),
+  removeScrap: (payload: PostScrapRequest) =>
+    queryClient.invalidateQueries({ queryKey: queryKeys.posts.removeScrap(payload) }),
 };
 
 export const prefetchQueries = {
@@ -65,6 +80,18 @@ export const prefetchQueries = {
     await queryClient.prefetchQuery({
       queryKey: queryKeys.posts.bestWorst(payload),
       queryFn: () => getBestWorstPostInfo(payload),
+    });
+  },
+  saveScrap: async (queryClient: QueryClient, payload: PostScrapRequest) => {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.posts.saveScrap(payload),
+      queryFn: () => saveScrap(payload),
+    });
+  },
+  removeScrap: async (queryClient: QueryClient, payload: PostScrapRequest) => {
+    await queryClient.prefetchQuery({
+      queryKey: queryKeys.posts.removeScrap(payload),
+      queryFn: () => removeScrap(payload),
     });
   },
 };
@@ -119,6 +146,22 @@ export const useDeletePost = (
 ) => {
   return useMutation({
     mutationFn: (payload: PostDeleteRequest) => deletePost(payload),
+    ...config,
+  });
+};
+
+export const useSaveScrap = (config?: UseMutationOptions<ApiResponse<PostScrapResponse>, Error, PostScrapRequest>) => {
+  return useMutation({
+    mutationFn: (payload: PostScrapRequest) => saveScrap(payload),
+    ...config,
+  });
+};
+
+export const useDeleteScrap = (
+  config?: UseMutationOptions<ApiResponse<PostScrapResponse>, Error, PostScrapRequest>
+) => {
+  return useMutation({
+    mutationFn: (payload: PostScrapRequest) => removeScrap(payload),
     ...config,
   });
 };

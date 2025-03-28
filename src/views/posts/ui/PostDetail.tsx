@@ -36,10 +36,12 @@ import { Paginator } from '@/widgets';
 import { postInvalidateQueries } from '..';
 import {
   useDeletePost,
+  useDeleteScrap,
   useGetBestWorstPostInfo,
   useGetCategoryPostList,
   useGetPostDetail,
   usePostReaction,
+  useSaveScrap,
 } from '../api/queries';
 
 interface Props {
@@ -92,6 +94,8 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
   const { mutate: deletePost } = useDeletePost();
   const { mutate: postReaction } = usePostReaction();
   const { mutate: createComment } = useCreateComment();
+  const { mutate: saveScrap } = useSaveScrap();
+  const { mutate: removeScrap } = useDeleteScrap();
 
   if (!postData || !relativePostListData || !bestWorstPostsData || !commentsData) {
     return null;
@@ -176,6 +180,48 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
     postInvalidateQueries.detail({ postSeq: postId });
   };
 
+  const handleToggleScrap = () => {
+    if (post.scrapped) {
+      removeScrap(
+        { postSeq: postId },
+        {
+          onSuccess: () => {
+            postInvalidateQueries.detail({ postSeq: postId });
+            toast({
+              title: '스크랩 취소',
+              description: '게시물 스크랩이 취소되었습니다.',
+            });
+          },
+          onError: () => {
+            toast({
+              title: '스크랩 취소 실패',
+              description: '게시물 스크랩 취소에 실패했습니다. 다시 시도해주세요.',
+            });
+          },
+        }
+      );
+    } else {
+      saveScrap(
+        { postSeq: postId },
+        {
+          onSuccess: () => {
+            postInvalidateQueries.detail({ postSeq: postId });
+            toast({
+              title: '스크랩 완료',
+              description: '게시물이 스크랩되었습니다.',
+            });
+          },
+          onError: () => {
+            toast({
+              title: '스크랩 실패',
+              description: '게시물 스크랩에 실패했습니다. 다시 시도해주세요.',
+            });
+          },
+        }
+      );
+    }
+  };
+
   return (
     <div className="flex w-full max-w-[960px] flex-col justify-start py-[50px]">
       {/* 헤더 */}
@@ -242,8 +288,12 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
               <span className="text-[#636571]">{post.viewCnt}</span>
             </div>
           </div>
-          <button>
-            <Icons.bookmark className="text-[#636571]" />
+          <button onClick={() => handleToggleScrap()} aria-label={post.scrapped ? "북마크 취소" : "북마크 추가"}>
+            {post.scrapped ? (
+              <Icons.bookmarkFilled className="text-[#636571]" />
+            ) : (
+              <Icons.bookmark className="text-[#636571]" />
+            )}
           </button>
         </div>
       </div>

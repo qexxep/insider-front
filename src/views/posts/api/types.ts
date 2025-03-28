@@ -46,4 +46,12 @@ export interface PostDeleteRequest {
 
 export type PostDeleteResponse = void;
 
+export interface PostScrapRequest {
+  postSeq: string;
+}
+
+export interface PostScrapResponse {
+  scrapSeq: string;
+}
+
 export type { CategoryItem };
