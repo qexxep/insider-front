@@ -239,8 +239,6 @@ export function RegisterPage() {
       confirmPassword: data.confirmPassword,
     };
 
-    console.log(payload);
-
     await signup(payload, {
       onSuccess: () => {
         alert('회원가입이 완료되었습니다.');
@@ -269,7 +267,7 @@ export function RegisterPage() {
           <h1 className="mb-[12px] text-3xl font-bold">회원가입</h1>
           <p className="text-lg font-medium text-muted-foreground">회원가입을 통해 더 많은 토론에 참여해보세요</p>
         </div>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto flex w-[750px] flex-col gap-9">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mx-auto flex w-[750px] flex-col gap-6">
           <FormField
             control={form.control}
             name="nickName"
@@ -307,6 +305,9 @@ export function RegisterPage() {
                 </div>
                 <FormMessage className={cn(isNicknameChecked && 'text-input-success')}>
                   {isNicknameChecked && '사용가능한 닉네임입니다.'}
+                  {!isNicknameChecked && !form.formState.errors.nickName && (
+                    <span className="text-gray-500">{'2~15자 영문 또는 숫자만 사용 가능'}</span>
+                  )}
                 </FormMessage>
               </FormItem>
             )}
@@ -348,6 +349,9 @@ export function RegisterPage() {
                 </div>
                 <FormMessage className={cn(isUserIdChecked && 'text-input-success')}>
                   {isUserIdChecked ? '사용가능한 아이디입니다.' : form.formState.errors.userId?.message}
+                  {!isUserIdChecked && !form.formState.errors.userId && (
+                    <span className="text-gray-500">{'8~20자 영문 대/소문자, 숫자, 특수문자(@$!%*?&) 포함'}</span>
+                  )}
                 </FormMessage>
               </FormItem>
             )}
@@ -371,7 +375,12 @@ export function RegisterPage() {
                     status={form.formState.errors.password ? 'error' : 'default'}
                   />
                 </FormControl>
-                <FormMessage />
+                <FormMessage>
+                  {form.formState.errors.password?.message}
+                  {!form.formState.errors.password && (
+                    <span className="text-gray-500">{'8~16자 영문 소문자와 숫자 포함'}</span>
+                  )}
+                </FormMessage>
               </FormItem>
             )}
           />
