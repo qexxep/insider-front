@@ -262,20 +262,22 @@ export const CategoryPostList = ({ category }: Props) => {
                 ))}
               </CardFooter>
               {/* TODO) 투표 중 상태 응답값 필요 */}
-              <div className="absolute -left-1 -top-[1px] flex items-center justify-center gap-[2px] overflow-y-visible rounded-[2px] rounded-bl-none bg-primary px-[6px] py-1 text-xs text-white">
-                <Icons.trashChecked />
-                투표 중
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="3"
-                  height="4"
-                  viewBox="0 0 3 4"
-                  fill="none"
-                  className="absolute -bottom-[3.5px] left-0 h-[3.5px] w-[3px]"
-                >
-                  <path d="M3 3.5V0H0L3 3.5Z" fill="#942600" />
-                </svg>
-              </div>
+              {post.isVote !== 0 && (
+                <div className="absolute -left-1 -top-[1px] flex items-center justify-center gap-[2px] overflow-y-visible rounded-[2px] rounded-bl-none bg-primary px-[6px] py-1 text-xs text-white">
+                  <Icons.trashChecked />
+                  투표 중
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="3"
+                    height="4"
+                    viewBox="0 0 3 4"
+                    fill="none"
+                    className="absolute -bottom-[3.5px] left-0 h-[3.5px] w-[3px]"
+                  >
+                    <path d="M3 3.5V0H0L3 3.5Z" fill="#942600" />
+                  </svg>
+                </div>
+              )}
             </Card>
           ))}
         </div>
