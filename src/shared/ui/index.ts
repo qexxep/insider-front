@@ -23,6 +23,7 @@ export { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 export { Icons } from './icons';
 export { Input } from './input';
 export { Label } from './label';
+export { LoadingSpinner } from './loading';
 export {
   Pagination,
   PaginationContent,
