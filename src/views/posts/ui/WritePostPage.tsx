@@ -139,7 +139,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       // 최초 게시글 생성
       const result = await createPostMutation.mutateAsync({ categoryCd: value });
       if (result.status === 'SUCCESS') {
-        setPostSeq(result.data.postSeq);
+        setPostSeq(result.data.data.postSeq);
       }
     } catch (error) {
       console.error('게시글 생성 실패:', error);
@@ -199,7 +199,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       if (!postSeq) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
         if (postResult.status === 'SUCCESS') {
-          const newPostSeq = postResult.data.postSeq; // 임시 변수에 저장
+          const newPostSeq = postResult.data.data.postSeq; // 임시 변수에 저장
           setPostSeq(newPostSeq);
 
           // 파일 업로드는 새로운 postSeq로 실행
@@ -209,13 +209,13 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
           });
 
           if (result.status === 'SUCCESS') {
-            const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.fileUrl}`;
+            const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.data.fileUrl}`;
             setUploadedImages(prev => [
               ...prev,
               {
                 url: fullFileUrl,
                 file,
-                fileSeq: result.data.fileSeq,
+                fileSeq: result.data.data.fileSeq,
               },
             ]);
           }
@@ -230,13 +230,13 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       });
 
       if (result.status === 'SUCCESS') {
-        const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.fileUrl}`;
+        const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.data.fileUrl}`;
         setUploadedImages(prev => [
           ...prev,
           {
             url: fullFileUrl,
             file,
-            fileSeq: result.data.fileSeq,
+            fileSeq: result.data.data.fileSeq,
           },
         ]);
       }
@@ -407,7 +407,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       if (!currentPostSeq && !isEditMode) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
         if (postResult.status === 'SUCCESS') {
-          currentPostSeq = postResult.data.postSeq;
+          currentPostSeq = postResult.data.data.postSeq;
           setPostSeq(currentPostSeq);
         } else {
           throw new Error('게시글 생성 실패');

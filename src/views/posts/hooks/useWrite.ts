@@ -1,5 +1,6 @@
 import { useCategories } from '@/app/(app)/@sidebar/hooks/useCategories';
 import { useCommonMutation } from '@/shared/api';
+import { ApiResponse } from '@/shared/api/types';
 import { toast } from '@/shared/hooks';
 
 import { writeApi } from '../api';
@@ -36,29 +37,35 @@ export interface FileDeleteRequest {
 }
 
 export function useWrite() {
-  const createPostMutation = useCommonMutation<CreatePostResponse, { categoryCd: string }>(writeApi.createPost, {
-    onError: () => {
-      toast({
-        variant: 'destructive',
-        title: '게시글 생성 실패',
-        description: '게시글을 생성하는데 실패했습니다. 다시 시도해주세요.',
-        duration: 2000,
-      });
-    },
-  });
+  const createPostMutation = useCommonMutation<ApiResponse<CreatePostResponse>, { categoryCd: string }>(
+    writeApi.createPost,
+    {
+      onError: () => {
+        toast({
+          variant: 'destructive',
+          title: '게시글 생성 실패',
+          description: '게시글을 생성하는데 실패했습니다. 다시 시도해주세요.',
+          duration: 2000,
+        });
+      },
+    }
+  );
 
-  const uploadFileMutation = useCommonMutation<FileUploadResponse, FileUploadRequest>(writeApi.uploadFile, {
-    onError: () => {
-      toast({
-        variant: 'destructive',
-        title: '파일 업로드 실패',
-        description: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
-        duration: 2000,
-      });
-    },
-  });
+  const uploadFileMutation = useCommonMutation<ApiResponse<FileUploadResponse>, FileUploadRequest>(
+    writeApi.uploadFile,
+    {
+      onError: () => {
+        toast({
+          variant: 'destructive',
+          title: '파일 업로드 실패',
+          description: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
+          duration: 2000,
+        });
+      },
+    }
+  );
 
-  const deleteFileMutation = useCommonMutation<void, FileDeleteRequest>(writeApi.deleteFile, {
+  const deleteFileMutation = useCommonMutation<ApiResponse<void>, FileDeleteRequest>(writeApi.deleteFile, {
     onError: () => {
       toast({
         variant: 'destructive',
@@ -69,7 +76,7 @@ export function useWrite() {
     },
   });
 
-  const savePostMutation = useCommonMutation<void, SavePostRequest>(writeApi.savePost, {
+  const savePostMutation = useCommonMutation<ApiResponse<void>, SavePostRequest>(writeApi.savePost, {
     onError: () => {
       toast({
         variant: 'destructive',
