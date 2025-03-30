@@ -62,7 +62,9 @@ export const CategoryPostList = ({ category }: Props) => {
     actionType: 'add' | 'remove' | 'toggle',
     postId: string
   ) => {
-    checkLogin();
+    const isLoggedIn = checkLogin();
+    if (!isLoggedIn) return;
+
     postReaction(
       { postSeq: postId, reactionType, actionType },
       {

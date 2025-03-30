@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+import { useAuth } from '@/entity/auth';
 import {
   CommentCard,
   CommentComposer,
@@ -40,7 +41,6 @@ import {
   useGetPostDetail,
   usePostReaction,
 } from '../api/queries';
-
 interface Props {
   postId: string;
   category: string;
@@ -54,6 +54,7 @@ const POSTS_SORT_TYPE_IN_DETAIL_PAGE = 'D';
 
 export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPage = 1 }: Props) => {
   const router = useRouter();
+  const { checkLogin } = useAuth();
   const [page, setPage] = useState(currentPage);
   const [commentPage, setCommentPage] = useState(commentCurrentPage);
 
@@ -138,6 +139,9 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
   };
 
   const handlePostReaction = (reactionType: 'like' | 'unlike', actionType: 'add' | 'remove' | 'toggle') => {
+    const isLoggedIn = checkLogin();
+    if (!isLoggedIn) return;
+
     postReaction(
       { postSeq: postId, reactionType, actionType },
       {
@@ -155,6 +159,9 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
   };
 
   const onSubmitCreateComment = (comment: string) => {
+    const isLoggedIn = checkLogin();
+    if (!isLoggedIn) return;
+
     createComment(
       {
         postSeq: postId,
