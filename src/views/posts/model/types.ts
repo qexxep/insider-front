@@ -70,4 +70,5 @@ export interface PostPreviewType {
   updDate: number;
   updTime: number;
   owner: boolean;
+  isVote: number;
 }

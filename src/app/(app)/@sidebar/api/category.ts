@@ -1,4 +1,4 @@
-import { apiClient, type ApiResponse } from '@/shared/api';
+import { type ApiResponse, baseApi } from '@/shared/api';
 
 // Types
 export interface CategoryItem {
@@ -14,5 +14,5 @@ export interface CategoryGroup {
 
 // API Functions
 export async function getCategories(): Promise<ApiResponse<CategoryGroup[]>> {
-  return await apiClient.get('mains/categories/all').json();
+  return await baseApi.get('mains/categories/all');
 }

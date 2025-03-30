@@ -13,7 +13,7 @@ export interface PostListResponse {
   totalCommonPostCnt: number;
   categoryCd: string | null;
   categoryName: string | null;
-  commonPosts: PostPreviewType[];
+  commonPosts: PostPreviewType;
   posts: PostPreviewType[];
 }
 

@@ -1,4 +1,4 @@
-import { apiClient, type ApiResponse } from '@/shared/api';
+import { type ApiResponse, baseApi } from '@/shared/api';
 
 export interface CategoryRecentPost {
   postSeq: string;
@@ -32,7 +32,5 @@ export interface MajorCategory {
   categoryList: CategoryInfo[];
 }
 
-export const getCategoryRecentPosts = async (): Promise<ApiResponse<MajorCategory[]>> => {
-  const response = await apiClient.get('mains/categories/recent-posts');
-  return response.json();
-};
+export const getCategoryRecentPosts = async (): Promise<ApiResponse<MajorCategory[]>> =>
+  await baseApi.get('mains/categories/recent-posts');

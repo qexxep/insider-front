@@ -62,7 +62,9 @@ export const CategoryPostList = ({ category }: Props) => {
     actionType: 'add' | 'remove' | 'toggle',
     postId: string
   ) => {
-    checkLogin();
+    const isLoggedIn = checkLogin();
+    if (!isLoggedIn) return;
+
     postReaction(
       { postSeq: postId, reactionType, actionType },
       {
@@ -104,16 +106,14 @@ export const CategoryPostList = ({ category }: Props) => {
       <div className="flex flex-col gap-4">
         <h2 className="text-xl font-bold">공지사항</h2>
         <div className="mb-6 flex flex-col gap-0 border-t-[1px] border-primary">
-          {commonPosts.map(post => (
-            <Link key={post.postSeq} href={`/posts/${category}/${post.postSeq}`}>
-              <div className="flex items-center justify-between border-b-[1px] border-gray-300 bg-primary-200 px-6 py-3">
-                <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-primary px-4 text-white">필독</span>
-                  <p className="text-lg">{post.postTitle}</p>
-                </div>
+          <Link key={commonPosts.postSeq} href={`/posts/${category}/${commonPosts.postSeq}`}>
+            <div className="flex items-center justify-between border-b-[1px] border-gray-300 bg-primary-200 px-6 py-3">
+              <div className="flex items-center gap-3">
+                <span className="rounded-full bg-primary px-4 text-white">필독</span>
+                <p className="text-lg">{commonPosts.postTitle}</p>
               </div>
-            </Link>
-          ))}
+            </div>
+          </Link>
         </div>
       </div>
       {/* 베스트 워스트 게시물 */}
@@ -264,20 +264,22 @@ export const CategoryPostList = ({ category }: Props) => {
                 ))}
               </CardFooter>
               {/* TODO) 투표 중 상태 응답값 필요 */}
-              <div className="absolute -left-1 -top-[1px] flex items-center justify-center gap-[2px] overflow-y-visible rounded-[2px] rounded-bl-none bg-primary px-[6px] py-1 text-xs text-white">
-                <Icons.trashChecked />
-                투표 중
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="3"
-                  height="4"
-                  viewBox="0 0 3 4"
-                  fill="none"
-                  className="absolute -bottom-[3.5px] left-0 h-[3.5px] w-[3px]"
-                >
-                  <path d="M3 3.5V0H0L3 3.5Z" fill="#942600" />
-                </svg>
-              </div>
+              {post.isVote !== 0 && (
+                <div className="absolute -left-1 -top-[1px] flex items-center justify-center gap-[2px] overflow-y-visible rounded-[2px] rounded-bl-none bg-primary px-[6px] py-1 text-xs text-white">
+                  <Icons.trashChecked />
+                  투표 중
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="3"
+                    height="4"
+                    viewBox="0 0 3 4"
+                    fill="none"
+                    className="absolute -bottom-[3.5px] left-0 h-[3.5px] w-[3px]"
+                  >
+                    <path d="M3 3.5V0H0L3 3.5Z" fill="#942600" />
+                  </svg>
+                </div>
+              )}
             </Card>
           ))}
         </div>
