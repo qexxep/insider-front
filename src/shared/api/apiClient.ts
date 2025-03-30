@@ -1,9 +1,14 @@
-import ky, { BeforeRequestHook, Options } from 'ky-universal';
+import ky, { AfterResponseHook, BeforeRequestHook, Options } from 'ky-universal';
 
 import type { ApiClientConfig, ApiResponse } from './types';
 
 const getClientAccessToken = (): string | null => {
   const match = document.cookie.match(/access_token=([^;]+)/);
+  return match ? match[1] : null;
+};
+
+const getClientRefreshToken = (): string | null => {
+  const match = document.cookie.match(/refresh_token=([^;]+)/);
   return match ? match[1] : null;
 };
 
@@ -27,6 +32,51 @@ const createAuthHeaderHook = (isServer: boolean): BeforeRequestHook => {
   };
 };
 
+interface RefreshTokenResponse {
+  data: {
+    jwt: {
+      accessToken: string;
+    };
+  };
+}
+
+const handle401Error: AfterResponseHook = async (request, options, response) => {
+  const isServer = typeof window === 'undefined';
+  if (isServer) return;
+
+  const refreshToken = getClientRefreshToken();
+
+  if (response.status === 401) {
+    try {
+      const baseUrl = typeof window === 'undefined' ? process.env.NEXT_PUBLIC_BASE_URL : '/api';
+
+      // 새로운 access token 발급
+      const response = await ky.get('auth/create-access-token', {
+        prefixUrl: baseUrl,
+        headers: {
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      });
+      const data = await response.json<RefreshTokenResponse>();
+      const newAccessToken = data.data.jwt.accessToken;
+
+      // 새로운 token으로 요청 재시도
+      document.cookie = `access_token=${newAccessToken}; path=/; expires=${new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toUTCString()}`;
+      request.headers.set('Authorization', `Bearer ${newAccessToken}`);
+      return await ky(request);
+    } catch (error) {
+      // token 갱신 실패 시 로그인 페이지로 리다이렉트
+      if (typeof window !== 'undefined') {
+        document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        window.location.href = '/sign-in';
+      }
+      throw error;
+    }
+  }
+  return response;
+};
+
 export const createApiClient = (config: ApiClientConfig) => {
   const isServer = typeof window === 'undefined';
 
@@ -37,6 +87,7 @@ export const createApiClient = (config: ApiClientConfig) => {
     },
     hooks: {
       beforeRequest: [createAuthHeaderHook(isServer)],
+      afterResponse: [handle401Error],
     },
     timeout: 30000,
     ...config.defaultOptions,
