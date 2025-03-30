@@ -1,7 +1,5 @@
 import { createApiClient } from './apiClient';
 
-export { apiClient } from './client';
-export { apiServer } from './server';
 export type { ApiResponse } from './types';
 
 // Query 관련 export

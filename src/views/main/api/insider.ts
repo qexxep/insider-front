@@ -1,4 +1,4 @@
-import { apiClient, type ApiResponse } from '@/shared/api';
+import { type ApiResponse, baseApi } from '@/shared/api';
 
 export interface InsiderRanking {
   postSeq: string;
@@ -14,7 +14,5 @@ export interface InsiderRanking {
   regTime: string;
 }
 
-export const getRankings = async (): Promise<ApiResponse<InsiderRanking[]>> => {
-  const response = await apiClient.get('mains/insider/rankings');
-  return response.json();
-};
+export const getRankings = async (): Promise<ApiResponse<InsiderRanking[]>> =>
+  await baseApi.get('mains/insider/rankings');
