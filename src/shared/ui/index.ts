@@ -50,6 +50,7 @@ export {
 } from './select';
 export { Separator } from './separator';
 export { Skeleton } from './skeleton';
+export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { Textarea } from './textarea';
 export {
   Toast,
