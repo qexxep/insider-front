@@ -137,6 +137,7 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
           toast({
             title: '게시물 삭제 실패',
             description: '게시물 삭제에 실패했습니다. 다시 시도해주세요.',
+            duration: 2000,
           });
         },
       }
@@ -157,6 +158,7 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
           toast({
             title: '게시물 좋아요 실패',
             description: '게시물 좋아요에 실패했습니다. 다시 시도해주세요.',
+            duration: 2000,
           });
         },
       }
@@ -197,12 +199,14 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
             toast({
               title: '스크랩 취소',
               description: '게시물 스크랩이 취소되었습니다.',
+              duration: 2000,
             });
           },
           onError: () => {
             toast({
               title: '스크랩 취소 실패',
               description: '게시물 스크랩 취소에 실패했습니다. 다시 시도해주세요.',
+              duration: 2000,
             });
           },
         }
@@ -216,12 +220,14 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
             toast({
               title: '스크랩 완료',
               description: '게시물이 스크랩되었습니다.',
+              duration: 2000,
             });
           },
           onError: () => {
             toast({
               title: '스크랩 실패',
               description: '게시물 스크랩에 실패했습니다. 다시 시도해주세요.',
+              duration: 2000,
             });
           },
         }
@@ -295,7 +301,7 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
               <span className="text-[#636571]">{post.viewCnt}</span>
             </div>
           </div>
-          <button onClick={() => handleToggleScrap()} aria-label={post.scrapped ? "북마크 취소" : "북마크 추가"}>
+          <button onClick={() => handleToggleScrap()} aria-label={post.scrapped ? '북마크 취소' : '북마크 추가'}>
             {post.scrapped ? (
               <Icons.bookmarkFilled className="text-[#636571]" />
             ) : (
