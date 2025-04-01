@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
+import { useCategories } from '@/app/(app)/@sidebar/hooks/useCategories';
 import { ApiResponse } from '@/shared/api/types';
 import { useToast } from '@/shared/hooks';
 import {
@@ -19,11 +20,9 @@ import {
   Separator,
   Textarea,
 } from '@/shared/ui';
+import { useCreatePost, useDeleteFile, useGetPostDetail, useSavePost, useUploadFile } from '@/views/posts';
 
-import { useGetPostDetail } from '../api/queries';
-import type { CategoryItem, PostDetailResponse } from '../api/types';
-import { useCategories, useWrite } from '../hooks/useWrite';
-import { SavePostRequest } from '../hooks/useWrite';
+import type { CategoryItem, PostDetailResponse, SavePostRequest } from '../api/types';
 import { CategorySelect } from './CategorySelect';
 
 interface UploadedImage {
@@ -80,7 +79,51 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
   const [content, setContent] = useState('');
 
   const { data, isLoading, error } = useCategories();
-  const { createPostMutation, uploadFileMutation, deleteFileMutation, savePostMutation } = useWrite();
+
+  // 직접 queries.ts에서 hooks 사용
+  const createPostMutation = useCreatePost({
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: '게시글 생성 실패',
+        description: '게시글을 생성하는데 실패했습니다. 다시 시도해주세요.',
+        duration: 2000,
+      });
+    },
+  });
+
+  const uploadFileMutation = useUploadFile({
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: '파일 업로드 실패',
+        description: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
+        duration: 2000,
+      });
+    },
+  });
+
+  const deleteFileMutation = useDeleteFile({
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: '파일 삭제 실패',
+        description: '파일 삭제에 실패했습니다.',
+        duration: 2000,
+      });
+    },
+  });
+
+  const savePostMutation = useSavePost({
+    onError: () => {
+      toast({
+        variant: 'destructive',
+        title: '게시글 저장 실패',
+        description: '게시글을 저장하는데 실패했습니다. 다시 시도해주세요.',
+        duration: 2000,
+      });
+    },
+  });
 
   // 모든 카테고리 그룹의 카테고리들을 하나의 배열로 평탄화
   const allCategories =
@@ -139,7 +182,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       // 최초 게시글 생성
       const result = await createPostMutation.mutateAsync({ categoryCd: value });
       if (result.status === 'SUCCESS') {
-        setPostSeq(result.data.data.postSeq);
+        setPostSeq(result.data.postSeq);
       }
     } catch (error) {
       console.error('게시글 생성 실패:', error);
@@ -199,7 +242,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       if (!postSeq) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
         if (postResult.status === 'SUCCESS') {
-          const newPostSeq = postResult.data.data.postSeq; // 임시 변수에 저장
+          const newPostSeq = postResult.data.postSeq; // 임시 변수에 저장
           setPostSeq(newPostSeq);
 
           // 파일 업로드는 새로운 postSeq로 실행
@@ -209,36 +252,48 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
           });
 
           if (result.status === 'SUCCESS') {
-            const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.data.fileUrl}`;
+            const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.fileUrl}`;
             setUploadedImages(prev => [
               ...prev,
               {
                 url: fullFileUrl,
                 file,
-                fileSeq: result.data.data.fileSeq,
+                fileSeq: result.data.fileSeq,
               },
             ]);
+          } else {
+            throw new Error('파일 업로드 실패');
           }
           return; // 파일 업로드 완료 후 종료
+        } else {
+          throw new Error('게시글 생성 실패');
         }
       }
 
-      // postSeq가 이미 있는 경우에만 실행
       const result = await uploadFileMutation.mutateAsync({
         postSeq,
         file,
       });
 
       if (result.status === 'SUCCESS') {
-        const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.data.fileUrl}`;
+        if (!result.data) {
+          throw new Error('파일 업로드 응답 구조 오류');
+        }
+        if (!result.data.fileUrl) {
+          throw new Error('파일 URL 정보 없음');
+        }
+
+        const fullFileUrl = `${process.env.NEXT_PUBLIC_BASE_URL!.replace('/api', '')}${result.data.fileUrl}`;
         setUploadedImages(prev => [
           ...prev,
           {
             url: fullFileUrl,
             file,
-            fileSeq: result.data.data.fileSeq,
+            fileSeq: result.data.fileSeq,
           },
         ]);
+      } else {
+        throw new Error('파일 업로드 실패');
       }
     } catch (error) {
       console.error('업로드 실패:', error);
@@ -407,7 +462,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       if (!currentPostSeq && !isEditMode) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
         if (postResult.status === 'SUCCESS') {
-          currentPostSeq = postResult.data.data.postSeq;
+          currentPostSeq = postResult.data.postSeq;
           setPostSeq(currentPostSeq);
         } else {
           throw new Error('게시글 생성 실패');
@@ -419,7 +474,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
         postTitle: title.trim(),
         content: content.trim(),
         categoryCd: selectedCategory,
-        postTag: tags.length > 0 ? tags.map(tag => `#${tag}`).join('') : '',
+        postTagList: tags.length > 0 ? tags.map(tag => tag) : [],
         isVote: showVoteForm ? 1 : 0,
       };
 
@@ -459,12 +514,17 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       // 3. 이전에 업로드됐지만 현재는 삭제된 이미지들의 fileSeq에 대해 삭제 요청
       const deletePromises = uploadedImages
         .filter(img => !currentFileSeqs.has(img.fileSeq))
-        .map(img =>
-          deleteFileMutation.mutateAsync({
+        .map(async img => {
+          const deleteResult = await deleteFileMutation.mutateAsync({
             postSeq,
             fileSeq: img.fileSeq,
-          })
-        );
+          });
+
+          if (deleteResult.status !== 'SUCCESS') {
+            console.error('파일 삭제 실패:', img.fileSeq);
+          }
+          return deleteResult;
+        });
 
       // 4. 모든 파일 삭제 요청 완료 대기
       if (deletePromises.length > 0) {

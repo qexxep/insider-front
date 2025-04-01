@@ -20,6 +20,11 @@ import {
 import {
   BestWorstPostInfoRequest,
   BestWorstPostInfoResponse,
+  CreatePostRequest,
+  CreatePostResponse,
+  FileDeleteRequest,
+  FileUploadRequest,
+  FileUploadResponse,
   PostDeleteRequest,
   PostDeleteResponse,
   PostDetailRequest,
@@ -30,8 +35,9 @@ import {
   PostReactionResponse,
   PostScrapRequest,
   PostScrapResponse,
+  SavePostRequest,
 } from './types';
-import { deletePost } from './writeApi';
+import { createPost, deleteFile, deletePost, savePost, uploadFile } from './writeApi';
 
 export const queryKeys = {
   posts: {
@@ -45,6 +51,10 @@ export const queryKeys = {
   },
   writes: {
     all: ['writes'] as const,
+    create: (params: CreatePostRequest) => [...queryKeys.writes.all, 'create', params] as const,
+    upload: (params: FileUploadRequest) => [...queryKeys.writes.all, 'upload', params] as const,
+    save: (params: SavePostRequest) => [...queryKeys.writes.all, 'save', params] as const,
+    deleteFile: (params: FileDeleteRequest) => [...queryKeys.writes.all, 'deleteFile', params] as const,
     delete: (params: PostDeleteRequest) => [...queryKeys.writes.all, 'delete', params] as const,
   },
 } as const;
@@ -60,6 +70,7 @@ export const invalidateQueries = {
     queryClient.invalidateQueries({ queryKey: queryKeys.posts.saveScrap(payload) }),
   removeScrap: (payload: PostScrapRequest) =>
     queryClient.invalidateQueries({ queryKey: queryKeys.posts.removeScrap(payload) }),
+  writes: () => queryClient.invalidateQueries({ queryKey: queryKeys.writes.all }),
 };
 
 export const prefetchQueries = {
@@ -137,6 +148,38 @@ export const usePostReaction = (
 ) => {
   return useMutation({
     mutationFn: (payload: PostReactionRequest) => postReaction(payload),
+    ...config,
+  });
+};
+
+export const useCreatePost = (
+  config?: UseMutationOptions<ApiResponse<CreatePostResponse>, Error, CreatePostRequest>
+) => {
+  return useMutation({
+    mutationFn: (payload: CreatePostRequest) => createPost(payload),
+    ...config,
+  });
+};
+
+export const useUploadFile = (
+  config?: UseMutationOptions<ApiResponse<FileUploadResponse>, Error, FileUploadRequest>
+) => {
+  return useMutation({
+    mutationFn: (payload: FileUploadRequest) => uploadFile(payload),
+    ...config,
+  });
+};
+
+export const useSavePost = (config?: UseMutationOptions<ApiResponse<void>, Error, SavePostRequest>) => {
+  return useMutation({
+    mutationFn: (payload: SavePostRequest) => savePost(payload),
+    ...config,
+  });
+};
+
+export const useDeleteFile = (config?: UseMutationOptions<ApiResponse<void>, Error, FileDeleteRequest>) => {
+  return useMutation({
+    mutationFn: (payload: FileDeleteRequest) => deleteFile(payload),
     ...config,
   });
 };

@@ -41,7 +41,7 @@ export type PostReactionResponse = void;
 
 export interface PostDeleteRequest {
   postSeq: string;
-  fileExistYn: 'N' | 'Y'; // 파일 등록 여부(
+  fileExistYn: 'N' | 'Y'; // 파일 등록 여부
 }
 
 export type PostDeleteResponse = void;
@@ -53,5 +53,47 @@ export interface PostScrapRequest {
 export interface PostScrapResponse {
   scrapSeq: string;
 }
+
+// 게시글 생성 요청 타입
+export interface CreatePostRequest {
+  categoryCd: string;
+}
+
+// 게시글 생성 응답 타입
+export interface CreatePostResponse {
+  postSeq: string;
+}
+
+// 파일 업로드 요청 타입
+export interface FileUploadRequest {
+  postSeq: string;
+  file: File;
+}
+
+// 파일 업로드 응답 타입
+export interface FileUploadResponse {
+  fileSeq: string;
+  fileUrl: string;
+}
+
+// 게시글 저장 요청 타입
+export interface SavePostRequest {
+  postSeq: string;
+  postTitle: string;
+  content: string;
+  categoryCd: string;
+  postTagList: string[];
+  isVote: number;
+  voteTitle?: string;
+  voteItems?: string[];
+}
+export type SavePostResponse = void;
+
+// 파일 삭제 요청 타입
+export interface FileDeleteRequest {
+  postSeq: string;
+  fileSeq: string;
+}
+export type FileDeleteResponse = void;
 
 export type { CategoryItem };
