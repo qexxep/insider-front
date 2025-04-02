@@ -20,7 +20,14 @@ import {
   Separator,
   Textarea,
 } from '@/shared/ui';
-import { useCreatePost, useDeleteFile, useGetPostDetail, useSavePost, useUploadFile } from '@/views/posts';
+import {
+  postInvalidateQueries,
+  useCreatePost,
+  useDeleteFile,
+  useGetPostDetail,
+  useSavePost,
+  useUploadFile,
+} from '@/views/posts';
 
 import type { CategoryItem, PostDetailResponse, SavePostRequest } from '../api/types';
 import { CategorySelect } from './CategorySelect';
@@ -80,7 +87,6 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
 
   const { data, isLoading, error } = useCategories();
 
-  // 직접 queries.ts에서 hooks 사용
   const createPostMutation = useCreatePost({
     onError: () => {
       toast({
@@ -176,7 +182,8 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
   const handleCategorySelect = async (value: string) => {
     setSelectedCategory(value);
 
-    if (postSeq) return;
+    // 수정 모드이거나 이미 postSeq가 있으면 새 게시글을 생성하지 않음
+    if (isEditMode || postSeq) return;
 
     try {
       // 최초 게시글 생성
@@ -196,7 +203,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
   };
 
   useEffect(() => {
-    if (initialCategory && !postSeq) {
+    if (initialCategory && !postSeq && !isEditMode) {
       handleCategorySelect(initialCategory);
     }
   }, []);
@@ -238,8 +245,10 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
     if (!validateFile(file)) return;
 
     try {
+      // 수정 모드일 때는 initialPostId를 사용
+      const currentPostSeq = isEditMode ? initialPostId : postSeq;
       // 게시글이 없는 경우 먼저 생성
-      if (!postSeq) {
+      if (!currentPostSeq) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
         if (postResult.status === 'SUCCESS') {
           const newPostSeq = postResult.data.postSeq; // 임시 변수에 저장
@@ -271,7 +280,7 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
       }
 
       const result = await uploadFileMutation.mutateAsync({
-        postSeq,
+        postSeq: currentPostSeq,
         file,
       });
 
@@ -457,8 +466,10 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
     }
 
     try {
-      // 게시글이 없고 수정 모드가 아닌 경우에만 새 게시글 생성
-      let currentPostSeq = postSeq;
+      // 수정 모드일 때는 initialPostId를 사용하고, 아닐 때만 새 게시글 생성
+      let currentPostSeq = isEditMode ? initialPostId : postSeq;
+
+      // 새 게시글 모드이고 아직 postSeq가 없는 경우에만 새 게시글 생성
       if (!currentPostSeq && !isEditMode) {
         const postResult = await createPostMutation.mutateAsync({ categoryCd: selectedCategory });
         if (postResult.status === 'SUCCESS') {
@@ -469,8 +480,8 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
         }
       }
 
-      const postData: SavePostRequest = {
-        postSeq: currentPostSeq,
+      const savePostData: SavePostRequest = {
+        postSeq: currentPostSeq!,
         postTitle: title.trim(),
         content: content.trim(),
         categoryCd: selectedCategory,
@@ -501,34 +512,44 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
           return;
         }
 
-        postData.voteTitle = voteForm.title.trim();
-        postData.voteItems = voteForm.options.map(option => option.content.trim());
+        savePostData.voteTitle = voteForm.title.trim();
+        savePostData.voteItems = voteForm.options.map(option => option.content.trim());
       }
 
       // 1. 게시물 저장
-      await savePostMutation.mutateAsync(postData);
+      await savePostMutation.mutateAsync(savePostData);
 
-      // 2. 현재 업로드된 이미지들의 fileSeq 목록
-      const currentFileSeqs = new Set(uploadedImages.map(img => img.fileSeq));
+      // 2. 수정 모드에서 삭제된 이미지 처리
+      if (isEditMode && postData?.data) {
+        // 원본 게시물의 fileList 가져오기
+        const originalFileList = postData.data.fileList || [];
 
-      // 3. 이전에 업로드됐지만 현재는 삭제된 이미지들의 fileSeq에 대해 삭제 요청
-      const deletePromises = uploadedImages
-        .filter(img => !currentFileSeqs.has(img.fileSeq))
-        .map(async img => {
+        // 원본 게시물의 fileSeq 목록
+        const originalFileSeqs = new Set(originalFileList.map(file => file.fileSeq));
+
+        // 현재 UI에 표시된 이미지들의 fileSeq 목록
+        const currentFileSeqs = new Set(uploadedImages.map(img => img.fileSeq));
+
+        // 원본에는 있었지만 현재 UI에는 없는 이미지들 (삭제된 이미지들)
+        const deletedFileSeqs = Array.from(originalFileSeqs).filter(fileSeq => !currentFileSeqs.has(fileSeq));
+
+        // 삭제된 이미지들에 대해 삭제 요청
+        const deletePromises = deletedFileSeqs.map(async fileSeq => {
           const deleteResult = await deleteFileMutation.mutateAsync({
-            postSeq,
-            fileSeq: img.fileSeq,
+            postSeq: currentPostSeq!,
+            fileSeq: fileSeq as string,
           });
 
           if (deleteResult.status !== 'SUCCESS') {
-            console.error('파일 삭제 실패:', img.fileSeq);
+            console.error('파일 삭제 실패:', fileSeq);
           }
           return deleteResult;
         });
 
-      // 4. 모든 파일 삭제 요청 완료 대기
-      if (deletePromises.length > 0) {
-        await Promise.all(deletePromises);
+        // 모든 파일 삭제 요청 완료 대기
+        if (deletePromises.length > 0) {
+          await Promise.all(deletePromises);
+        }
       }
 
       // 성공 토스트 메시지 표시
@@ -540,6 +561,9 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
 
       setTimeout(() => {
         // 상세 페이지로 이동 (카테고리 코드와 게시글 번호 사용)
+        if (isEditMode) {
+          postInvalidateQueries.detail({ postSeq: currentPostSeq! });
+        }
         router.push(`/posts/${selectedCategory}/${currentPostSeq}`);
       }, 500);
     } catch (error) {
