@@ -1,16 +1,17 @@
 'use client';
 
+import { useCookies } from 'next-client-cookies';
 import { useEffect, useState } from 'react';
-
-import { getClientCookie } from '@/shared/utils/cookie';
 
 import { LOGIN_REQUIRED_EVENT } from './consts';
 
 export const useAuth = () => {
+  const cookies = useCookies();
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const getLoginStatus = () => {
-    const accessToken = getClientCookie('access_token');
+    const accessToken = cookies.get('access_token');
     return !!accessToken;
   };
 
