@@ -37,7 +37,7 @@ export default async function Sidebar({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        'fixed left-0 top-14 h-screen w-[260px] border-r border-border bg-background px-6 py-4',
+        'fixed left-0 top-14 h-screen w-full max-w-[200px] border-r border-border bg-background px-3 py-4 lg:max-w-[244px] lg:px-5',
         'transition-all duration-300 ease-in-out',
         className
       )}
@@ -60,11 +60,12 @@ export default async function Sidebar({ className }: { className?: string }) {
           <Fragment key={category.commCategoryCode}>
             <MenuSection
               title={category.majorCategoryName}
-            categoryList={formatCategoryList(category.categoryList, true)}
-          />
-          <Separator className="my-2" />
-        </Fragment>
-    )})}
+              categoryList={formatCategoryList(category.categoryList, true)}
+            />
+            <Separator className="my-2" />
+          </Fragment>
+        );
+      })}
     </aside>
   );
 }
