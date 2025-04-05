@@ -34,7 +34,7 @@ export default async function Header() {
           <HotTopics />
         </div>
         {/* 중앙 */}
-        <div className="absolute left-1/2 top-1/2 w-full -translate-x-1/3 -translate-y-1/2 max-sm:w-[200px] sm:max-w-[300px] md:max-w-[400px] lg:max-w-[480px] xl:max-w-[557px]">
+        <div className="absolute left-1/2 top-1/2 w-full -translate-x-1/4 -translate-y-1/2 max-sm:w-[200px] sm:max-w-[300px] md:max-w-[400px] lg:max-w-[480px] xl:max-w-[557px]">
           <div className="relative flex h-full w-full items-center">
             <Icons.search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
             <Input

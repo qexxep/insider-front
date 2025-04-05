@@ -26,7 +26,7 @@ export default function Layout({
         {sidebar}
 
         {/* 메인 */}
-        <div className="min-h-[calc(100vh - 48px)] relative ml-[260px] flex flex-col items-center">
+        <div className="min-h-[calc(100vh - 48px)] relative ml-[200px] flex flex-col items-center lg:ml-[244px]">
           <main className="relative w-full max-w-[960px] flex-1 justify-center p-5">{children}</main>
           {/* 푸터 */}
           {footer}
