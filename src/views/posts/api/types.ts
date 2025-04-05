@@ -1,6 +1,7 @@
 import type { CategoryItem } from '@/app/(app)/@sidebar/api/category';
 
 import { PostDetailType, PostPreviewType } from '../model/types';
+
 export interface PostListByCategoryRequest {
   categoryCd: string;
   currPage: number;
@@ -97,3 +98,8 @@ export interface FileDeleteRequest {
 export type FileDeleteResponse = void;
 
 export type { CategoryItem };
+
+export interface VoteRequest {
+  postSeq: string;
+  itemSeq: number;
+}

@@ -5,10 +5,10 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-import { useAuth } from '@/entity/auth';
-import { Badge, Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
+import { PersonalityIcon } from '@/feature/personality';
+import { Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
 import { CardFooter } from '@/shared/ui/card';
-import { postInvalidateQueries, useGetBestWorstPostInfo, useGetCategoryPostList, usePostReaction } from '@/views/posts';
+import { useGetBestWorstPostInfo, useGetCategoryPostList } from '@/views/posts';
 import { Paginator } from '@/widgets/paginator';
 
 const DEFAULT_CURRENT_PAGE = 1;
@@ -20,7 +20,6 @@ interface Props {
 
 export const CategoryPostList = ({ category }: Props) => {
   const router = useRouter();
-  const { checkLogin } = useAuth();
   const [currentPage, setCurrentPage] = useState(DEFAULT_CURRENT_PAGE);
   const [sortType, setSortType] = useState<'A' | 'D' | 'R'>('D');
   const sortTypeText = sortType === 'A' ? '등록순' : sortType === 'D' ? '최신순' : '추천순';
@@ -34,7 +33,6 @@ export const CategoryPostList = ({ category }: Props) => {
   const { data: bestWorstPostsData, isLoading: isBestWorstLoading } = useGetBestWorstPostInfo({
     categoryCd: category,
   });
-  const { mutate: postReaction } = usePostReaction();
 
   if (isPostsLoading || isBestWorstLoading) {
     return null;
@@ -55,32 +53,6 @@ export const CategoryPostList = ({ category }: Props) => {
 
   const onPageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  const handlePostReaction = (
-    reactionType: 'like' | 'unlike',
-    actionType: 'add' | 'remove' | 'toggle',
-    postId: string
-  ) => {
-    const isLoggedIn = checkLogin();
-    if (!isLoggedIn) return;
-
-    postReaction(
-      { postSeq: postId, reactionType, actionType },
-      {
-        onSuccess: () => {
-          postInvalidateQueries.list({
-            categoryCd: category,
-            currPage: currentPage,
-            pageSize: DEFAULT_PAGE_SIZE,
-            sortType,
-          });
-        },
-        onError: error => {
-          console.log(error);
-        },
-      }
-    );
   };
 
   const changeSortType = () => {
@@ -202,68 +174,72 @@ export const CategoryPostList = ({ category }: Props) => {
             <Icons.arrowUpDown />
           </Button>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
           {posts.map(post => (
             <Card
               key={post.postSeq}
               className="relative flex cursor-pointer flex-col justify-between bg-white p-6 pt-8 hover:bg-gray-100"
               onClick={() => handlePostClick(post.postSeq)}
             >
-              <CardContent className="flex justify-between gap-4 p-0 pb-4">
-                <div className="flex flex-col items-start gap-5">
+              <CardContent className="flex justify-between gap-4 p-0 pb-5">
+                <div className="flex w-full flex-col items-start gap-3">
                   <h4 className="font-bold text-gray-900">{post.postTitle}</h4>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1">
-                      <Icons.inssiderType />
-                      <span className="text-gray-900">{post.nickname}</span>
-                    </div>
-                    <div className="h-[11px] w-[1px] bg-[#D9D9D9] p-0" />
-                    <div className="flex items-center gap-1 text-sm text-[#989898]">
-                      <span>{post.regDate}</span>
-                      <div className="h-[2px] w-[2px] rounded-full bg-[#D9D9D9] p-0" />
-                      <span className="flex items-center gap-1">
-                        <Icons.eye className="h-[18px] w-[18px]" />
-                        {post.viewCnt}
-                      </span>
-                    </div>
+                  <div className="flex h-fit w-full flex-nowrap items-center gap-6">
+                    <p className="line-clamp-3 h-fit w-full text-gray-900">{post.previewContent}</p>
+                    {post.thumbnailPath && (
+                      <div className="relative flex h-6 w-[64px] flex-shrink-0 items-center justify-center overflow-visible">
+                        <Image
+                          // TODO) 프론트엔드 환경에서 이미지 경로 처리
+                          src={'http://inssider.kro.kr' + post.thumbnailPath}
+                          alt={post.postTitle + 'thumbnail image'}
+                          width={64}
+                          height={64}
+                          style={{ width: '64px', height: '64px' }}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    )}
                   </div>
+                  {post.postTagList.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-0">
+                      {post.postTagList.map((tag: string, index: number) => (
+                        <span key={`tag-${index}`} className="text-xs text-gray-500">
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
-                {post.thumbnailPath && (
-                  <div>
-                    <Image
-                      // TODO) 프론트엔드 환경에서 이미지 경로 처리
-                      src={'http://inssider.kro.kr' + post.thumbnailPath}
-                      alt={post.postTitle + 'thumbnail image'}
-                      width={64}
-                      height={64}
-                    />
-                  </div>
-                )}
               </CardContent>
-              <CardFooter className="flex flex-wrap gap-[6px] gap-y-2 p-0">
-                <div className="mr-2 flex items-center gap-3">
-                  <div
-                    className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]"
-                    onClick={e => e.stopPropagation()}
-                  >
-                    <button onClick={() => handlePostReaction('like', 'add', post.postSeq)}>
-                      <Icons.thumbsUp className="h-4 w-4 text-gray-900" />
-                    </button>
-                    <span className="leading-[1] text-gray-900">{post.likeCnt}</span>
-                    <button onClick={() => handlePostReaction('unlike', 'remove', post.postSeq)}>
-                      <Icons.thumbsDown className="h-4 w-4 text-gray-900" />
-                    </button>
+              <CardFooter className="flex flex-nowrap justify-between gap-[6px] gap-y-2 p-0">
+                <div className="mr-2 flex items-center gap-2">
+                  <div className="border-gray-500/50 flex items-center justify-center gap-2 rounded-full border px-3 py-[7px]">
+                    <Icons.thumbsUp className="h-4 w-4 text-gray-900" />
+                    <span className="text-sm leading-[1] text-gray-900">{post.likeCnt}</span>
+                    <Icons.thumbsDown className="h-4 w-4 text-gray-900" />
                   </div>
-                  <div className="flex items-center justify-center gap-2 rounded-full bg-[#dcdcdc]/50 px-3 py-[7px]">
+                  <div className="border-gray-500/50 flex items-center justify-center gap-2 rounded-full border px-3 py-[7px]">
                     <Icons.comment className="h-4 w-4 text-gray-900" />
-                    <span className="leading-[1] text-gray-900">{post.commentCnt}</span>
+                    <span className="text-sm leading-[1] text-gray-900">{post.commentCnt}</span>
                   </div>
                 </div>
-                {post.postTagList.map((tag: string, index: number) => (
-                  <Badge key={`tag-${index}`} variant="tag">
-                    #{tag}
-                  </Badge>
-                ))}
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <PersonalityIcon code={'CIEM'} size={16} />
+                    <span className="w-fit max-w-[76px] truncate text-ellipsis text-[13px] text-gray-900">
+                      {post.nickname}
+                    </span>
+                  </div>
+                  <div className="h-[11px] w-[1px] bg-[#D9D9D9] p-0" />
+                  <div className="flex items-center gap-2 text-sm text-gray-600">
+                    <span className="flex items-center gap-1">
+                      <Icons.eye className="h-[18px] w-[18px]" />
+                      {post.viewCnt}
+                    </span>
+                    <div className="h-[11px] w-[1px] bg-[#D9D9D9] p-0" />
+                    <span className="truncate text-ellipsis">{post.regDate}</span>
+                  </div>
+                </div>
               </CardFooter>
               {/* TODO) 투표 중 상태 응답값 필요 */}
               {post.isVote !== 0 && (

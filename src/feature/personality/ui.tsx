@@ -24,9 +24,11 @@ export type PersonalityCode = `${PoliticalType}${SocialType}${ThinkingType}${Gen
 
 export interface PersonalityProps {
   code: PersonalityCode;
+  size?: number;
+  className?: string;
 }
 
-export const PersonalityIcon = ({ code }: PersonalityProps) => {
+export const PersonalityIcon = ({ code, size = 20, className }: PersonalityProps) => {
   const personality = {
     political: code[0] as PoliticalType,
     social: code[1] as SocialType,
@@ -35,7 +37,14 @@ export const PersonalityIcon = ({ code }: PersonalityProps) => {
   };
 
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      fill="none"
+      className={className}
+    >
       <path
         d="M18.4502 2.1921L18.5315 9.37076C18.5315 9.37076 18.5762 9.6821 18.1795 9.72676C17.7828 9.7721 15.8802 9.75276 15.8802 9.75276C15.7522 9.80076 15.7508 9.9741 15.7888 10.1334C15.9015 10.6081 15.8155 10.6841 15.7542 10.9541C15.6882 11.4281 15.2002 11.7094 15.1088 11.7534C14.9442 11.8328 14.4348 12.0401 13.9048 11.7941C13.8495 11.7688 13.3802 11.5194 13.2115 11.0161C13.0682 10.5881 12.9868 10.5128 13.0755 10.1114C13.1048 9.97943 12.9762 9.86543 12.8835 9.85476L10.3928 9.88276L10.3855 7.1781C10.4195 7.05743 10.4788 6.94476 10.7288 6.93476C10.8255 6.93076 11.7148 7.2741 12.1068 6.57943C12.1262 6.54543 12.5948 5.62076 12.2022 4.98276C11.8528 4.41476 11.5535 4.41543 11.3768 4.40143C11.1168 4.38076 10.9742 4.48609 10.4522 4.40276L10.2295 4.33943L10.3048 2.0401C10.3048 2.0401 10.2882 1.79676 10.6848 1.76476C11.0815 1.73343 18.1302 1.6801 18.1302 1.6801C18.1302 1.6801 18.4168 1.61543 18.4475 1.78476C18.4782 1.9541 18.4508 2.19143 18.4508 2.19143L18.4502 2.1921Z"
         fill={PERSONALITY_COLORS[personality.social]}
