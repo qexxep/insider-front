@@ -607,13 +607,6 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
           >
             투표 추가
           </Button>
-          <Button
-            className="bg-primary px-6 text-white transition-colors hover:bg-primary-700 disabled:bg-gray-400 disabled:text-primary-foreground"
-            onClick={handleSubmitPost}
-            disabled={savePostMutation.isPending || !postSeq || !title.trim() || !content.trim()}
-          >
-            {savePostMutation.isPending ? '등록 중...' : isEditMode ? '수정하기' : '게시물 등록'}
-          </Button>
         </div>
       </div>
 
@@ -720,6 +713,15 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
             handleAddVoteOption={handleAddVoteOption}
           />
         )}
+      </div>
+      <div className="mt-10 flex justify-center">
+        <Button
+          className="w-60 bg-primary px-6 text-white transition-colors hover:bg-primary-700 disabled:bg-gray-400 disabled:text-primary-foreground"
+          onClick={handleSubmitPost}
+          disabled={savePostMutation.isPending || !postSeq || !title.trim() || !content.trim()}
+        >
+          {savePostMutation.isPending ? '등록 중...' : isEditMode ? '수정하기' : '게시물 등록'}
+        </Button>
       </div>
     </div>
   );
