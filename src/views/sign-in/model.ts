@@ -13,6 +13,25 @@ export const LoginFormSchema = z.object({
 
 export type LoginFormType = z.infer<typeof LoginFormSchema>;
 
+export const FindIdFormSchema = z.object({
+  userEmail: z.string().email({ message: '이메일 형식에 맞지 않습니다.' }).min(1, { message: '이메일을 입력해주세요.' }),
+});
+
+export type FindIdFormType = z.infer<typeof FindIdFormSchema>;
+
+export const VerifyOtpFormSchema = z.object({
+  inputOtp: tempCodeSchema,
+});
+
+export type VerifyOtpFormType = z.infer<typeof VerifyOtpFormSchema>;
+
+export const FindPasswordFormSchema = z.object({
+  userId: z.string().min(1, { message: '아이디를 입력해주세요.' }),
+  email: z.string().email({ message: '이메일 형식에 맞지 않습니다.' }).min(1, { message: '이메일을 입력해주세요.' }),
+});
+
+export type FindPasswordFormType = z.infer<typeof FindPasswordFormSchema>;
+
 export const SignupFormSchema = z
   .object({
     nickName: z

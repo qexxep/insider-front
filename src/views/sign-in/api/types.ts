@@ -14,7 +14,7 @@ export interface SignInResponse {
 
 export interface SendOtpRequest {
   otpPurpose: string; // SIGN_UP, FIND_ID
-  tempCode: string;
+  tempCode?: string; // tempCode는 SIGN_UP에서만 사용하고 FIND_ID에서 사용하지 않음
   userEmail: string;
 }
 
@@ -24,23 +24,29 @@ export interface FindPasswordRequest {
 }
 
 export interface FindIdRequest {
-  code: string;
+  code: string; // checkCode
   userEmail: string;
+}
+export interface FindIdResponse {
+  userId: string;
 }
 
 export interface CheckOtpRequest {
   otpPurpose: string; // SIGN_UP, FIND_ID
-  tempCode: string;
+  tempCode?: string; // tempCode는 SIGN_UP에서만 사용하고 FIND_ID에서 사용하지 않음
   email: string;
   inputOtp: string;
 }
 
-export interface ChangePasswordRequest {
-  password: string;
-  newPassword: string;
-  newConfirmPassword: string;
+export interface CheckOtpResponse {
+  checkCode: string;
 }
 
+export interface ChangePasswordRequest {
+  password: string; // 현재 비밀번호 또는 현재 임시비밀번호
+  newPassword: string; // 영문 + 숫자 +특수문자 7자이상 18자 이하
+  newConfirmPassword: string; // 영문 + 숫자 + 특수문자 7자이상 18자 이하
+}
 // Registers
 
 export interface SignUpRequest {

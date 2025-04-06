@@ -4,6 +4,7 @@ import {
   ChangePasswordRequest,
   CheckOtpRequest,
   FindIdRequest,
+  FindIdResponse,
   FindPasswordRequest,
   SendOtpRequest,
   SignInRequest,
@@ -21,7 +22,7 @@ export const sendOtp = (data: SendOtpRequest) => baseApi.post<void>('auth/send-o
 
 export const findPassword = (data: FindPasswordRequest) => baseApi.post<void>('auth/find-password', data);
 
-export const findId = (data: FindIdRequest) => baseApi.post<void>('auth/find-id', data);
+export const findId = (data: FindIdRequest) => baseApi.post<FindIdResponse>('auth/find-id', data);
 
 export const checkOtp = (data: CheckOtpRequest) => baseApi.post<void>('auth/check-otp', data);
 

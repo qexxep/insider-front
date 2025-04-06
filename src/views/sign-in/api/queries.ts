@@ -16,7 +16,9 @@ import {
   CheckDuplicateIdRequest,
   CheckDuplicateNicknameRequest,
   CheckOtpRequest,
+  CheckOtpResponse,
   FindIdRequest,
+  FindIdResponse,
   FindPasswordRequest,
   SendOtpRequest,
   SignInRequest,
@@ -104,14 +106,14 @@ export const useFindPassword = (config?: UseMutationOptions<ApiResponse<void>, E
   });
 };
 
-export const useFindId = (config?: UseMutationOptions<ApiResponse<void>, Error, FindIdRequest>) => {
+export const useFindId = (config?: UseMutationOptions<ApiResponse<FindIdResponse>, Error, FindIdRequest>) => {
   return useMutation({
     mutationFn: (payload: FindIdRequest) => findId(payload),
     ...config,
   });
 };
 
-export const useCheckOtp = (config?: UseMutationOptions<ApiResponse<void>, Error, CheckOtpRequest>) => {
+export const useCheckOtp = (config?: UseMutationOptions<ApiResponse<CheckOtpResponse>, Error, CheckOtpRequest>) => {
   return useMutation({
     mutationFn: (payload: CheckOtpRequest) => checkOtp(payload),
     ...config,
