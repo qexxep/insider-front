@@ -13,8 +13,8 @@ import {
   getBestWorstPostInfo,
   getPostDetail,
   getPostListByCategory,
-  postReaction,
   removeScrap,
+  savePostReaction,
   saveScrap,
 } from './postApi';
 import {
@@ -147,7 +147,7 @@ export const usePostReaction = (
   config?: UseMutationOptions<ApiResponse<PostReactionResponse>, Error, PostReactionRequest>
 ) => {
   return useMutation({
-    mutationFn: (payload: PostReactionRequest) => postReaction(payload),
+    mutationFn: (payload: PostReactionRequest) => savePostReaction(payload),
     ...config,
   });
 };

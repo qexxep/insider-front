@@ -3,6 +3,7 @@ import { baseApi } from '@/shared/api';
 import {
   ChangePasswordRequest,
   CheckOtpRequest,
+  CheckOtpResponse,
   FindIdRequest,
   FindIdResponse,
   FindPasswordRequest,
@@ -24,6 +25,6 @@ export const findPassword = (data: FindPasswordRequest) => baseApi.post<void>('a
 
 export const findId = (data: FindIdRequest) => baseApi.post<FindIdResponse>('auth/find-id', data);
 
-export const checkOtp = (data: CheckOtpRequest) => baseApi.post<void>('auth/check-otp', data);
+export const checkOtp = (data: CheckOtpRequest) => baseApi.post<CheckOtpResponse>('auth/check-otp', data);
 
 export const changePassword = (data: ChangePasswordRequest) => baseApi.post<void>('auth/change-password', data);
