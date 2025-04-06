@@ -91,7 +91,7 @@ async function MainPage() {
                 <Card
                   className={cn(
                     'relative h-full rounded-lg transition-all duration-300 ease-in-out hover:scale-[1.01] hover:shadow-lg',
-                    RANK_COLORS[item.rankNum as 1 | 2 | 3]
+                    RANK_COLORS[item.rankNum as 1 | 2 | 3 | 4 | 5 | 6]
                   )}
                 >
                   <CardHeader className="relative pb-0">
