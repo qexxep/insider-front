@@ -1,0 +1,80 @@
+[
+  {
+    "postSeq": "1",
+    "rankNum": "1",
+    "postTitle": "취업 얘기~~",
+    "categoryCd": "003001",
+    "categoryName": "취업",
+    "viewCnt": "25",
+    "likeCnt": "0",
+    "commentCnt": "1",
+    "thumbnailPath": "",
+    "regDate": "2025-04-07",
+    "regTime": "23:17:54"
+  },
+  {
+    "postSeq": "8",
+    "rankNum": "2",
+    "postTitle": "트럼프가 미쳐돌아가고 있네요",
+    "categoryCd": "003006",
+    "categoryName": "사회",
+    "viewCnt": "2",
+    "likeCnt": "1",
+    "commentCnt": "0",
+    "thumbnailPath": "",
+    "regDate": "2025-04-08",
+    "regTime": "14:52:25"
+  },
+  {
+    "postSeq": "3",
+    "rankNum": "3",
+    "postTitle": "첫게시글 ㅎ",
+    "categoryCd": "003007",
+    "categoryName": "익명자유",
+    "viewCnt": "2",
+    "likeCnt": "0",
+    "commentCnt": "0",
+    "thumbnailPath": "/files/post/3/thumbnail_d5e445d4-8bb1-4373-97dd-c2d6ea812d7a.png",
+    "regDate": "2025-04-07",
+    "regTime": "23:20:00"
+  },
+  {
+    "postSeq": "4",
+    "rankNum": "4",
+    "postTitle": "취업난 너무 힘드네요..",
+    "categoryCd": "003001",
+    "categoryName": "취업",
+    "viewCnt": "1",
+    "likeCnt": "0",
+    "commentCnt": "0",
+    "thumbnailPath": "",
+    "regDate": "2025-04-08",
+    "regTime": "14:46:56"
+  },
+  {
+    "postSeq": "6",
+    "rankNum": "5",
+    "postTitle": "윤석열 탄핵",
+    "categoryCd": "003004",
+    "categoryName": "정치",
+    "viewCnt": "0",
+    "likeCnt": "0",
+    "commentCnt": "0",
+    "thumbnailPath": "",
+    "regDate": "2025-04-08",
+    "regTime": "14:49:07"
+  },
+  {
+    "postSeq": "7",
+    "rankNum": "6",
+    "postTitle": "손흥민 최고!",
+    "categoryCd": "003005",
+    "categoryName": "스포츠",
+    "viewCnt": "0",
+    "likeCnt": "0",
+    "commentCnt": "0",
+    "thumbnailPath": "/files/post/7/thumbnail_90c8bb92-565b-414c-a144-f34038f2a220.png",
+    "regDate": "2025-04-08",
+    "regTime": "14:49:55"
+  }
+]

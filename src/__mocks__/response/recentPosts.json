@@ -1,0 +1,251 @@
+[
+  {
+    "majorCategoryName": "인싸이더 게시판",
+    "commCategoryCode": "999003",
+    "categoryList": [
+      {
+        "recentPostList": [
+          {
+            "postSeq": "4",
+            "postTitle": "취업난 너무 힘드네요..",
+            "previewContent": "취업할 수 있는걸까요?\n경쟁률이 700:1 이라니..",
+            "postType": "N",
+            "viewCnt": 1,
+            "likeCnt": 0,
+            "unlikeCnt": 0,
+            "reactionTotal": 0,
+            "commentCnt": 0,
+            "isVote": 0,
+            "postTagList": [],
+            "thumbnailPath": "",
+            "nickname": "무나마스터",
+            "propensityImage": "",
+            "regId": "munamaster",
+            "regDate": "2025-04-08",
+            "regTime": "14:46:56",
+            "updId": "munamaster",
+            "updDate": "2025-04-08",
+            "updTime": "14:47:22",
+            "owner": false
+          },
+          {
+            "postSeq": "1",
+            "postTitle": "취업 얘기~~",
+            "previewContent": "취업취업",
+            "postType": "N",
+            "viewCnt": 25,
+            "likeCnt": 0,
+            "unlikeCnt": 1,
+            "reactionTotal": -1,
+            "commentCnt": 1,
+            "isVote": 0,
+            "postTagList": ["취업"],
+            "thumbnailPath": "",
+            "nickname": "관리자은영",
+            "propensityImage": "",
+            "regId": "silver0",
+            "regDate": "2025-04-07",
+            "regTime": "23:17:54",
+            "updId": "silver0",
+            "updDate": "2025-04-07",
+            "updTime": "23:18:26",
+            "owner": false
+          }
+        ],
+        "categoryCd": "003001",
+        "categoryCode": "003001",
+        "categoryName": "취업"
+      },
+      {
+        "recentPostList": [],
+        "categoryCd": "003002",
+        "categoryCode": "003002",
+        "categoryName": ""
+      },
+      {
+        "recentPostList": [],
+        "categoryCd": "003003",
+        "categoryCode": "003003",
+        "categoryName": ""
+      },
+      {
+        "recentPostList": [
+          {
+            "postSeq": "6",
+            "postTitle": "윤석열 탄핵",
+            "previewContent": "결국 되고 말았네요!",
+            "postType": "N",
+            "viewCnt": 0,
+            "likeCnt": 0,
+            "unlikeCnt": 0,
+            "reactionTotal": 0,
+            "commentCnt": 0,
+            "isVote": 0,
+            "postTagList": [],
+            "thumbnailPath": "",
+            "nickname": "무나마스터",
+            "propensityImage": "",
+            "regId": "munamaster",
+            "regDate": "2025-04-08",
+            "regTime": "14:49:07",
+            "updId": "munamaster",
+            "updDate": "2025-04-08",
+            "updTime": "14:49:21",
+            "owner": false
+          },
+          {
+            "postSeq": "5",
+            "postTitle": "다음 대통령은 누가 될까요?",
+            "previewContent": "투표해봅시다!",
+            "postType": "N",
+            "viewCnt": 0,
+            "likeCnt": 0,
+            "unlikeCnt": 0,
+            "reactionTotal": 0,
+            "commentCnt": 0,
+            "isVote": 1,
+            "postTagList": [],
+            "thumbnailPath": "",
+            "nickname": "무나마스터",
+            "propensityImage": "",
+            "regId": "munamaster",
+            "regDate": "2025-04-08",
+            "regTime": "14:47:52",
+            "updId": "munamaster",
+            "updDate": "2025-04-08",
+            "updTime": "14:48:45",
+            "owner": false
+          }
+        ],
+        "categoryCd": "003004",
+        "categoryCode": "003004",
+        "categoryName": "정치"
+      },
+      {
+        "recentPostList": [
+          {
+            "postSeq": "7",
+            "postTitle": "손흥민 최고!",
+            "previewContent": "흥민이가 최고야!!",
+            "postType": "N",
+            "viewCnt": 0,
+            "likeCnt": 0,
+            "unlikeCnt": 0,
+            "reactionTotal": 0,
+            "commentCnt": 0,
+            "isVote": 0,
+            "postTagList": [],
+            "thumbnailPath": "/files/post/7/thumbnail_90c8bb92-565b-414c-a144-f34038f2a220.png",
+            "nickname": "무나마스터",
+            "propensityImage": "",
+            "regId": "munamaster",
+            "regDate": "2025-04-08",
+            "regTime": "14:49:55",
+            "updId": "munamaster",
+            "updDate": "2025-04-08",
+            "updTime": "14:50:43",
+            "owner": false
+          }
+        ],
+        "categoryCd": "003005",
+        "categoryCode": "003005",
+        "categoryName": "스포츠"
+      },
+      {
+        "recentPostList": [
+          {
+            "postSeq": "8",
+            "postTitle": "트럼프가 미쳐돌아가고 있네요",
+            "previewContent": "국가별 관세라니 답이없네 정말",
+            "postType": "N",
+            "viewCnt": 2,
+            "likeCnt": 1,
+            "unlikeCnt": 0,
+            "reactionTotal": 1,
+            "commentCnt": 0,
+            "isVote": 0,
+            "postTagList": ["dfsdf", "asdasd", "ㅇ아아", "안녕", "맞아"],
+            "thumbnailPath": "",
+            "nickname": "무나마스터",
+            "propensityImage": "",
+            "regId": "munamaster",
+            "regDate": "2025-04-08",
+            "regTime": "14:52:25",
+            "updId": "munamaster",
+            "updDate": "2025-04-08",
+            "updTime": "15:55:36",
+            "owner": false
+          }
+        ],
+        "categoryCd": "003006",
+        "categoryCode": "003006",
+        "categoryName": "사회"
+      },
+      {
+        "recentPostList": [
+          {
+            "postSeq": "3",
+            "postTitle": "첫게시글 ㅎ",
+            "previewContent": "익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명익명",
+            "postType": "N",
+            "viewCnt": 2,
+            "likeCnt": 0,
+            "unlikeCnt": 0,
+            "reactionTotal": 0,
+            "commentCnt": 0,
+            "isVote": 0,
+            "postTagList": ["수다"],
+            "thumbnailPath": "/files/post/3/thumbnail_d5e445d4-8bb1-4373-97dd-c2d6ea812d7a.png",
+            "nickname": "관리자은영",
+            "propensityImage": "",
+            "regId": "silver0",
+            "regDate": "2025-04-07",
+            "regTime": "23:20:00",
+            "updId": "silver0",
+            "updDate": "2025-04-07",
+            "updTime": "23:22:28",
+            "owner": false
+          }
+        ],
+        "categoryCd": "003007",
+        "categoryCode": "003007",
+        "categoryName": "익명자유"
+      }
+    ]
+  },
+  {
+    "majorCategoryName": "힐링추천 게시판",
+    "commCategoryCode": "999004",
+    "categoryList": [
+      {
+        "recentPostList": [],
+        "categoryCd": "004001",
+        "categoryCode": "004001",
+        "categoryName": ""
+      },
+      {
+        "recentPostList": [],
+        "categoryCd": "004002",
+        "categoryCode": "004002",
+        "categoryName": ""
+      },
+      {
+        "recentPostList": [],
+        "categoryCd": "004003",
+        "categoryCode": "004003",
+        "categoryName": ""
+      },
+      {
+        "recentPostList": [],
+        "categoryCd": "004004",
+        "categoryCode": "004004",
+        "categoryName": ""
+      }
+    ]
+  },
+  {
+    "majorCategoryName": "즐겨찾기 게시판",
+    "commCategoryCode": "",
+    "categoryList": []
+  }
+]
