@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { CategoryIcon } from '@/shared/components';
 import { Button, Card, CardContent, CardHeader, CardTitle, Icons } from '@/shared/ui';
 
-import { CategoryInfo } from '../api/category';
+import { CategoryInfo } from '../api/types';
 
 export function CategoryPostCard({ data }: { data: CategoryInfo }) {
   const router = useRouter();

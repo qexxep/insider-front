@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { Icons } from '@/shared/ui';
 
-import { InsiderRanking } from '../api/insider';
+import { InsiderRanking } from '../api/types';
 
 export function RankPostCard({ data }: { data: InsiderRanking }) {
   return (
