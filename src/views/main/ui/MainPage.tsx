@@ -146,11 +146,19 @@ async function MainPage() {
           return null;
         }
 
+        // 게시글이 없는 카테고리 필터링
+        const filteredCategories = data.categoryList.filter(category => category.recentPostList.length > 0);
+
+        // 게시글이 없는 카테고리가 없으면 섹션을 렌더링하지 않음
+        if (filteredCategories.length === 0) {
+          return null;
+        }
+
         return (
           <Fragment key={data.commCategoryCode}>
             <h2 className="mb-4 mt-10 text-xl font-bold">{data.majorCategoryName}</h2>
             <div className="grid grid-cols-2 gap-5">
-              {data.categoryList.map(category => (
+              {filteredCategories.map(category => (
                 <CategoryPostCard key={category.categoryCode} data={category} />
               ))}
             </div>
