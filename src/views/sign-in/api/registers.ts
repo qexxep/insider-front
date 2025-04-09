@@ -4,7 +4,7 @@ import { CheckDuplicateIdRequest, CheckDuplicateNicknameRequest, SignUpInitRespo
 
 export const signUp = (data: SignUpRequest) => baseApi.post<void>('registers/sign-up', data);
 
-export const signUpInit = () => baseApi.post<SignUpInitResponse>('registers/sign-up-init');
+export const signUpInit = () => baseApi.get<SignUpInitResponse>('registers/sign-up-init');
 
 export const checkDuplicateNickname = (data: CheckDuplicateNicknameRequest) =>
   baseApi.post<void>('registers/check-duplicate-nickname', data);
