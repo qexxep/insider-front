@@ -1,3 +1,5 @@
+export const revalidate = 60;
+
 import { CategoryPostList } from '@/views/posts';
 
 interface PageProps {

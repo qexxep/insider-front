@@ -1,4 +1,4 @@
-import { use } from 'react';
+export const revalidate = 60;
 
 import { PostDetail } from '@/views/posts';
 
@@ -10,9 +10,9 @@ interface PageProps {
   searchParams: Promise<{ [key: string]: number | undefined }>;
 }
 
-export default function Page({ params, searchParams }: PageProps) {
-  const { postId, category } = use(params);
-  const { page } = use(searchParams);
+export default async function Page({ params, searchParams }: PageProps) {
+  const { postId, category } = await params;
+  const { page } = await searchParams;
 
   return <PostDetail postId={postId} category={category} currentPage={page} />;
 }

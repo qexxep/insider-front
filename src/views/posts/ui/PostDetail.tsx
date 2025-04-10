@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { redirect, useRouter } from 'next/navigation';
+import { useCookies } from 'next-client-cookies';
 import { useState } from 'react';
 
 import { useAuth } from '@/entity/auth';
@@ -57,7 +58,8 @@ const POSTS_SORT_TYPE_IN_DETAIL_PAGE = 'D';
 
 export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPage = 1 }: Props) => {
   const router = useRouter();
-  const { checkLogin } = useAuth();
+  const { checkLogin, isLoggedIn } = useAuth();
+  const cookies = useCookies();
   const [page, setPage] = useState(currentPage);
   const [commentPage, setCommentPage] = useState(commentCurrentPage);
 
@@ -104,6 +106,9 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
 
   const { voteInfo, fileList, ...post } = postData.data;
   const { comments, totalCommentCnt } = commentsData.data;
+
+  const userId = cookies.get('user_id'); // 또는 실제 사용자 ID가 저장된 쿠키 이름
+  const isPostOwner = isLoggedIn && userId && post.regId === userId;
 
   const { posts, totalPostCnt } = relativePostListData.data;
   const bestWorstPosts = bestWorstPostsData.data;
@@ -247,7 +252,7 @@ export const PostDetail = ({ postId, category, currentPage = 1, commentCurrentPa
             <h1 className="text-xl font-bold text-gray-900">{post.postTitle}</h1>
           </div>
           {/* TODO 본인 게시물 여부 판단 필요 */}
-          {post.owner && (
+          {(post.owner || isPostOwner) && (
             <div className="flex gap-3">
               <AlertDialog>
                 <AlertDialogTrigger asChild>
