@@ -38,7 +38,7 @@
     "ky-universal": "^0.12.0",
     "lucide-react": "^0.474.0",
     "msw": "^2.7.3",
-    "next": "15.1.6",
+    "next": "15.2.3",
     "next-client-cookies": "^2.0.1",
     "react": "^19.0.0",
     "react-day-picker": "8.10.1",
