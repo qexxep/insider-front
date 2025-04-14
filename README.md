@@ -1,6 +1,7 @@
-# Insider-Front
+# Inssider
 
-![Insider-Front](https://via.placeholder.com/800x400?text=Insider-Front)
+Inssider Frontend
+![Inssider](./public/logo.svg)
 
 ## 프로젝트 소개
 
