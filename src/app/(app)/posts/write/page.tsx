@@ -3,7 +3,11 @@ import { redirect } from 'next/navigation';
 
 import { WritePostPage } from '@/views/posts';
 
-export default async function WritePage() {
+interface WritePageProps {
+  searchParams: { category?: string };
+}
+
+export default async function WritePage({ searchParams }: WritePageProps) {
   const cookieStore = await cookies();
   const token = cookieStore.get('access_token');
 
@@ -15,5 +19,8 @@ export default async function WritePage() {
     redirect(`/?redirect=${encodedRedirectPath}`);
   }
 
-  return <WritePostPage />;
+  // 카테고리 파라미터가 있으면 WritePostPage에 전달
+  const initialCategory = searchParams.category;
+
+  return <WritePostPage initialCategory={initialCategory} />;
 }
