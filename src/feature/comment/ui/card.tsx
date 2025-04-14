@@ -129,9 +129,9 @@ export const Card = ({ postSeq, comment, parent, callback }: Props) => {
     );
   };
 
-  const handleEditComment = () => {
-    setIsEditing(true);
-  };
+  //const handleEditComment = () => {
+  //  setIsEditing(true);
+  //};
 
   const onSubmitUpdateComment = (content: string) => {
     updateComment(
@@ -151,8 +151,18 @@ export const Card = ({ postSeq, comment, parent, callback }: Props) => {
     );
   };
 
+  // 내 댓글 여부와 대댓글 여부에 따라 배경색 적용
+  const isMyComment = comment.owner && isLoggedIn;
+  const isReplyComment = parent !== undefined;
+
   return (
-    <div className={cn('flex gap-2 px-5 py-4', parent && 'pl-0', comment.owner && isLoggedIn && 'bg-primary-100')}>
+    <div
+      className={cn(
+        'flex gap-2 px-5 py-4',
+        isReplyComment && 'pl-0',
+        (isMyComment || isReplyComment) && 'bg-primary-100'
+      )}
+    >
       {parent && (
         <div className="">
           <Icons.cornerDownRight className="h-5 w-5 text-primary" />
@@ -168,6 +178,9 @@ export const Card = ({ postSeq, comment, parent, callback }: Props) => {
           <div className="h-[2px] w-[2px] rounded-full bg-gray-500" />
           <div className="flex items-center gap-2">
             <span className="text-gray-500">{formatTimeAgo(comment.regDate + ' ' + comment.regTime)}</span>
+            {isMyComment && (
+              <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-white">내 댓글</span>
+            )}
           </div>
         </div>
         {!isEditing ? (
@@ -210,8 +223,9 @@ export const Card = ({ postSeq, comment, parent, callback }: Props) => {
           {comment.owner && comment.commentStatus === 'N' && isLoggedIn && (
             <div className="flex gap-3">
               <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="link" className="h-fit p-0 text-primary-700 underline underline-offset-2">
+                <AlertDialogTrigger asChild className="gap-1">
+                  <Button variant="link" className="h-fit p-0 text-gray-600 underline underline-offset-2">
+                    <Icons.trash className="h-4 w-4 text-gray-600" />
                     댓글 삭제하기
                   </Button>
                 </AlertDialogTrigger>
@@ -236,13 +250,13 @@ export const Card = ({ postSeq, comment, parent, callback }: Props) => {
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-              <Button
+              {/*<Button
                 variant="link"
                 className="h-fit p-0 text-primary-700 underline underline-offset-2"
                 onClick={handleEditComment}
               >
                 댓글 수정하기
-              </Button>
+              </Button>*/}
             </div>
           )}
         </div>
