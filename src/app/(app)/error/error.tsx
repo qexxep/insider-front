@@ -2,8 +2,7 @@
 
 import { useEffect } from 'react';
 
-import { ErrorPage } from '@/shared/ui/error/ErrorPage';
-import { showErrorToast } from '@/shared/ui/error/ErrorToast';
+import { ErrorPage, showErrorToast } from '@/shared/ui';
 
 export default function Error({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
