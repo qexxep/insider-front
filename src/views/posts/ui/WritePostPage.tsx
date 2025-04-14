@@ -684,7 +684,11 @@ export function WritePostPage({ mode = 'create', initialPostId, initialCategory 
                   value={currentTag}
                   onChange={e => setCurrentTag(e.target.value.replace(/^#/, ''))}
                   onKeyDown={handleTagInput}
-                  placeholder={tags.length === 0 ? `# 태그를 입력해주세요 (최대 ${MAX_TAG_COUNT}개)` : '새 태그 입력'}
+                  placeholder={
+                    tags.length === 0
+                      ? `# 태그를 입력해주세요 (최대 ${MAX_TAG_COUNT}개) / 입력 후 Enter`
+                      : '새 태그 입력'
+                  }
                   className="ml-0 w-auto flex-1 border-0 focus-visible:ring-0"
                 />
               )}
