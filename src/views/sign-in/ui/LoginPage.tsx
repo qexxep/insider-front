@@ -27,9 +27,12 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
   const cookies = useCookies();
   const searchParams = useSearchParams();
   const returnUrl = searchParams.get('returnUrl');
+  // Check if the user has explicitly disabled remember ID
+  const rememberDisabled = cookies.get('remember_id_disabled') === 'true';
 
   const { mutate: signIn, isPending } = useSignIn();
-  const [rememberId, setRememberId] = useState<boolean>(!!initialRememberId);
+  // Default to true unless the user has explicitly disabled it
+  const [rememberId, setRememberId] = useState<boolean>(!rememberDisabled);
   const [errorInfo, setErrorInfo] = useState<string | null>(null);
 
   const form = useForm<LoginFormType>({
@@ -54,8 +57,11 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
 
         if (rememberId) {
           cookies.set('remember_id', data.userId);
+          cookies.remove('remember_id_disabled');
         } else {
           cookies.remove('remember_id');
+          // Mark that the user has explicitly disabled remember ID
+          cookies.set('remember_id_disabled', 'true');
         }
 
         window.location.href = returnUrl ?? '/';
@@ -68,6 +74,19 @@ export function LoginPage({ initialRememberId }: { initialRememberId: string | n
 
   const handleRememberId = (checked: boolean) => {
     setRememberId(checked);
+    // Update the preference immediately when the checkbox changes
+    if (!checked) {
+      cookies.set('remember_id_disabled', 'true');
+      // 체크박스 해제 시 즉시 저장된 아이디 삭제
+      cookies.remove('remember_id');
+    } else {
+      cookies.remove('remember_id_disabled');
+      // 체크박스 체크 시 현재 입력된 아이디 저장 (있는 경우에만)
+      const currentUserId = form.getValues('userId');
+      if (currentUserId) {
+        cookies.set('remember_id', currentUserId);
+      }
+    }
   };
 
   const handleErrorInfo = (errorInfo: string) => {
