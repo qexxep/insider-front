@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { WritePostPage } from '@/views/posts';
 
-export default async function WritePage({ searchParams }: { searchParams: URLSearchParams }) {
+export default async function WritePage({ searchParams }: { searchParams: Promise<URLSearchParams> }) {
   const cookieStore = await cookies();
   const token = cookieStore.get('access_token');
 
@@ -16,7 +16,7 @@ export default async function WritePage({ searchParams }: { searchParams: URLSea
   }
 
   // Next.js 15: searchParams.get('category') 사용
-  const initialCategory = searchParams.get('category');
+  const initialCategory = (await searchParams).get('category');
 
-  return <WritePostPage initialCategory={initialCategory || undefined} />;
+  return <WritePostPage initialCategory={initialCategory as string | undefined} />;
 }
