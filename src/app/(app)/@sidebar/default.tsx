@@ -3,8 +3,8 @@ import { Fragment } from 'react';
 import { cn } from '@/shared/lib';
 import { Separator } from '@/shared/ui';
 
+import { MenuSection } from './_components/MenuSection';
 import { CategoryItem, getCategories } from './api/category';
-import { MenuSection } from './components/MenuSection';
 
 export default async function Sidebar({ className }: { className?: string }) {
   const { data: categories } = await getCategories();

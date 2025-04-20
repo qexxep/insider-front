@@ -2,7 +2,7 @@ import { Separator } from '@/shared/ui';
 
 export default function Footer() {
   return (
-    <footer className="min-h-[120px] pt-5">
+    <footer className="min-h-[120px] w-full bg-transparent pt-5">
       <div className="mx-auto max-w-7xl px-4">
         <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
           <span>이용약관</span>
