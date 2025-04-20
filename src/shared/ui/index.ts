@@ -21,7 +21,10 @@ export { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 export { Checkbox } from './checkbox';
 export {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
   DropdownMenuGroup,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuRadioGroup,
@@ -32,15 +35,6 @@ export {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-  Toast,
-  ToastAction,
-  type ToastActionElement,
-  ToastClose,
-  ToastDescription,
-  type ToastProps,
-  ToastProvider,
-  ToastTitle,
-  ToastViewport,
 } from './dropdown-menu';
 export { EmptyData } from './empty-data';
 export { ErrorPage } from './error/ErrorPage';
@@ -78,4 +72,15 @@ export { Separator } from './separator';
 export { Skeleton } from './skeleton';
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { Textarea } from './textarea';
+export {
+  Toast,
+  ToastAction,
+  type ToastActionElement,
+  ToastClose,
+  ToastDescription,
+  type ToastProps,
+  ToastProvider,
+  ToastTitle,
+  ToastViewport,
+} from './toast';
 export { Toaster } from './toaster';
