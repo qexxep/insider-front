@@ -44,6 +44,13 @@ const handle401Error: AfterResponseHook = async (request, options, response) => 
   const isServer = typeof window === 'undefined';
   if (isServer) return;
 
+  // Skip authentication for public routes
+  const url = new URL(request.url);
+  const publicPaths = ['posts/search']; // Add other public paths as needed
+  if (publicPaths.some(path => url.pathname.includes(path))) {
+    return response;
+  }
+
   const refreshToken = getClientRefreshToken();
 
   if (response.status === 401) {
@@ -69,7 +76,7 @@ const handle401Error: AfterResponseHook = async (request, options, response) => 
       if (typeof window !== 'undefined') {
         document.cookie = 'access_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
         document.cookie = 'refresh_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-        window.location.href = '/sign-in';
+        window.location.href = '/login';
       }
       throw error;
     }
