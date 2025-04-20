@@ -6,8 +6,9 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { PersonalityIcon } from '@/feature/personality';
-import { Button, Card, CardContent, CardHeader, Icons } from '@/shared/ui';
+import { Button, Card, CardContent, CardHeader, Icons, LoadingSpinner } from '@/shared/ui';
 import { CardFooter } from '@/shared/ui/card';
+import { EmptyData } from '@/shared/ui/empty-data';
 import { useGetBestWorstPostInfo, useGetCategoryPostList } from '@/views/posts';
 import { Paginator } from '@/widgets/paginator';
 
@@ -35,11 +36,17 @@ export const CategoryPostList = ({ category }: Props) => {
   });
 
   if (isPostsLoading || isBestWorstLoading) {
-    return null;
+    return <LoadingSpinner />;
   }
 
   if (!relativePostListData || !bestWorstPostsData) {
-    throw new Error('Post not found');
+    return (
+      <EmptyData
+        message="데이터를 찾을 수 없습니다."
+        icon={<Icons.file className="h-12 w-12 text-gray-400" />}
+        className="mx-auto max-w-[960px] py-[50px]"
+      />
+    );
   }
 
   const { posts, commonPosts, totalPostCnt, categoryName } = relativePostListData.data;
@@ -104,25 +111,25 @@ export const CategoryPostList = ({ category }: Props) => {
                   <button>
                     <Icons.thumbsUp className="h-4 w-4 text-white" />
                   </button>
-                  <span className="leading-[1] text-white">{bestWorstPosts.bestPostInfo.likeCnt}</span>
+                  <span className="leading-[1] text-white">{bestWorstPosts?.bestPostInfo?.likeCnt}</span>
                   <button>
                     <Icons.thumbsDown className="h-4 w-4 text-white" />
                   </button>
                 </div>
                 <div className="flex items-center justify-center gap-2 rounded-full bg-[#FF885F]/50 px-3 py-[7px]">
                   <Icons.comment className="h-4 w-4 text-white" />
-                  <span className="leading-[1] text-white">{bestWorstPosts.bestPostInfo.commentCnt}</span>
+                  <span className="leading-[1] text-white">{bestWorstPosts?.bestPostInfo?.commentCnt}</span>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <h3 className="text-lg font-bold">{bestWorstPosts.bestPostInfo.postTitle}</h3>
-              <p className="line-clamp-1 font-normal">{bestWorstPosts.bestPostInfo.previewContent}</p>
+              <h3 className="text-lg font-bold">{bestWorstPosts?.bestPostInfo?.postTitle}</h3>
+              <p className="line-clamp-1 font-normal">{bestWorstPosts?.bestPostInfo?.previewContent}</p>
             </CardContent>
             <CardFooter className="flex items-center justify-center">
               <Button
                 className="w-full rounded-full bg-white font-bold text-primary"
-                onClick={() => handlePostClick(bestWorstPosts.bestPostInfo.postSeq)}
+                onClick={() => handlePostClick(bestWorstPosts?.bestPostInfo?.postSeq)}
               >
                 베스트 게시물 보러가기
               </Button>
@@ -139,25 +146,25 @@ export const CategoryPostList = ({ category }: Props) => {
                   <button>
                     <Icons.thumbsUp className="h-4 w-4 text-white" />
                   </button>
-                  <span className="leading-[1] text-white">{bestWorstPosts.worstPostInfo.likeCnt}</span>
+                  <span className="leading-[1] text-white">{bestWorstPosts?.worstPostInfo?.likeCnt}</span>
                   <button>
                     <Icons.thumbsDown className="h-4 w-4 text-white" />
                   </button>
                 </div>
                 <div className="flex items-center justify-center gap-2 rounded-full bg-[#8F8F8F]/50 px-3 py-[7px]">
                   <Icons.comment className="h-4 w-4 text-white" />
-                  <span className="leading-[1] text-white">{bestWorstPosts.worstPostInfo.commentCnt}</span>
+                  <span className="leading-[1] text-white">{bestWorstPosts?.worstPostInfo?.commentCnt}</span>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <h3 className="text-lg font-bold">{bestWorstPosts.worstPostInfo.postTitle}</h3>
-              <p className="line-clamp-1 font-normal">{bestWorstPosts.worstPostInfo.previewContent}</p>
+              <h3 className="text-lg font-bold">{bestWorstPosts?.worstPostInfo?.postTitle}</h3>
+              <p className="line-clamp-1 font-normal">{bestWorstPosts?.worstPostInfo?.previewContent}</p>
             </CardContent>
             <CardFooter>
               <Button
                 className="w-full rounded-full bg-white font-bold text-gray-600"
-                onClick={() => handlePostClick(bestWorstPosts.worstPostInfo.postSeq)}
+                onClick={() => handlePostClick(bestWorstPosts?.worstPostInfo?.postSeq)}
               >
                 워스트 게시물 보러가기
               </Button>
@@ -175,7 +182,7 @@ export const CategoryPostList = ({ category }: Props) => {
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-3">
-          {posts.map(post => (
+          {posts?.map(post => (
             <Card
               key={post.postSeq}
               className="relative flex cursor-pointer flex-col justify-between bg-white p-6 pt-8 hover:bg-gray-100"
