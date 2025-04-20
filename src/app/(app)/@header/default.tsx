@@ -2,8 +2,9 @@ import { cookies } from 'next/headers';
 import Link from 'next/link';
 
 import { type ApiResponse, baseApi } from '@/shared/api';
-import { Icons, Input, Separator } from '@/shared/ui';
+import { Icons, Separator } from '@/shared/ui';
 
+import { SearchInput } from './_components/SearchInput';
 import UserProfile from './_components/UserProfile';
 import { LinkButton } from './link-button';
 
@@ -34,16 +35,7 @@ export default async function Header() {
           <HotTopics />
         </div>
         {/* 중앙 */}
-        <div className="absolute left-1/2 top-1/2 w-full -translate-x-1/4 -translate-y-1/2 max-sm:w-[200px] sm:max-w-[300px] md:max-w-[400px] lg:max-w-[480px] xl:max-w-[557px]">
-          <div className="relative flex h-full w-full items-center">
-            <Icons.search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-primary" />
-            <Input
-              type="search"
-              placeholder="검색어를 입력하세요."
-              className="h-10 w-full rounded-full border-primary pl-10 focus:border-2 focus-visible:ring-0 focus-visible:ring-offset-0"
-            />
-          </div>
-        </div>
+        <SearchInput />
         {/* 우측 */}
         {token && (
           <div className="flex items-center gap-3">
