@@ -3,8 +3,9 @@ import { redirect } from 'next/navigation';
 
 import { WritePostPage } from '@/views/posts';
 
+// Use a more generic type for searchParams to satisfy PageProps
 interface WritePageProps {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export default async function WritePage({ searchParams }: WritePageProps) {
@@ -19,8 +20,9 @@ export default async function WritePage({ searchParams }: WritePageProps) {
     redirect(`/?redirect=${encodedRedirectPath}`);
   }
 
-  // 카테고리 파라미터가 있으면 WritePostPage에 전달
-  const initialCategory = (await searchParams)?.category;
+  // Safely access the category from resolved searchParams
+  const resolvedSearchParams = await searchParams;
+  const initialCategory = resolvedSearchParams?.category as string | undefined;
 
   return <WritePostPage initialCategory={initialCategory} />;
 }
