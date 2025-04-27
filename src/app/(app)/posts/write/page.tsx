@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { WritePostPage } from '@/views/posts';
 
 interface WritePageProps {
-  searchParams: { category?: string };
+  searchParams: Promise<{ category?: string }>;
 }
 
 export default async function WritePage({ searchParams }: WritePageProps) {
@@ -20,7 +20,7 @@ export default async function WritePage({ searchParams }: WritePageProps) {
   }
 
   // 카테고리 파라미터가 있으면 WritePostPage에 전달
-  const initialCategory = searchParams.category;
+  const initialCategory = (await searchParams)?.category;
 
   return <WritePostPage initialCategory={initialCategory} />;
 }
