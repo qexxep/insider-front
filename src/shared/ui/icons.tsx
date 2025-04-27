@@ -12,6 +12,7 @@ import {
   CornerDownRight,
   Diamond,
   Eye,
+  File,
   MessageSquare,
   Pencil,
   Plus,
@@ -672,6 +673,7 @@ const Icons = {
   plus: Plus,
   cornerDownRight: CornerDownRight,
   pencil: Pencil,
+  file: File,
 } as const;
 
 export { Icons };
