@@ -4,8 +4,8 @@ import Link from 'next/link';
 import { type ApiResponse, baseApi } from '@/shared/api';
 import { Icons, Separator } from '@/shared/ui';
 
-import { SearchInput } from './_components/SearchInput';
-import UserProfile from './_components/UserProfile';
+import { SearchInput } from './_ui/SearchInput';
+import UserProfile from './_ui/UserProfile';
 import { LinkButton } from './link-button';
 
 export interface HotTopic {
